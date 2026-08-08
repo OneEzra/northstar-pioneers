@@ -1,23 +1,358 @@
+import { Link } from 'react-router-dom';
 import { useSeoMeta } from '@unhead/react';
-
-// FIXME: Update this page (the content is just a fallback if you fail to update the page)
+import { SiteNav } from '@/components/SiteNav';
+import { SiteFooter } from '@/components/SiteFooter';
+import {
+  getNextEvent,
+  getPastEvents,
+  formatEventDate,
+  formatEventDateShort,
+} from '@/data/events';
 
 const Index = () => {
   useSeoMeta({
-    title: 'Welcome to Your Blank App',
-    description: 'A modern Nostr client application built with React, TailwindCSS, and Nostrify.',
+    title: 'Northstar Pioneers — Twin Cities AI Collective',
+    description:
+      'Builders, thinkers, and pioneers who believe intelligence is becoming as essential as electricity. Monthly meetup in Minneapolis, MN.',
   });
 
+  const nextEvent = getNextEvent();
+  const pastEvents = getPastEvents().slice(0, 2);
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4 text-gray-900 dark:text-gray-100">
-          Welcome to Your Blank App
-        </h1>
-        <p className="text-xl text-gray-600 dark:text-gray-400">
-          Start building your amazing project here!
-        </p>
-      </div>
+    <div className="min-h-screen bg-background text-foreground">
+      <SiteNav />
+
+      {/* ── HERO ──────────────────────────────────────────────── */}
+      <section className="relative isolate overflow-hidden">
+        {/* Background gradients */}
+        <div
+          className="absolute inset-0 -z-10"
+          style={{
+            background:
+              'radial-gradient(ellipse 80% 50% at 50% -10%, rgba(30,142,255,0.18) 0%, transparent 60%)',
+          }}
+        />
+        {/* Grid lines */}
+        <div
+          className="absolute inset-0 -z-10 opacity-[0.04]"
+          style={{
+            backgroundImage:
+              'linear-gradient(#1E8EFF 1px, transparent 1px), linear-gradient(90deg, #1E8EFF 1px, transparent 1px)',
+            backgroundSize: '60px 60px',
+          }}
+        />
+
+        <div className="max-w-6xl mx-auto px-6 pt-24 pb-20 sm:pt-32 sm:pb-28">
+          {/* Eyebrow */}
+          <div className="flex items-center gap-3 mb-6">
+            <div className="glow-dot" />
+            <span className="pioneer-label">Monthly Mastermind · Minneapolis, MN</span>
+          </div>
+
+          {/* Headline */}
+          <h1
+            className="font-black uppercase text-foreground mb-6 leading-none"
+            style={{
+              fontFamily: "'Barlow Condensed', sans-serif",
+              fontSize: 'clamp(48px, 8vw, 96px)',
+              letterSpacing: '0.01em',
+            }}
+          >
+            We Take Up<br />
+            The Task <span className="text-[#1E8EFF]">Eternal.</span>
+          </h1>
+
+          <p className="text-[#D0D0D0] text-lg sm:text-xl max-w-xl mb-10 leading-relaxed font-light">
+            Builders, thinkers, and pioneers who believe intelligence is
+            becoming as essential — and as available — as electricity.{' '}
+            <span className="text-foreground font-medium">No gatekeepers. No fluff.</span>
+          </p>
+
+          {/* CTA row */}
+          <div className="flex flex-wrap gap-4 items-center">
+            <a
+              href="https://www.meetup.com/northstar-pioneers/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block bg-[#1E8EFF] text-black font-bold text-sm uppercase tracking-widest px-7 py-3.5 rounded-[2px] hover:brightness-110 transition-all"
+            >
+              Join the Collective
+            </a>
+            <Link
+              to="/events"
+              className="inline-block text-[#1E8EFF] border border-[#1E8EFF]/40 font-bold text-sm uppercase tracking-widest px-7 py-3.5 rounded-[2px] hover:bg-[#1E8EFF]/10 transition-colors"
+            >
+              View Archive
+            </Link>
+            <a
+              href="https://t.me/northstarpioneerscommunity"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block text-muted-foreground border border-border font-bold text-sm uppercase tracking-widest px-7 py-3.5 rounded-[2px] hover:text-foreground hover:border-foreground/40 transition-colors"
+            >
+              Telegram
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* ── NEXT EVENT ────────────────────────────────────────── */}
+      {nextEvent && (
+        <section className="max-w-6xl mx-auto px-6 mb-20">
+          <div className="pioneer-label mb-6">Next Gathering</div>
+          <div className="card-accent p-0 overflow-hidden">
+            {/* Top bar */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-8 py-6 border-b border-border">
+              <div>
+                <div className="text-xs font-bold uppercase tracking-widest text-[#5AB0FF] mb-1">
+                  Upcoming
+                </div>
+                <h2 className="text-2xl sm:text-3xl font-extrabold text-foreground">
+                  {nextEvent.title}
+                </h2>
+              </div>
+              <span className="tag-pill self-start sm:self-auto">
+                {formatEventDateShort(nextEvent.date)} · Mpls
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-0 divide-y md:divide-y-0 md:divide-x divide-border">
+              <div className="px-8 py-6">
+                <div className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-1">
+                  Date
+                </div>
+                <div className="text-foreground font-semibold">
+                  {formatEventDate(nextEvent.date)}
+                </div>
+              </div>
+              <div className="px-8 py-6">
+                <div className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-1">
+                  Time
+                </div>
+                <div className="text-foreground font-semibold">{nextEvent.time}</div>
+              </div>
+              <div className="px-8 py-6">
+                <div className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-1">
+                  Venue
+                </div>
+                <div className="text-foreground font-semibold">{nextEvent.venue}</div>
+                <div className="text-sm text-muted-foreground mt-0.5">
+                  {nextEvent.address}
+                </div>
+              </div>
+            </div>
+
+            {/* Format */}
+            <div className="px-8 py-6 border-t border-border">
+              <div className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-4">
+                Format
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                {[
+                  { icon: '🍕', label: 'Welcome', desc: 'Connect & grab a slice' },
+                  {
+                    icon: '🗞️',
+                    label: 'Socratic Review',
+                    desc: '5–10 frontier topics',
+                  },
+                  {
+                    icon: '🛠️',
+                    label: 'Builder Demo',
+                    desc: 'See what members are building',
+                  },
+                  {
+                    icon: '🤝',
+                    label: 'Networking',
+                    desc: 'Open discussion',
+                  },
+                ].map((step) => (
+                  <div key={step.label} className="flex flex-col gap-1">
+                    <span className="text-2xl">{step.icon}</span>
+                    <span className="text-sm font-bold text-foreground">
+                      {step.label}
+                    </span>
+                    <span className="text-xs text-muted-foreground">{step.desc}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* RSVP */}
+            <div className="px-8 py-5 border-t border-border flex flex-wrap gap-3 items-center">
+              {nextEvent.meetupUrl && (
+                <a
+                  href={nextEvent.meetupUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-[#1E8EFF] text-black font-bold text-xs uppercase tracking-widest px-6 py-3 rounded-[2px] hover:brightness-110 transition-all"
+                >
+                  RSVP on Meetup ↗
+                </a>
+              )}
+              <a
+                href="https://t.me/northstarpioneerscommunity"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-muted-foreground border border-border font-bold text-xs uppercase tracking-widest px-6 py-3 rounded-[2px] hover:text-foreground hover:border-foreground/40 transition-colors"
+              >
+                Join Telegram
+              </a>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ── ABOUT STRIP ───────────────────────────────────────── */}
+      <section className="relative isolate overflow-hidden bg-card border-y border-border py-20 mb-20">
+        <div
+          className="absolute inset-0 -z-10 opacity-[0.03]"
+          style={{
+            backgroundImage:
+              'linear-gradient(#1E8EFF 1px, transparent 1px), linear-gradient(90deg, #1E8EFF 1px, transparent 1px)',
+            backgroundSize: '40px 40px',
+          }}
+        />
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+            <div>
+              <div className="pioneer-label mb-4">Who We Are</div>
+              <h2
+                className="font-black uppercase text-3xl sm:text-4xl text-foreground mb-6 leading-tight"
+                style={{ fontFamily: "'Barlow Condensed', sans-serif" }}
+              >
+                Sovereign Thinking.<br />
+                Human <span className="text-[#1E8EFF]">Flourishing.</span>
+              </h2>
+              <p className="text-[#D0D0D0] leading-relaxed mb-6">
+                Northstar Pioneers is rooted in the belief that the tools of
+                this new age belong in the hands of those bold enough to use
+                them. We gather in the Twin Cities to learn, to build, and to
+                push each other forward.
+              </p>
+              <Link
+                to="/about"
+                className="text-[#1E8EFF] border border-[#1E8EFF]/40 font-bold text-xs uppercase tracking-widest px-6 py-3 rounded-[2px] hover:bg-[#1E8EFF]/10 transition-colors inline-block"
+              >
+                Learn More
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              {[
+                {
+                  num: '76+',
+                  label: 'Members',
+                  desc: 'Builders across the Twin Cities',
+                },
+                {
+                  num: '2',
+                  label: 'Gatherings',
+                  desc: 'And growing every month',
+                },
+                {
+                  num: 'Monthly',
+                  label: 'Cadence',
+                  desc: 'Consistent, focused, no fluff',
+                },
+                {
+                  num: '2 hrs',
+                  label: 'Format',
+                  desc: 'Tight, energizing, actionable',
+                },
+              ].map((stat) => (
+                <div
+                  key={stat.label}
+                  className="bg-background border border-border rounded-[2px] p-5"
+                >
+                  <div className="text-2xl font-extrabold text-[#1E8EFF] mb-1">
+                    {stat.num}
+                  </div>
+                  <div className="text-xs font-bold uppercase tracking-wider text-foreground mb-1">
+                    {stat.label}
+                  </div>
+                  <div className="text-xs text-muted-foreground">{stat.desc}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── RECENT EVENTS PREVIEW ─────────────────────────────── */}
+      {pastEvents.length > 0 && (
+        <section className="max-w-6xl mx-auto px-6 mb-20">
+          <div className="flex items-end justify-between mb-6">
+            <div>
+              <div className="pioneer-label mb-1">Past Gatherings</div>
+              <h2
+                className="font-black uppercase text-2xl sm:text-3xl text-foreground"
+                style={{ fontFamily: "'Barlow Condensed', sans-serif" }}
+              >
+                From the Archive
+              </h2>
+            </div>
+            <Link
+              to="/events"
+              className="hidden sm:block text-xs font-bold uppercase tracking-widest text-[#1E8EFF] hover:underline"
+            >
+              View All →
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {pastEvents.map((event) => (
+              <Link
+                key={event.slug}
+                to={`/events/${event.slug}`}
+                className="card-accent p-6 block group hover:border-[#1E8EFF]/50 transition-colors"
+              >
+                <div className="flex items-start justify-between gap-4 mb-3">
+                  <span className="text-xs font-bold uppercase tracking-widest text-[#5AB0FF]">
+                    {formatEventDateShort(event.date)}
+                  </span>
+                  {event.attendees && (
+                    <span className="text-xs text-muted-foreground">
+                      {event.attendees} attendees
+                    </span>
+                  )}
+                </div>
+                <h3 className="text-lg font-bold text-foreground group-hover:text-[#1E8EFF] transition-colors mb-2">
+                  {event.title}
+                </h3>
+                <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2">
+                  {event.summary}
+                </p>
+                {event.topics.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mt-4">
+                    {event.topics.slice(0, 2).map((t) => (
+                      <span key={t.title} className="tag-pill text-[11px] py-1 px-3">
+                        {t.title}
+                      </span>
+                    ))}
+                    {event.topics.length > 2 && (
+                      <span className="tag-pill text-[11px] py-1 px-3">
+                        +{event.topics.length - 2} more
+                      </span>
+                    )}
+                  </div>
+                )}
+              </Link>
+            ))}
+          </div>
+
+          <div className="sm:hidden mt-4">
+            <Link
+              to="/events"
+              className="text-xs font-bold uppercase tracking-widest text-[#1E8EFF] hover:underline"
+            >
+              View All Events →
+            </Link>
+          </div>
+        </section>
+      )}
+
+      <SiteFooter />
     </div>
   );
 };

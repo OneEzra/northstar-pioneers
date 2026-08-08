@@ -47,34 +47,36 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 
+  /* Northstar Pioneers brand colors */
+  --color-pioneer-blue: var(--pioneer-blue);
+  --color-pioneer-blue-bright: var(--pioneer-blue-bright);
+  --color-pioneer-blue-dark: var(--pioneer-blue-dark);
+  --color-pioneer-blue-glow: var(--pioneer-blue-glow);
+  --color-pioneer-blue-border: var(--pioneer-blue-border);
+
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-xl: calc(var(--radius) + 4px);
 
+  --font-sans: 'Barlow', system-ui, sans-serif;
+  --font-display: 'Barlow Condensed', 'Barlow', system-ui, sans-serif;
+
   --animate-accordion-down: accordion-down 0.2s ease-out;
   --animate-accordion-up: accordion-up 0.2s ease-out;
 
   @keyframes accordion-down {
-    from {
-      height: 0;
-    }
-    to {
-      height: var(--radix-accordion-content-height);
-    }
+    from { height: 0; }
+    to { height: var(--radix-accordion-content-height); }
   }
 
   @keyframes accordion-up {
-    from {
-      height: var(--radix-accordion-content-height);
-    }
-    to {
-      height: 0;
-    }
+    from { height: var(--radix-accordion-content-height); }
+    to { height: 0; }
   }
 }
 
-/* Container utility replacement for v4 (previously configured in tailwind.config) */
+/* Container utility */
 @utility container {
   margin-inline: auto;
   padding-inline: 2rem;
@@ -83,81 +85,47 @@
   }
 }
 
+/* ── NORTHSTAR PIONEERS BRAND TOKENS ── */
 :root {
-  --radius: 0.75rem;
-
-  --background: hsl(0 0% 100%);
-  --foreground: hsl(222.2 84% 4.9%);
-
-  --card: hsl(0 0% 100%);
-  --card-foreground: hsl(222.2 84% 4.9%);
-
-  --popover: hsl(0 0% 100%);
-  --popover-foreground: hsl(222.2 84% 4.9%);
-
-  --primary: hsl(222.2 47.4% 11.2%);
-  --primary-foreground: hsl(210 40% 98%);
-
-  --secondary: hsl(210 40% 96.1%);
-  --secondary-foreground: hsl(222.2 47.4% 11.2%);
-
-  --muted: hsl(210 40% 96.1%);
-  --muted-foreground: hsl(215.4 16.3% 46.9%);
-
-  --accent: hsl(210 40% 96.1%);
-  --accent-foreground: hsl(222.2 47.4% 11.2%);
-
-  --destructive: hsl(0 84.2% 60.2%);
-  --destructive-foreground: hsl(210 40% 98%);
-
-  --border: hsl(214.3 31.8% 91.4%);
-  --input: hsl(214.3 31.8% 91.4%);
-  --ring: hsl(222.2 84% 4.9%);
-
-  --chart-1: hsl(12 76% 61%);
-  --chart-2: hsl(173 58% 39%);
-  --chart-3: hsl(197 37% 24%);
-  --chart-4: hsl(43 74% 66%);
-  --chart-5: hsl(27 87% 67%);
-
-  --sidebar: hsl(0 0% 98%);
-  --sidebar-foreground: hsl(240 5.3% 26.1%);
-  --sidebar-primary: hsl(240 5.9% 10%);
-  --sidebar-primary-foreground: hsl(0 0% 98%);
-  --sidebar-accent: hsl(240 4.8% 95.9%);
-  --sidebar-accent-foreground: hsl(240 5.9% 10%);
-  --sidebar-border: hsl(220 13% 91%);
-  --sidebar-ring: hsl(217.2 91.2% 59.8%);
+  --pioneer-blue:        #1E8EFF;
+  --pioneer-blue-bright: #5AB0FF;
+  --pioneer-blue-dark:   #0D5ECC;
+  --pioneer-blue-glow:   rgba(30,142,255,0.15);
+  --pioneer-blue-border: rgba(30,142,255,0.35);
 }
 
+/* ── DARK MODE (PRIMARY) ── */
+:root,
 .dark {
-  --background: hsl(222.2 84% 4.9%);
-  --foreground: hsl(210 40% 98%);
+  --radius: 0.125rem; /* sharp, 2px — style guide uses border-radius: 2px */
 
-  --card: hsl(222.2 84% 4.9%);
-  --card-foreground: hsl(210 40% 98%);
+  --background: #0A0A0A;
+  --foreground: #D0D0D0;
 
-  --popover: hsl(222.2 84% 4.9%);
-  --popover-foreground: hsl(210 40% 98%);
+  --card: #141414;
+  --card-foreground: #FFFFFF;
 
-  --primary: hsl(210 40% 98%);
-  --primary-foreground: hsl(222.2 47.4% 11.2%);
+  --popover: #141414;
+  --popover-foreground: #FFFFFF;
 
-  --secondary: hsl(217.2 32.6% 17.5%);
-  --secondary-foreground: hsl(210 40% 98%);
+  --primary: #1E8EFF;
+  --primary-foreground: #000000;
 
-  --muted: hsl(217.2 32.6% 17.5%);
-  --muted-foreground: hsl(215 20.2% 65.1%);
+  --secondary: #1A1A1A;
+  --secondary-foreground: #D0D0D0;
 
-  --accent: hsl(217.2 32.6% 17.5%);
-  --accent-foreground: hsl(210 40% 98%);
+  --muted: #1A1A1A;
+  --muted-foreground: #909090;
+
+  --accent: #1E8EFF;
+  --accent-foreground: #000000;
 
   --destructive: hsl(0 62.8% 30.6%);
   --destructive-foreground: hsl(210 40% 98%);
 
-  --border: hsl(217.2 32.6% 17.5%);
-  --input: hsl(217.2 32.6% 17.5%);
-  --ring: hsl(212.7 26.8% 83.9%);
+  --border: #2A2A2A;
+  --input: #2A2A2A;
+  --ring: #1E8EFF;
 
   --chart-1: hsl(220 70% 50%);
   --chart-2: hsl(160 60% 45%);
@@ -165,14 +133,54 @@
   --chart-4: hsl(280 65% 60%);
   --chart-5: hsl(340 75% 55%);
 
-  --sidebar: hsl(240 5.9% 10%);
-  --sidebar-foreground: hsl(240 4.8% 95.9%);
-  --sidebar-primary: hsl(224.3 76.3% 48%);
-  --sidebar-primary-foreground: hsl(0 0% 100%);
-  --sidebar-accent: hsl(240 3.7% 15.9%);
-  --sidebar-accent-foreground: hsl(240 4.8% 95.9%);
-  --sidebar-border: hsl(240 3.7% 15.9%);
-  --sidebar-ring: hsl(217.2 91.2% 59.8%);
+  --sidebar: #0A0A0A;
+  --sidebar-foreground: #D0D0D0;
+  --sidebar-primary: #1E8EFF;
+  --sidebar-primary-foreground: #000000;
+  --sidebar-accent: #1A1A1A;
+  --sidebar-accent-foreground: #D0D0D0;
+  --sidebar-border: #2A2A2A;
+  --sidebar-ring: #1E8EFF;
+}
+
+/* ── LIGHT MODE ── */
+.light {
+  --background: #F4F5F7;
+  --foreground: #252525;
+
+  --card: #FFFFFF;
+  --card-foreground: #0A0A0A;
+
+  --popover: #FFFFFF;
+  --popover-foreground: #0A0A0A;
+
+  --primary: #1E8EFF;
+  --primary-foreground: #FFFFFF;
+
+  --secondary: #E2E5EA;
+  --secondary-foreground: #0A0A0A;
+
+  --muted: #E2E5EA;
+  --muted-foreground: #5A6272;
+
+  --accent: #1E8EFF;
+  --accent-foreground: #FFFFFF;
+
+  --destructive: hsl(0 84.2% 60.2%);
+  --destructive-foreground: hsl(210 40% 98%);
+
+  --border: #D0D4DC;
+  --input: #D0D4DC;
+  --ring: #1E8EFF;
+
+  --sidebar: #F4F5F7;
+  --sidebar-foreground: #252525;
+  --sidebar-primary: #1E8EFF;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #E2E5EA;
+  --sidebar-accent-foreground: #252525;
+  --sidebar-border: #D0D4DC;
+  --sidebar-ring: #1E8EFF;
 }
 
 @layer base {
@@ -186,5 +194,71 @@
 
   body {
     @apply bg-background text-foreground;
+    font-family: 'Barlow', system-ui, sans-serif;
+    font-size: 15px;
+    line-height: 1.65;
   }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Barlow', system-ui, sans-serif;
+    font-weight: 800;
+    color: var(--card-foreground);
+  }
+}
+
+/* ── PIONEER UTILITY CLASSES ── */
+.font-display {
+  font-family: 'Barlow Condensed', system-ui, sans-serif;
+}
+
+.pioneer-label {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--pioneer-blue-bright);
+}
+
+.dark .pioneer-label {
+  color: var(--pioneer-blue-bright);
+}
+
+.light .pioneer-label {
+  color: var(--pioneer-blue-dark);
+}
+
+.tag-pill {
+  display: inline-block;
+  background: var(--pioneer-blue-glow);
+  border: 1px solid var(--pioneer-blue-border);
+  color: var(--pioneer-blue-bright);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  padding: 6px 14px;
+  border-radius: 2px;
+}
+
+/* Blue accent top-border card */
+.card-accent {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--pioneer-blue);
+  border-radius: 2px;
+}
+
+/* Glow pulse for hero */
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.6; }
+  50%       { opacity: 1; }
+}
+
+.glow-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #1E8EFF;
+  box-shadow: 0 0 8px 2px rgba(30,142,255,0.5);
+  animation: glow-pulse 2s ease-in-out infinite;
 }
