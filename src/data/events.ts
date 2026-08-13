@@ -132,6 +132,7 @@ export const events: MeetupEvent[] = [
     time: 'TBD',
     venue: 'Nerdery',
     address: '7700 France Ave S, Edina, MN',
+    city: 'Edina',
     status: 'upcoming',
     placeholder: true,
     summary: 'Save the date — details coming soon.',
