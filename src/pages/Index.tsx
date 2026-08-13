@@ -105,7 +105,7 @@ const Index = () => {
               rel="noopener noreferrer"
               className="inline-block bg-[#1E8EFF] text-black font-bold text-sm uppercase tracking-widest px-7 py-3.5 rounded-[2px] hover:brightness-110 transition-all"
             >
-              Join the Collective
+              RSVP on Meetup
             </a>
             <Link
               to="/events"
