@@ -264,6 +264,16 @@ const EventDetailPage = () => {
                         @{event.builderDemo.presenterTelegram}
                       </a>
                     )}
+                    {event.builderDemo.presenterLinkedIn && (
+                      <a
+                        href={event.builderDemo.presenterLinkedIn}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs font-bold uppercase tracking-widest text-muted-foreground hover:text-[#1E8EFF] transition-colors"
+                      >
+                        LinkedIn ↗
+                      </a>
+                    )}
                   </div>
                 </div>
               </div>

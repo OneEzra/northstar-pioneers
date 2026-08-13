@@ -77,6 +77,16 @@ function EventCard({ event }: { event: MeetupEvent }) {
                 @{event.builderDemo.presenterTelegram}
               </a>
             )}
+            {event.builderDemo.presenterLinkedIn && (
+              <a
+                href={event.builderDemo.presenterLinkedIn}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground hover:text-[#1E8EFF] transition-colors"
+              >
+                LinkedIn ↗
+              </a>
+            )}
           </div>
           <p className="text-xs text-muted-foreground leading-relaxed">
             {event.builderDemo.description}

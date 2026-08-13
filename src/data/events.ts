@@ -64,6 +64,8 @@ export interface MeetupEvent {
     presenterUrl?: string;
     /** Optional Telegram handle (without @) */
     presenterTelegram?: string;
+    /** Optional LinkedIn profile URL */
+    presenterLinkedIn?: string;
     description: string;
     resources?: Resource[];
   };
@@ -334,7 +336,20 @@ export const events: MeetupEvent[] = [
         ],
       },
     ],
-    builderDemo: undefined,
+    builderDemo: {
+      title: 'Seven Pillars of AI',
+      presenter: 'Lonnie Lassman',
+      presenterLinkedIn: 'https://www.linkedin.com/in/lonnie-lassman/',
+      description:
+        'Lonnie shared his framework for thinking about and applying AI. Presented on June 9, 2026.',
+      resources: [
+        {
+          type: 'slides',
+          label: 'View Presentation',
+          url: 'https://oneezra.github.io/7pillars_northstarpioneers/',
+        },
+      ],
+    },
   },
 ];
 
