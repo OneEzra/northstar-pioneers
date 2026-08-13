@@ -311,11 +311,6 @@ const Index = () => {
                   <span className="text-xs font-bold uppercase tracking-widest text-[#5AB0FF]">
                     {formatEventDateShort(event.date)}
                   </span>
-                  {event.attendees && (
-                    <span className="text-xs text-muted-foreground">
-                      {event.attendees} attendees
-                    </span>
-                  )}
                 </div>
                 <h3 className="text-lg font-bold text-foreground group-hover:text-[#1E8EFF] transition-colors mb-2">
                   {event.title}

@@ -34,11 +34,7 @@ function EventCard({ event }: { event: MeetupEvent }) {
             </h2>
           </Link>
         </div>
-        <div className="flex flex-wrap gap-2 shrink-0">
-          {event.attendees && (
-            <span className="tag-pill">{event.attendees} attendees</span>
-          )}
-        </div>
+        <div className="flex flex-wrap gap-2 shrink-0"></div>
       </div>
 
       {/* Summary */}

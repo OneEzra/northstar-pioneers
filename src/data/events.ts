@@ -67,10 +67,10 @@ export interface MeetupEvent {
 export const events: MeetupEvent[] = [
   // ── UPCOMING ──────────────────────────────────────────────────
   {
-    slug: '2026-09',
-    title: 'September 2026 Meetup',
-    date: '2026-09-21T17:00:00',
-    time: '5:00 – 7:00 PM CDT',
+    slug: '2026-08',
+    title: 'August 2026 Meetup',
+    date: '2026-08-26T17:30:00',
+    time: '5:30 – 7:30 PM CDT',
     venue: 'Nerdery',
     address: '7700 France Ave S, Edina, MN',
     status: 'upcoming',
