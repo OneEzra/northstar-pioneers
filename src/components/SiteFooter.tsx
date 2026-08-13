@@ -70,7 +70,7 @@ export function SiteFooter() {
               </li>
             </ul>
             <div className="mt-6 text-xs text-muted-foreground uppercase tracking-wider">
-              Minneapolis, MN · Monthly
+              Greater Twin Cities, MN · Monthly
             </div>
           </div>
         </div>
