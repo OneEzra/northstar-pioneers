@@ -8,6 +8,7 @@ import {
   events,
   getPastEvents,
   getNextEvent,
+  getUpcomingEvents,
   formatEventDate,
   formatEventDateShort,
   type MeetupEvent,
@@ -217,6 +218,7 @@ const EventsPage = () => {
 
   const pastEvents = getPastEvents();
   const nextEvent = getNextEvent();
+  const placeholderEvents = getUpcomingEvents().filter((e) => e.placeholder);
   const [topicsOpen, setTopicsOpen] = useState(false);
 
   return (
@@ -435,6 +437,67 @@ const EventsPage = () => {
                   Pioneers Telegram Community
                 </a>
               </div>
+            </div>
+          </section>
+        )}
+
+        {/* On the Horizon — placeholder events */}
+        {placeholderEvents.length > 0 && (
+          <section className="mb-14">
+            <div className="pioneer-label mb-4">On the Horizon</div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {placeholderEvents.map((event) => (
+                <div key={event.slug} className="card-accent p-6 flex flex-col gap-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold uppercase tracking-widest text-[#5AB0FF]">
+                      Save the Date
+                    </span>
+                    <span className="tag-pill text-[10px]">TBD</span>
+                  </div>
+                  <h3
+                    className="text-lg font-extrabold text-foreground leading-tight"
+                    style={{ fontFamily: "'Barlow Condensed', sans-serif" }}
+                  >
+                    {event.title}
+                  </h3>
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                      <span className="font-bold uppercase tracking-wider">Date</span>
+                      <span>—</span>
+                      <span>TBD</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                      <span className="font-bold uppercase tracking-wider">Venue</span>
+                      <span>—</span>
+                      <span>{event.venue}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                      <span className="font-bold uppercase tracking-wider">Pioneer</span>
+                      <span>—</span>
+                      <span>TBD</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                      <span className="font-bold uppercase tracking-wider">Topics</span>
+                      <span>—</span>
+                      <span>TBD</span>
+                    </div>
+                  </div>
+                  <div className="mt-auto pt-3 border-t border-border">
+                    <span className="text-xs text-muted-foreground italic">
+                      Details coming soon — check back or join the{' '}
+                      <a
+                        href="https://t.me/northstarpioneerscommunity"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[#1E8EFF] hover:underline not-italic"
+                      >
+                        Telegram
+                      </a>{' '}
+                      for updates.
+                    </span>
+                  </div>
+                </div>
+              ))}
             </div>
           </section>
         )}

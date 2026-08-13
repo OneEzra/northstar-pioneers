@@ -73,6 +73,8 @@ export interface MeetupEvent {
   photoUrl?: string;
   /** Number of attendees (for past events) */
   attendees?: number;
+  /** True for save-the-date placeholders with no confirmed details yet */
+  placeholder?: boolean;
 }
 
 // -----------------------------------------------------------------
@@ -118,6 +120,19 @@ export const events: MeetupEvent[] = [
         ],
       },
     ],
+    builderDemo: undefined,
+  },
+  {
+    slug: '2026-09',
+    title: 'September 2026 Meetup',
+    date: '2026-09-01T17:30:00',
+    time: 'TBD',
+    venue: 'Nerdery',
+    address: '7700 France Ave S, Edina, MN',
+    status: 'upcoming',
+    placeholder: true,
+    summary: 'Save the date — details coming soon.',
+    topics: [],
     builderDemo: undefined,
   },
 
@@ -380,13 +395,16 @@ export const events: MeetupEvent[] = [
 
 // --- Helpers ---------------------------------------------------
 
+/** Returns all upcoming events sorted by date (soonest first) */
+export function getUpcomingEvents(): MeetupEvent[] {
+  return events
+    .filter((e) => e.status === 'upcoming')
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+}
+
 /** Returns the next upcoming event, or null */
 export function getNextEvent(): MeetupEvent | null {
-  const now = new Date();
-  const upcoming = events
-    .filter((e) => e.status === 'upcoming' && new Date(e.date) > now)
-    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-  return upcoming[0] ?? null;
+  return getUpcomingEvents().find((e) => !e.placeholder) ?? getUpcomingEvents()[0] ?? null;
 }
 
 /** Returns all past events, newest first */

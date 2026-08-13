@@ -5,6 +5,7 @@ import { SiteNav } from '@/components/SiteNav';
 import { SiteFooter } from '@/components/SiteFooter';
 import {
   getNextEvent,
+  getUpcomingEvents,
   getPastEvents,
   formatEventDate,
   formatEventDateShort,
@@ -47,6 +48,8 @@ const Index = () => {
   });
 
   const nextEvent = getNextEvent();
+  const upcomingEvents = getUpcomingEvents();
+  const placeholderEvents = upcomingEvents.filter((e) => e.placeholder);
   const pastEvents = getPastEvents().slice(0, 2);
   const [topicsOpen, setTopicsOpen] = useState(false);
 
@@ -327,6 +330,61 @@ const Index = () => {
                 Pioneers Telegram Community
               </a>
             </div>
+          </div>
+        </section>
+      )}
+
+      {/* ── ON THE HORIZON ────────────────────────────────────── */}
+      {placeholderEvents.length > 0 && (
+        <section className="max-w-6xl mx-auto px-6 mb-16">
+          <div className="pioneer-label mb-4">On the Horizon</div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {placeholderEvents.map((event) => (
+              <div key={event.slug} className="card-accent p-6 flex flex-col gap-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold uppercase tracking-widest text-[#5AB0FF]">
+                    Save the Date
+                  </span>
+                  <span className="tag-pill text-[10px]">TBD</span>
+                </div>
+                <h3
+                  className="text-lg font-extrabold text-foreground leading-tight"
+                  style={{ fontFamily: "'Barlow Condensed', sans-serif" }}
+                >
+                  {event.title}
+                </h3>
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <span className="font-bold uppercase tracking-wider">Date</span>
+                    <span>—</span>
+                    <span>TBD</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <span className="font-bold uppercase tracking-wider">Venue</span>
+                    <span>—</span>
+                    <span>{event.venue}</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <span className="font-bold uppercase tracking-wider">Pioneer</span>
+                    <span>—</span>
+                    <span>TBD</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <span className="font-bold uppercase tracking-wider">Topics</span>
+                    <span>—</span>
+                    <span>TBD</span>
+                  </div>
+                </div>
+                <div className="mt-auto pt-3 border-t border-border flex items-center gap-3">
+                  <Link
+                    to="/events"
+                    className="text-xs font-bold uppercase tracking-widest text-[#1E8EFF] hover:text-[#5AB0FF] transition-colors"
+                  >
+                    More Info Soon →
+                  </Link>
+                </div>
+              </div>
+            ))}
           </div>
         </section>
       )}
