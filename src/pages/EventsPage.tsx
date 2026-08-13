@@ -226,13 +226,14 @@ const EventsPage = () => {
         {nextEvent && (
           <section className="mb-14">
             <div className="pioneer-label mb-4">Upcoming</div>
-            <div className="card-accent overflow-hidden">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-7 py-5 border-b border-border">
+            <div className="card-accent p-0 overflow-hidden">
+              {/* Top bar */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-8 py-6 border-b border-border">
                 <div>
                   <div className="text-xs font-bold uppercase tracking-widest text-[#5AB0FF] mb-1">
-                    {formatEventDate(nextEvent.date)}
+                    Upcoming
                   </div>
-                  <h2 className="text-2xl font-extrabold text-foreground">
+                  <h2 className="text-2xl sm:text-3xl font-extrabold text-foreground">
                     {nextEvent.title}
                   </h2>
                 </div>
@@ -240,21 +241,112 @@ const EventsPage = () => {
                   {formatEventDateShort(nextEvent.date)} · Mpls
                 </span>
               </div>
-              <div className="px-7 py-5 flex flex-wrap gap-3 items-center">
-                <div className="text-sm text-muted-foreground">
-                  <span className="font-semibold text-foreground">{nextEvent.time}</span>{' '}
-                  at {nextEvent.venue}, {nextEvent.address}
+
+              {/* Date / Time / Venue */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-0 divide-y md:divide-y-0 md:divide-x divide-border">
+                <div className="px-8 py-6">
+                  <div className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-1">
+                    Date
+                  </div>
+                  <div className="text-foreground font-semibold">
+                    {formatEventDate(nextEvent.date)}
+                  </div>
                 </div>
+                <div className="px-8 py-6">
+                  <div className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-1">
+                    Time
+                  </div>
+                  <div className="text-foreground font-semibold">{nextEvent.time}</div>
+                </div>
+                <div className="px-8 py-6">
+                  <div className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-1">
+                    Venue Sponsor
+                  </div>
+                  <div className="text-foreground font-semibold">{nextEvent.venue}</div>
+                  <div className="text-sm text-muted-foreground mt-0.5">
+                    {nextEvent.address}
+                  </div>
+                </div>
+              </div>
+
+              {/* Venue Sponsor Bio */}
+              <div className="px-8 py-6 border-t border-border">
+                <div className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-2">
+                  About the Venue Sponsor
+                </div>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  Nerdery is a digital solutions provider with over 20 years of experience
+                  building business-critical software for when off-the-shelf solutions won't
+                  work and failure is not an option. As a strategic ally, we provide the Digital
+                  Strategy, System Modernization, and AI Optimization needed to bridge the gap
+                  between executive vision and technical execution.{' '}
+                  <a
+                    href="https://www.nerdery.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[#1E8EFF] hover:underline"
+                  >
+                    nerdery.com ↗
+                  </a>
+                </p>
+              </div>
+
+              {/* Featured Pioneer */}
+              <div className="px-8 py-6 border-t border-border">
+                <div className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-2">
+                  Featured Pioneer
+                </div>
+                <a
+                  href="https://www.linkedin.com/in/leewinbush/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-foreground font-semibold hover:text-[#1E8EFF] transition-colors"
+                >
+                  Lee Winbush ↗
+                </a>
+              </div>
+
+              {/* Format */}
+              <div className="px-8 py-6 border-t border-border">
+                <div className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-4">
+                  Format
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                  {[
+                    { icon: '🍕', label: 'Welcome', desc: 'Connect & grab a slice' },
+                    { icon: '🗞️', label: 'Socratic Review', desc: '5–10 frontier topics' },
+                    { icon: '🛠️', label: 'Builder Demo', desc: 'See what members are building' },
+                    { icon: '🤝', label: 'Networking', desc: 'Open discussion' },
+                  ].map((step) => (
+                    <div key={step.label} className="flex flex-col gap-1">
+                      <span className="text-2xl">{step.icon}</span>
+                      <span className="text-sm font-bold text-foreground">{step.label}</span>
+                      <span className="text-xs text-muted-foreground">{step.desc}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* RSVP */}
+              <div className="px-8 py-5 border-t border-border flex flex-wrap gap-3 items-center">
                 {nextEvent.meetupUrl && (
                   <a
                     href={nextEvent.meetupUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="bg-[#1E8EFF] text-black font-bold text-xs uppercase tracking-widest px-5 py-2.5 rounded-[2px] hover:brightness-110 transition-all"
+                    className="bg-[#1E8EFF] text-black font-bold text-xs uppercase tracking-widest px-6 py-3 rounded-[2px] hover:brightness-110 transition-all"
                   >
-                    RSVP ↗
+                    RSVP on Meetup ↗
                   </a>
                 )}
+                <a
+                  href="https://t.me/northstarpioneerscommunity"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-muted-foreground border border-border font-bold text-xs uppercase tracking-widest px-6 py-3 rounded-[2px] hover:text-foreground hover:border-foreground/40 transition-colors"
+                >
+                  Pioneers Telegram Community
+                </a>
               </div>
             </div>
           </section>
