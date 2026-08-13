@@ -346,7 +346,7 @@ const Index = () => {
             {placeholderEvents.map((event) => (
               <div key={event.slug} className="card-accent px-7 py-5 flex flex-col gap-3">
                 {/* Row 1: title + pill */}
-                <div className="flex items-center gap-3">
+                <div className="flex items-center justify-between gap-3">
                   <h3
                     className="text-lg font-extrabold text-foreground leading-tight"
                     style={{ fontFamily: "'Barlow Condensed', sans-serif" }}
