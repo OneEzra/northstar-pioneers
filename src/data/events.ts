@@ -58,6 +58,10 @@ export interface MeetupEvent {
   builderDemo?: {
     title: string;
     presenter: string;
+    /** Optional URL for the presenter's website/portfolio */
+    presenterUrl?: string;
+    /** Optional Telegram handle (without @) */
+    presenterTelegram?: string;
     description: string;
     resources?: Resource[];
   };
@@ -194,11 +198,24 @@ export const events: MeetupEvent[] = [
       },
     ],
     builderDemo: {
-      title: 'Community Demo',
-      presenter: 'Community Member',
+      title: 'DIY iPhone Apps with Xcode: Meal Planning & Budgets',
+      presenter: 'Kyle',
+      presenterUrl: 'https://instakyle.tech',
+      presenterTelegram: 'instakyle',
       description:
-        'Live demonstration from a Northstar Pioneers member. See the Meetup event page for details.',
-      resources: [],
+        'Kyle walked the group through building your own iPhone apps from scratch using Xcode -- no prior iOS experience required. His demo focused on practical apps he built himself: a meal planner and a budget tracker. A great example of using AI-assisted coding to ship real tools on Apple\'s native platform.',
+      resources: [
+        {
+          type: 'video',
+          label: 'Watch Kyle\'s Presentation',
+          url: 'https://blossom.ditto.pub/eda2d0f82696913a13cd26acc8070d90e939d765a56a982f23150c695f526cee.mp4',
+        },
+        {
+          type: 'link',
+          label: 'instakyle.tech',
+          url: 'https://instakyle.tech',
+        },
+      ],
     },
   },
 

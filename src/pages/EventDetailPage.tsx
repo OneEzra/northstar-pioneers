@@ -219,18 +219,6 @@ const EventDetailPage = () => {
           </p>
         </section>
 
-        {/* Socratic Topics */}
-        {event.topics.length > 0 && (
-          <section>
-            <div className="pioneer-label mb-5">Socratic Review Topics</div>
-            <div className="space-y-4">
-              {event.topics.map((topic, i) => (
-                <TopicCard key={topic.title} topic={topic} index={i} />
-              ))}
-            </div>
-          </section>
-        )}
-
         {/* Builder Demo */}
         {event.builderDemo && (
           <section>
@@ -239,18 +227,40 @@ const EventDetailPage = () => {
               className="card-accent p-6 border-l-4"
               style={{ borderLeftColor: '#1E8EFF' }}
             >
-              <div className="flex items-start gap-2 mb-1">
-                <span className="text-2xl">🛠️</span>
-                <div>
-                  <h3 className="text-lg font-bold text-foreground">
+              <div className="flex items-start gap-3 mb-4">
+                <span className="text-2xl shrink-0">🛠️</span>
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-lg font-bold text-foreground leading-tight">
                     {event.builderDemo.title}
                   </h3>
-                  <div className="text-sm text-[#5AB0FF] font-semibold mt-0.5">
-                    {event.builderDemo.presenter}
+                  <div className="flex flex-wrap items-center gap-3 mt-1">
+                    <span className="text-sm text-[#5AB0FF] font-semibold">
+                      {event.builderDemo.presenter}
+                    </span>
+                    {event.builderDemo.presenterUrl && (
+                      <a
+                        href={event.builderDemo.presenterUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs font-bold uppercase tracking-widest text-muted-foreground hover:text-[#1E8EFF] transition-colors"
+                      >
+                        {event.builderDemo.presenterUrl.replace(/^https?:\/\//, '')} ↗
+                      </a>
+                    )}
+                    {event.builderDemo.presenterTelegram && (
+                      <a
+                        href={`https://t.me/${event.builderDemo.presenterTelegram}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs font-bold uppercase tracking-widest text-muted-foreground hover:text-[#1E8EFF] transition-colors"
+                      >
+                        @{event.builderDemo.presenterTelegram}
+                      </a>
+                    )}
                   </div>
                 </div>
               </div>
-              <p className="text-sm text-muted-foreground leading-relaxed mt-4">
+              <p className="text-sm text-muted-foreground leading-relaxed">
                 {event.builderDemo.description}
               </p>
               {event.builderDemo.resources && event.builderDemo.resources.length > 0 && (
@@ -260,6 +270,18 @@ const EventDetailPage = () => {
                   ))}
                 </div>
               )}
+            </div>
+          </section>
+        )}
+
+        {/* Socratic Topics */}
+        {event.topics.length > 0 && (
+          <section>
+            <div className="pioneer-label mb-5">Socratic Review Topics</div>
+            <div className="space-y-4">
+              {event.topics.map((topic, i) => (
+                <TopicCard key={topic.title} topic={topic} index={i} />
+              ))}
             </div>
           </section>
         )}

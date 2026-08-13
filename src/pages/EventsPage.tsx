@@ -42,6 +42,62 @@ function EventCard({ event }: { event: MeetupEvent }) {
         <p className="text-sm text-muted-foreground leading-relaxed">{event.summary}</p>
       </div>
 
+      {/* Builder Demo */}
+      {event.builderDemo && (
+        <div className="px-7 py-5 border-b border-border bg-[rgba(30,142,255,0.04)]">
+          <div className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-2">
+            Builder Demo
+          </div>
+          <div className="text-sm font-bold text-foreground mb-1">
+            {event.builderDemo.title}
+          </div>
+          <div className="flex flex-wrap items-center gap-3 mb-2">
+            <span className="text-xs text-[#5AB0FF] font-semibold">
+              {event.builderDemo.presenter}
+            </span>
+            {event.builderDemo.presenterUrl && (
+              <a
+                href={event.builderDemo.presenterUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground hover:text-[#1E8EFF] transition-colors"
+              >
+                {event.builderDemo.presenterUrl.replace(/^https?:\/\//, '')} ↗
+              </a>
+            )}
+            {event.builderDemo.presenterTelegram && (
+              <a
+                href={`https://t.me/${event.builderDemo.presenterTelegram}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground hover:text-[#1E8EFF] transition-colors"
+              >
+                @{event.builderDemo.presenterTelegram}
+              </a>
+            )}
+          </div>
+          <p className="text-xs text-muted-foreground leading-relaxed">
+            {event.builderDemo.description}
+          </p>
+          {event.builderDemo.resources && event.builderDemo.resources.length > 0 && (
+            <div className="flex flex-wrap gap-2 mt-3">
+              {event.builderDemo.resources.map((r) => (
+                <a
+                  key={r.url}
+                  href={r.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 text-[11px] font-bold text-[#5AB0FF] hover:text-[#1E8EFF] transition-colors bg-[rgba(30,142,255,0.08)] border border-[rgba(30,142,255,0.2)] px-2.5 py-1 rounded-[2px]"
+                >
+                  <span>{resourceIcon[r.type] ?? '↗'}</span>
+                  {r.label}
+                </a>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Topics */}
       {event.topics.length > 0 && (
         <div className="px-7 py-5 border-b border-border">
@@ -83,40 +139,6 @@ function EventCard({ event }: { event: MeetupEvent }) {
               </li>
             ))}
           </ul>
-        </div>
-      )}
-
-      {/* Builder Demo */}
-      {event.builderDemo && (
-        <div className="px-7 py-5 border-b border-border bg-[rgba(30,142,255,0.04)]">
-          <div className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-2">
-            Builder Demo
-          </div>
-          <div className="text-sm font-bold text-foreground mb-1">
-            {event.builderDemo.title}
-          </div>
-          <div className="text-xs text-[#5AB0FF] font-semibold mb-2">
-            {event.builderDemo.presenter}
-          </div>
-          <p className="text-xs text-muted-foreground leading-relaxed">
-            {event.builderDemo.description}
-          </p>
-          {event.builderDemo.resources && event.builderDemo.resources.length > 0 && (
-            <div className="flex flex-wrap gap-2 mt-3">
-              {event.builderDemo.resources.map((r) => (
-                <a
-                  key={r.url}
-                  href={r.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 text-[11px] font-bold text-[#5AB0FF] hover:text-[#1E8EFF] transition-colors bg-[rgba(30,142,255,0.08)] border border-[rgba(30,142,255,0.2)] px-2.5 py-1 rounded-[2px]"
-                >
-                  <span>{resourceIcon[r.type] ?? '↗'}</span>
-                  {r.label}
-                </a>
-              ))}
-            </div>
-          )}
         </div>
       )}
 
