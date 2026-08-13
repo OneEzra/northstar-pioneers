@@ -243,7 +243,7 @@ const EventsPage = () => {
               <div className="px-7 py-5 flex flex-wrap gap-3 items-center">
                 <div className="text-sm text-muted-foreground">
                   <span className="font-semibold text-foreground">{nextEvent.time}</span>{' '}
-                  at {nextEvent.venue} — {nextEvent.address}
+                  at {nextEvent.venue}, {nextEvent.address}
                 </div>
                 {nextEvent.meetupUrl && (
                   <a
