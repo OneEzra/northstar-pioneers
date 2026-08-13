@@ -88,8 +88,8 @@ const Index = () => {
               letterSpacing: '0.01em',
             }}
           >
-            We Take Up<br />
-            The Task <span className="text-[#1E8EFF]">Eternal.</span>
+            We Take Up The Task <span className="text-[#1E8EFF]">Eternal,</span><br />
+            The Burden, &amp; The Lesson.
           </h1>
 
           <p className="text-foreground/80 text-lg sm:text-xl max-w-xl mb-10 leading-relaxed font-light">
