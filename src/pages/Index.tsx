@@ -95,7 +95,7 @@ const Index = () => {
           <p className="text-foreground/80 text-lg sm:text-xl max-w-xl mb-10 leading-relaxed font-light">
             Northstar Pioneers are builders, thinkers, and storytellers who believe
             intelligence should be sovereign, shared, and open to everyone brave enough
-            to ask the next question.
+            to ask, "what if."
           </p>
 
           {/* CTA row */}
