@@ -71,8 +71,8 @@ export const events: MeetupEvent[] = [
     title: 'September 2026 Meetup',
     date: '2026-09-21T17:00:00',
     time: '5:00 – 7:00 PM CDT',
-    venue: 'Improving',
-    address: '3033 Excelsior Blvd #180, Minneapolis, MN 55416',
+    venue: 'Nerdery',
+    address: '7700 France Ave S, Edina, MN',
     status: 'upcoming',
     meetupUrl: 'https://www.meetup.com/northstar-pioneers/events/',
     summary:

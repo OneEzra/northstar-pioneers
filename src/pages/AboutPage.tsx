@@ -146,10 +146,10 @@ const AboutPage = () => {
                 <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-1">
                   Venue
                 </div>
-                <div className="font-bold text-foreground text-lg mb-1">Improving</div>
+                <div className="font-bold text-foreground text-lg mb-1">Nerdery</div>
                 <div className="text-sm text-muted-foreground">
-                  3033 Excelsior Blvd #180<br />
-                  Minneapolis, MN 55416
+                  7700 France Ave S<br />
+                  Edina, MN
                 </div>
               </div>
               <div>
