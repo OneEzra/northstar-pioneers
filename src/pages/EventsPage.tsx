@@ -328,36 +328,43 @@ const EventsPage = () => {
               {/* Topics panel */}
               {topicsOpen && nextEvent.topics.length > 0 && (
                 <div className="px-8 py-6 border-t border-border">
-                  <ul className="space-y-4">
-                    {nextEvent.topics.map((topic) => (
-                      <li key={topic.title} className="flex items-start gap-2">
-                        <span className="text-[#1E8EFF] mt-0.5 shrink-0">›</span>
-                        <div>
-                          <span className="text-sm font-semibold text-foreground">{topic.title}</span>
-                          {topic.description && (
-                            <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
-                              {topic.description}
-                            </p>
-                          )}
-                          {topic.resources && topic.resources.length > 0 && (
-                            <div className="flex flex-wrap gap-2 mt-2">
-                              {topic.resources.map((r) => (
-                                <a
-                                  key={r.url}
-                                  href={r.url}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="inline-flex items-center gap-1 text-[11px] font-bold text-[#5AB0FF] hover:text-[#1E8EFF] transition-colors bg-[rgba(30,142,255,0.08)] border border-[rgba(30,142,255,0.2)] px-2.5 py-1 rounded-[2px]"
-                                >
-                                  🔗 {r.label}
-                                </a>
-                              ))}
-                            </div>
-                          )}
+                  <div className="pioneer-label mb-4">Socratic Review Topics</div>
+                  <div className="space-y-4">
+                    {nextEvent.topics.map((topic, i) => (
+                      <div key={topic.title} className="card-accent p-6">
+                        <div className="flex items-start gap-4">
+                          <div className="text-[#1E8EFF] font-mono text-sm font-bold shrink-0 mt-0.5">
+                            {String(i + 1).padStart(2, '0')}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <h3 className="text-base font-bold text-foreground mb-2">{topic.title}</h3>
+                            {topic.description && (
+                              <p className="text-sm text-muted-foreground leading-relaxed">
+                                {topic.description}
+                              </p>
+                            )}
+                            {topic.resources && topic.resources.length > 0 && (
+                              <div className="flex flex-wrap gap-2 mt-4">
+                                {topic.resources.map((r) => (
+                                  <a
+                                    key={r.url}
+                                    href={r.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-2 text-sm font-bold text-[#5AB0FF] hover:text-[#1E8EFF] transition-colors bg-[rgba(30,142,255,0.08)] border border-[rgba(30,142,255,0.25)] px-4 py-2 rounded-[2px] hover:bg-[rgba(30,142,255,0.14)]"
+                                  >
+                                    <span>🔗</span>
+                                    {r.label}
+                                    <span className="text-xs opacity-60">↗</span>
+                                  </a>
+                                ))}
+                              </div>
+                            )}
+                          </div>
                         </div>
-                      </li>
+                      </div>
                     ))}
-                  </ul>
+                  </div>
                 </div>
               )}
 
