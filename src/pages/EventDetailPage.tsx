@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useSeoMeta } from '@unhead/react';
 import { SiteNav } from '@/components/SiteNav';
@@ -8,6 +9,7 @@ import {
   getPastEvents,
   formatEventDate,
   type Resource,
+  type Topic,
 } from '@/data/events';
 
 const resourceIcon: Record<string, string> = {
@@ -33,14 +35,86 @@ function ResourceBadge({ resource }: { resource: Resource }) {
   );
 }
 
+function TopicCard({ topic, index }: { topic: Topic; index: number }) {
+  const [expanded, setExpanded] = useState(false);
+  const hasMore =
+    (topic.expandedContent && topic.expandedContent.length > 0) ||
+    !!topic.expandedImageUrl;
+
+  return (
+    <div className="card-accent p-6">
+      <div className="flex items-start gap-4">
+        <div className="text-[#1E8EFF] font-mono text-sm font-bold shrink-0 mt-0.5">
+          {String(index + 1).padStart(2, '0')}
+        </div>
+        <div className="flex-1 min-w-0">
+          <h3 className="text-base font-bold text-foreground mb-2">{topic.title}</h3>
+
+          {/* One-sentence description always visible */}
+          {topic.description && (
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              {topic.description}
+            </p>
+          )}
+
+          {/* Presenter */}
+          {topic.presenter && (
+            <div className="text-xs text-[#5AB0FF] font-semibold mt-2">
+              Presented by {topic.presenter}
+            </div>
+          )}
+
+          {/* Expanded content */}
+          {expanded && hasMore && (
+            <div className="mt-4 space-y-3 border-t border-border pt-4">
+              {topic.expandedContent?.map((para, i) => (
+                <p key={i} className="text-sm text-muted-foreground leading-relaxed">
+                  {para}
+                </p>
+              ))}
+              {topic.expandedImageUrl && (
+                <img
+                  src={topic.expandedImageUrl}
+                  alt={topic.expandedImageAlt ?? topic.title}
+                  className="w-full rounded-[2px] border border-border mt-4"
+                  loading="lazy"
+                />
+              )}
+            </div>
+          )}
+
+          {/* Read more / less toggle */}
+          {hasMore && (
+            <button
+              onClick={() => setExpanded(!expanded)}
+              className="mt-3 text-xs font-bold uppercase tracking-widest text-[#1E8EFF] hover:text-[#5AB0FF] transition-colors"
+            >
+              {expanded ? '− Read less' : '+ Read more'}
+            </button>
+          )}
+
+          {/* Resources */}
+          {topic.resources && topic.resources.length > 0 && (
+            <div className="flex flex-wrap gap-2 mt-4">
+              {topic.resources.map((r) => (
+                <ResourceBadge key={r.url} resource={r} />
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 const EventDetailPage = () => {
   const { slug } = useParams<{ slug: string }>();
   const event = slug ? getEventBySlug(slug) : undefined;
 
   useSeoMeta({
     title: event
-      ? `${event.title} — Northstar Pioneers`
-      : 'Event Not Found — Northstar Pioneers',
+      ? `${event.title} -- Northstar Pioneers`
+      : 'Event Not Found -- Northstar Pioneers',
     description: event?.summary,
   });
 
@@ -87,11 +161,6 @@ const EventDetailPage = () => {
             >
               {event.status === 'upcoming' ? 'Upcoming' : 'Past Event'}
             </span>
-            {event.attendees && (
-              <span className="text-xs text-muted-foreground font-semibold">
-                {event.attendees} attendees
-              </span>
-            )}
           </div>
           <h1
             className="font-black uppercase text-3xl sm:text-5xl text-foreground leading-tight mb-6"
@@ -154,37 +223,9 @@ const EventDetailPage = () => {
         {event.topics.length > 0 && (
           <section>
             <div className="pioneer-label mb-5">Socratic Review Topics</div>
-            <div className="space-y-6">
+            <div className="space-y-4">
               {event.topics.map((topic, i) => (
-                <div key={topic.title} className="card-accent p-6">
-                  <div className="flex items-start gap-4">
-                    <div className="text-[#1E8EFF] font-mono text-sm font-bold shrink-0 mt-0.5">
-                      {String(i + 1).padStart(2, '0')}
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="text-base font-bold text-foreground mb-2">
-                        {topic.title}
-                      </h3>
-                      {topic.description && (
-                        <p className="text-sm text-muted-foreground leading-relaxed mb-4">
-                          {topic.description}
-                        </p>
-                      )}
-                      {topic.presenter && (
-                        <div className="text-xs text-[#5AB0FF] font-semibold mb-3">
-                          Presented by {topic.presenter}
-                        </div>
-                      )}
-                      {topic.resources && topic.resources.length > 0 && (
-                        <div className="flex flex-wrap gap-2">
-                          {topic.resources.map((r) => (
-                            <ResourceBadge key={r.url} resource={r} />
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
+                <TopicCard key={topic.title} topic={topic} index={i} />
               ))}
             </div>
           </section>
@@ -258,7 +299,7 @@ const EventDetailPage = () => {
                 className="flex-1 group text-left"
               >
                 <div className="text-xs text-muted-foreground uppercase tracking-widest mb-1">
-                  ← Previous
+                  Previous
                 </div>
                 <div className="text-sm font-bold text-foreground group-hover:text-[#1E8EFF] transition-colors">
                   {prevEvent.title}
@@ -273,7 +314,7 @@ const EventDetailPage = () => {
                 className="flex-1 group text-right"
               >
                 <div className="text-xs text-muted-foreground uppercase tracking-widest mb-1">
-                  Next →
+                  Next
                 </div>
                 <div className="text-sm font-bold text-foreground group-hover:text-[#1E8EFF] transition-colors">
                   {nextEventInList.title}
