@@ -327,7 +327,7 @@ const Index = () => {
                 rel="noopener noreferrer"
                 className="text-muted-foreground border border-border font-bold text-xs uppercase tracking-widest px-6 py-3 rounded-[2px] hover:text-foreground hover:border-foreground/40 transition-colors"
               >
-                Pioneers Telegram Community
+                Pioneers Telegram
               </a>
             </div>
           </div>
@@ -338,51 +338,32 @@ const Index = () => {
       {placeholderEvents.length > 0 && (
         <section className="max-w-6xl mx-auto px-6 mb-16">
           <div className="pioneer-label mb-4">On the Horizon</div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="space-y-3">
             {placeholderEvents.map((event) => (
-              <div key={event.slug} className="card-accent p-6 flex flex-col gap-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold uppercase tracking-widest text-[#5AB0FF]">
-                    Save the Date
-                  </span>
+              <div key={event.slug} className="card-accent px-7 py-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="flex items-center gap-4 flex-wrap">
                   <span className="tag-pill text-[10px]">TBD</span>
-                </div>
-                <h3
-                  className="text-lg font-extrabold text-foreground leading-tight"
-                  style={{ fontFamily: "'Barlow Condensed', sans-serif" }}
-                >
-                  {event.title}
-                </h3>
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                    <span className="font-bold uppercase tracking-wider">Date</span>
-                    <span>—</span>
-                    <span>TBD</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                    <span className="font-bold uppercase tracking-wider">Venue</span>
-                    <span>—</span>
-                    <span>{event.venue}</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                    <span className="font-bold uppercase tracking-wider">Pioneer</span>
-                    <span>—</span>
-                    <span>TBD</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                    <span className="font-bold uppercase tracking-wider">Topics</span>
-                    <span>—</span>
-                    <span>TBD</span>
-                  </div>
-                </div>
-                <div className="mt-auto pt-3 border-t border-border flex items-center gap-3">
-                  <Link
-                    to="/events"
-                    className="text-xs font-bold uppercase tracking-widest text-[#1E8EFF] hover:text-[#5AB0FF] transition-colors"
+                  <h3
+                    className="text-lg font-extrabold text-foreground leading-tight"
+                    style={{ fontFamily: "'Barlow Condensed', sans-serif" }}
                   >
-                    More Info Soon →
-                  </Link>
+                    {event.title}
+                  </h3>
+                  <div className="flex items-center gap-4 text-xs text-muted-foreground flex-wrap">
+                    <span><span className="font-bold uppercase tracking-wider text-foreground/60">Date</span> — TBD</span>
+                    <span><span className="font-bold uppercase tracking-wider text-foreground/60">Venue</span> — {event.venue}</span>
+                    <span><span className="font-bold uppercase tracking-wider text-foreground/60">Pioneer</span> — TBD</span>
+                    <span><span className="font-bold uppercase tracking-wider text-foreground/60">Topics</span> — TBD</span>
+                  </div>
                 </div>
+                <a
+                  href="https://t.me/northstarpioneerscommunity"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="shrink-0 text-muted-foreground border border-border font-bold text-xs uppercase tracking-widest px-5 py-2.5 rounded-[2px] hover:text-foreground hover:border-foreground/40 transition-colors"
+                >
+                  Pioneers Telegram ↗
+                </a>
               </div>
             ))}
           </div>
