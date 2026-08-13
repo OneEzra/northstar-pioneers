@@ -146,10 +146,9 @@ const AboutPage = () => {
                 <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-1">
                   Venue
                 </div>
-                <div className="font-bold text-foreground text-lg mb-1">Nerdery</div>
+                <div className="font-bold text-foreground text-lg mb-1">Greater Twin Cities</div>
                 <div className="text-sm text-muted-foreground">
-                  7700 France Ave S<br />
-                  Edina, MN
+                  Check event page for details
                 </div>
               </div>
               <div>
@@ -158,8 +157,7 @@ const AboutPage = () => {
                 </div>
                 <div className="font-bold text-foreground text-lg mb-1">Monthly</div>
                 <div className="text-sm text-muted-foreground">
-                  Typically the third Monday of the month<br />
-                  5:00 – 7:00 PM CDT
+                  Typically 5:30 – 7:30 PM CDT
                 </div>
               </div>
             </div>
@@ -215,7 +213,8 @@ const AboutPage = () => {
               Ready to <span className="text-[#1E8EFF]">Pioneer</span>?
             </h2>
             <p className="text-muted-foreground text-sm mt-1">
-              Come ready to build. Pizza provided.
+              Take up the task eternal,<br />
+              the burden, &amp; the lesson.
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
