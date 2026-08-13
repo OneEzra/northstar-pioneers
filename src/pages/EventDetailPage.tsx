@@ -208,7 +208,7 @@ const EventDetailPage = () => {
                 rel="noopener noreferrer"
                 className="text-muted-foreground border border-border font-bold text-xs uppercase tracking-widest px-6 py-3 rounded-[2px] hover:text-foreground hover:border-foreground/40 transition-colors"
               >
-                Join Telegram
+                Pioneers Telegram Community
               </a>
             </div>
           )}
