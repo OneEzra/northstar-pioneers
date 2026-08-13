@@ -25,6 +25,8 @@ export interface Resource {
 
 export interface Topic {
   title: string;
+  /** Optional section/category grouping label shown above the topic */
+  section?: string;
   /** One-sentence overview shown on the archive/overview page */
   description?: string;
   /** Full paragraphs shown in the "Read more" expansion */
@@ -197,45 +199,142 @@ export const events: MeetupEvent[] = [
     status: 'past',
     meetupUrl: 'https://www.meetup.com/northstar-pioneers/events/314465552/',
     summary:
-      'The first Northstar Pioneers gathering -- an introduction to the collective and a Socratic kick-off on where AI is actually heading.',
+      'The inaugural Northstar Pioneers gathering. Topics spanned learning with AI, defining AGI, infrastructure, and capital flows reshaping the industry.',
     attendees: 25,
     topics: [
       {
-        title: 'Where AI is Actually Heading',
+        section: 'Foundations',
+        title: 'How to Learn AI with AI',
         description:
-          'What separates genuine capability improvements from hype cycles -- examining the last 18 months through a critical lens.',
-      },
-      {
-        title: 'Sovereign AI & the Compute Question',
-        description:
-          'Centralized vs. decentralized AI: who controls the model weights, the data, and the inference layer?',
+          'Learning AI is no longer about tutorials or courses -- it\'s about working with AI as a learning and building partner.',
+        expandedContent: [
+          'In this AI Operators bonus episode, NLW breaks down the mindset shifts and practical tactics needed to learn faster by pairing directly with models.',
+          'He covers vision-first thinking, messy exploration, productive pushback, handoff documents, prompt chaining, and when to stop or reset a thread.',
+        ],
         resources: [
           {
             type: 'link',
-            label: 'Why Open Source AI Is the Path Forward',
-            url: 'https://www.wired.com/story/open-source-ai-is-the-path-forward/',
+            label: 'Listen on Spotify',
+            url: 'https://open.spotify.com/episode/0FuvhOlrteVKk3jow5tSuW',
           },
         ],
       },
       {
-        title: 'Introductions & Pioneer Lightning Round',
+        section: 'Foundations',
+        title: 'Get Started with AI',
         description:
-          'Each attendee shares what they\'re building, exploring, or burning to talk about.',
+          'The goal is to help you build the most important thing first: confidence.',
+        expandedContent: [
+          'Once you build confidence, you create momentum. Once you create momentum, curiosity starts to unlock. And when curiosity takes over, AI stops feeling intimidating and starts feeling empowering.',
+          'Jordi walks through the simple foundation that helped become a daily AI power user over the past two years.',
+        ],
+        resources: [
+          {
+            type: 'video',
+            label: 'Watch on YouTube',
+            url: 'https://www.youtube.com/watch?v=Domk77rYJhU',
+          },
+        ],
+      },
+      {
+        section: 'What Is AGI Anyway?',
+        title: 'When AI Builds Itself',
+        description:
+          'Anthropic is delegating a growing share of AI development to AI systems themselves -- pointing toward recursive self-improvement.',
+        expandedContent: [
+          'For most of AI\'s history, humans drove every step in its development cycle. But at Anthropic, we are delegating a growing share of AI development to AI systems themselves, which is speeding up our work.',
+          'Taken far enough, and given enough compute, that trend points to an AI system capable of fully autonomously designing and developing its own successor. This is called recursive self-improvement. We are not there yet, and recursive self-improvement is not inevitable.',
+        ],
+        resources: [
+          {
+            type: 'link',
+            label: 'Anthropic -- Recursive Self-Improvement',
+            url: 'https://www.anthropic.com/institute/recursive-self-improvement',
+          },
+        ],
+      },
+      {
+        section: 'What Is AGI Anyway?',
+        title: 'Turing Test & Cognitive Taxonomy',
+        description:
+          'A DeepMind paper draws on psychology, neuroscience, and cognitive science to construct a framework for measuring progress toward AGI.',
+        expandedContent: [
+          'The Turing Test stipulated that a machine should be considered intelligent when it can hold a general conversation with a person, via text, and a second human judge cannot reliably determine which participant is the machine. It was, in essence, an "I\'ll know it when I see it" approach to intelligence.',
+          'The paper Measuring Progress Toward AGI: A Cognitive Framework identifies 10 key cognitive faculties -- including perception, reasoning, memory, learning, attention, and social cognition -- that the researchers argue are essential for general intelligence.',
+        ],
+        resources: [
+          {
+            type: 'link',
+            label: 'DeepMind Paper (Google Blog)',
+            url: 'https://blog.google/innovation-and-ai/models-and-research/google-deepmind/measuring-agi-cognitive-framework/',
+          },
+          {
+            type: 'link',
+            label: 'Fortune -- AGI Definition & Cognitive Taxonomy',
+            url: 'https://fortune.com/2026/03/30/agi-definition-jensen-huang-lex-fridman-deepmind-turing-text-cognitive-taxonomy',
+          },
+        ],
+      },
+      {
+        section: 'Infrastructure',
+        title: 'The Three-Layer AI Cloud Stack',
+        description:
+          'AI is still early and the bottleneck is increasingly physical -- building a real moat in physical, compute, and software layers.',
+        resources: [
+          {
+            type: 'link',
+            label: 'X -- @danroberts0101: Three-Layer AI Cloud Stack',
+            url: 'https://x.com/danroberts0101/status/2057755830443713024',
+          },
+        ],
+      },
+      {
+        section: 'Infrastructure',
+        title: 'Running Local Models',
+        description:
+          'How to run a local model that is free, private, and capable of connecting to external tools.',
+        resources: [
+          {
+            type: 'link',
+            label: 'Ollama Docs',
+            url: 'https://docs.ollama.com/',
+          },
+        ],
+      },
+      {
+        section: 'Capital',
+        title: 'Airbnb AI Lab',
+        description:
+          'Airbnb\'s Brian Chesky plans to launch a new AI lab focused on user interaction and design.',
+        expandedContent: [
+          'It\'s not clear what the focus of Chesky\'s new AI lab will be, although the Bloomberg article mentions user interaction and design, areas that he has emphasized at Airbnb.',
+        ],
+        resources: [
+          {
+            type: 'link',
+            label: 'TechCrunch -- Airbnb\'s Brian Chesky Plans to Launch a New AI Lab',
+            url: 'https://techcrunch.com/2026/06/04/airbnbs-brian-chesky-plans-to-launch-a-new-ai-lab/',
+          },
+        ],
+      },
+      {
+        section: 'Capital',
+        title: "It's the Shoes",
+        description:
+          'Allbirds makes a bizarre pivot to AI compute infrastructure, adding $127 million in value and rebranding as NewBird AI.',
+        expandedContent: [
+          'Allbirds announced that it\'s pivoting its business to AI compute infrastructure. The company will be called NewBird AI, and announced a deal to raise up to $50 million in funding, expected to close in the second quarter of 2026.',
+        ],
+        resources: [
+          {
+            type: 'link',
+            label: 'CNBC -- Allbirds Pivots to AI',
+            url: 'https://www.cnbc.com/2026/04/15/allbirds-bird-stock-shoes-ai.html',
+          },
+        ],
       },
     ],
-    builderDemo: {
-      title: 'Multi-Modal RAG Pipeline',
-      presenter: 'Community Member',
-      description:
-        'A retrieval-augmented generation pipeline that ingests PDFs, images, and web pages -- live demo with Q&A.',
-      resources: [
-        {
-          type: 'link',
-          label: 'LangChain Docs',
-          url: 'https://docs.langchain.com',
-        },
-      ],
-    },
+    builderDemo: undefined,
   },
 ];
 

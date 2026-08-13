@@ -48,6 +48,11 @@ function TopicCard({ topic, index }: { topic: Topic; index: number }) {
           {String(index + 1).padStart(2, '0')}
         </div>
         <div className="flex-1 min-w-0">
+          {topic.section && (
+            <div className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground mb-1">
+              {topic.section}
+            </div>
+          )}
           <h3 className="text-base font-bold text-foreground mb-2">{topic.title}</h3>
 
           {/* One-sentence description always visible */}

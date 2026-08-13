@@ -112,6 +112,11 @@ function EventCard({ event }: { event: MeetupEvent }) {
                 <div className="flex items-start gap-2">
                   <span className="text-[#1E8EFF] mt-0.5 shrink-0">›</span>
                   <div>
+                    {topic.section && (
+                      <span className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground mr-2">
+                        {topic.section} —
+                      </span>
+                    )}
                     <span className="text-sm font-semibold text-foreground">
                       {topic.title}
                     </span>
