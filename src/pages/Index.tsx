@@ -93,8 +93,8 @@ const Index = () => {
           </h1>
 
           <p className="text-foreground/80 text-lg sm:text-xl max-w-xl mb-10 leading-relaxed font-light">
-            Builders, thinkers, and pioneers who believe intelligence is
-            becoming as essential — and as available — as electricity.
+            Northstar Pioneers are builders, thinkers, and pioneers who believe
+            intelligence is becoming as essential — and as available — as electricity.
           </p>
 
           {/* CTA row */}
