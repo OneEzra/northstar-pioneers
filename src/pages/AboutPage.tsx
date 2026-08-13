@@ -148,7 +148,7 @@ const AboutPage = () => {
                 </div>
                 <div className="font-bold text-foreground text-lg mb-1">Greater Twin Cities</div>
                 <div className="text-sm text-muted-foreground">
-                  Check event page for details
+                  Check <Link to="/events" className="text-[#1E8EFF] hover:underline">event page</Link> for details
                 </div>
               </div>
               <div>
