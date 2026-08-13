@@ -151,7 +151,7 @@ const Index = () => {
                 </h2>
               </div>
               <span className="tag-pill self-start sm:self-auto">
-                {formatEventDateShort(nextEvent.date)} · Mpls
+                {formatEventDateShort(nextEvent.date)} · {nextEvent.city ?? 'Mpls'}
               </span>
             </div>
 
@@ -428,7 +428,7 @@ const Index = () => {
                 {
                   num: 'Monthly',
                   label: 'Cadence',
-                  desc: 'Consistent, focused, no fluff',
+                  desc: 'Consistent, focused, thoughtful',
                 },
                 {
                   num: '2 hrs',

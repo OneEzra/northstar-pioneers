@@ -50,6 +50,8 @@ export interface MeetupEvent {
   time: string;
   venue: string;
   address: string;
+  /** Short city name for tags/pills, e.g. "Edina", "Mpls" */
+  city?: string;
   status: 'upcoming' | 'past';
   meetupUrl?: string;
   /** Short summary shown on the card */
@@ -90,6 +92,7 @@ export const events: MeetupEvent[] = [
     time: '5:30 - 7:30 PM CDT',
     venue: 'Nerdery',
     address: '7700 France Ave S, Edina, MN',
+    city: 'Edina',
     status: 'upcoming',
     meetupUrl: 'https://www.meetup.com/northstar-pioneers/events/',
     summary:

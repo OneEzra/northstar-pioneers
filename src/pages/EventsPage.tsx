@@ -267,7 +267,7 @@ const EventsPage = () => {
                   </h2>
                 </div>
                 <span className="tag-pill self-start sm:self-auto">
-                  {formatEventDateShort(nextEvent.date)} · Mpls
+                  {formatEventDateShort(nextEvent.date)} · {nextEvent.city ?? 'Mpls'}
                 </span>
               </div>
 

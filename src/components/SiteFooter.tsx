@@ -70,14 +70,14 @@ export function SiteFooter() {
               </li>
             </ul>
             <div className="mt-6 text-xs text-muted-foreground uppercase tracking-wider">
-              Greater Twin Cities, MN · Monthly
+              Greater Twin Cities, MN
             </div>
           </div>
         </div>
 
         <div className="mt-10 pt-6 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="text-xs text-muted-foreground">
-            © {new Date().getFullYear()} Northstar Pioneers · Twin Cities, MN
+            © {new Date().getFullYear()} Northstar Pioneers · Minnesota
           </p>
           <a
             href="https://shakespeare.diy"
