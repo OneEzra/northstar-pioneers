@@ -340,30 +340,34 @@ const Index = () => {
           <div className="pioneer-label mb-4">On the Horizon</div>
           <div className="space-y-3">
             {placeholderEvents.map((event) => (
-              <div key={event.slug} className="card-accent px-7 py-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div className="flex items-center gap-4 flex-wrap">
-                  <span className="tag-pill text-[10px]">TBD</span>
+              <div key={event.slug} className="card-accent px-7 py-5 flex flex-col gap-3">
+                {/* Row 1: title + pill */}
+                <div className="flex items-center gap-3">
                   <h3
                     className="text-lg font-extrabold text-foreground leading-tight"
                     style={{ fontFamily: "'Barlow Condensed', sans-serif" }}
                   >
                     {event.title}
                   </h3>
+                  <span className="tag-pill text-[10px]">TBD</span>
+                </div>
+                {/* Row 2: metadata + button */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div className="flex items-center gap-4 text-xs text-muted-foreground flex-wrap">
                     <span><span className="font-bold uppercase tracking-wider text-foreground/60">Date</span> — TBD</span>
                     <span><span className="font-bold uppercase tracking-wider text-foreground/60">Venue</span> — {event.venue}</span>
                     <span><span className="font-bold uppercase tracking-wider text-foreground/60">Pioneer</span> — TBD</span>
                     <span><span className="font-bold uppercase tracking-wider text-foreground/60">Topics</span> — TBD</span>
                   </div>
+                  <a
+                    href="https://t.me/northstarpioneerscommunity"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="shrink-0 self-start sm:self-auto text-muted-foreground border border-border font-bold text-xs uppercase tracking-widest px-5 py-2.5 rounded-[2px] hover:text-foreground hover:border-foreground/40 transition-colors"
+                  >
+                    Pioneers Telegram ↗
+                  </a>
                 </div>
-                <a
-                  href="https://t.me/northstarpioneerscommunity"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="shrink-0 text-muted-foreground border border-border font-bold text-xs uppercase tracking-widest px-5 py-2.5 rounded-[2px] hover:text-foreground hover:border-foreground/40 transition-colors"
-                >
-                  Pioneers Telegram ↗
-                </a>
               </div>
             ))}
           </div>
