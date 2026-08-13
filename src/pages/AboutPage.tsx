@@ -43,13 +43,13 @@ const AboutPage = () => {
           <blockquote className="border-l-4 border-[#1E8EFF] pl-6 text-xl text-foreground font-light leading-relaxed mb-6">
             "Take up the task eternal, the burden, and the lesson."
           </blockquote>
-          <p className="text-[#D0D0D0] leading-relaxed text-base mb-4">
+          <p className="text-foreground/80 leading-relaxed text-base mb-4">
             Northstar Pioneers is a monthly gathering for builders, thinkers, and
             people who believe intelligence is becoming as essential — and as
             available — as electricity. We come together in the Twin Cities to
             learn, to build, and to push each other forward.
           </p>
-          <p className="text-[#D0D0D0] leading-relaxed text-base">
+          <p className="text-foreground/80 leading-relaxed text-base">
             No gatekeepers. No fluff. Just people serious about shaping what comes
             next. We are rooted in sovereign thinking, human flourishing, and the
             conviction that the tools of this new age belong in the hands of those

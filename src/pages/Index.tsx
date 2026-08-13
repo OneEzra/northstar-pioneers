@@ -7,7 +7,36 @@ import {
   getPastEvents,
   formatEventDate,
   formatEventDateShort,
+  type MeetupEvent,
 } from '@/data/events';
+
+/** Format date as "Jul 20, 2026" */
+function formatDateWithYear(dateStr: string): string {
+  return new Date(dateStr).toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  });
+}
+
+/** Build a one-paragraph topic summary from all topic titles */
+function buildTopicSummary(event: MeetupEvent): string {
+  const titles = event.topics.map((t) => t.title);
+  if (titles.length === 0) return '';
+  if (titles.length === 1) return `Topics covered: ${titles[0]}.`;
+  const last = titles[titles.length - 1];
+  const rest = titles.slice(0, -1);
+  return `Topics covered: ${rest.join(', ')}, and ${last}.`;
+}
+
+/** Get presenter name and primary contact link from builderDemo */
+function getPresenterInfo(event: MeetupEvent): { name: string; url: string } | null {
+  const d = event.builderDemo;
+  if (!d || !d.presenter) return null;
+  const url = d.presenterUrl ?? d.presenterLinkedIn ?? (d.presenterTelegram ? `https://t.me/${d.presenterTelegram}` : null);
+  if (!url) return { name: d.presenter, url: '' };
+  return { name: d.presenter, url };
+}
 
 const Index = () => {
   useSeoMeta({
@@ -63,10 +92,9 @@ const Index = () => {
             The Task <span className="text-[#1E8EFF]">Eternal.</span>
           </h1>
 
-          <p className="text-[#D0D0D0] text-lg sm:text-xl max-w-xl mb-10 leading-relaxed font-light">
+          <p className="text-foreground/80 text-lg sm:text-xl max-w-xl mb-10 leading-relaxed font-light">
             Builders, thinkers, and pioneers who believe intelligence is
-            becoming as essential — and as available — as electricity.{' '}
-            <span className="text-foreground font-medium">No gatekeepers. No fluff.</span>
+            becoming as essential — and as available — as electricity.
           </p>
 
           {/* CTA row */}
@@ -224,7 +252,7 @@ const Index = () => {
                 Sovereign Thinking.<br />
                 Human <span className="text-[#1E8EFF]">Flourishing.</span>
               </h2>
-              <p className="text-[#D0D0D0] leading-relaxed mb-6">
+              <p className="text-foreground/80 leading-relaxed mb-6">
                 Northstar Pioneers is rooted in the belief that the tools of
                 this new age belong in the hands of those bold enough to use
                 them. We gather in the Twin Cities to learn, to build, and to
@@ -301,39 +329,53 @@ const Index = () => {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {pastEvents.map((event) => (
-              <Link
-                key={event.slug}
-                to={`/events/${event.slug}`}
-                className="card-accent p-6 block group hover:border-[#1E8EFF]/50 transition-colors"
-              >
-                <div className="flex items-start justify-between gap-4 mb-3">
-                  <span className="text-xs font-bold uppercase tracking-widest text-[#5AB0FF]">
-                    {formatEventDateShort(event.date)}
-                  </span>
-                </div>
-                <h3 className="text-lg font-bold text-foreground group-hover:text-[#1E8EFF] transition-colors mb-2">
-                  {event.title}
-                </h3>
-                <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2">
-                  {event.summary}
-                </p>
-                {event.topics.length > 0 && (
-                  <div className="flex flex-wrap gap-2 mt-4">
-                    {event.topics.slice(0, 2).map((t) => (
-                      <span key={t.title} className="tag-pill text-[11px] py-1 px-3">
-                        {t.title}
-                      </span>
-                    ))}
-                    {event.topics.length > 2 && (
-                      <span className="tag-pill text-[11px] py-1 px-3">
-                        +{event.topics.length - 2} more
-                      </span>
-                    )}
+            {pastEvents.map((event) => {
+              const presenter = getPresenterInfo(event);
+              const topicSummary = buildTopicSummary(event);
+              return (
+                <Link
+                  key={event.slug}
+                  to={`/events/${event.slug}`}
+                  className="card-accent p-6 block group hover:border-[#1E8EFF]/50 transition-colors"
+                >
+                  {/* Date with year */}
+                  <div className="text-xs font-bold uppercase tracking-widest text-[#5AB0FF] mb-3">
+                    {formatDateWithYear(event.date)}
                   </div>
-                )}
-              </Link>
-            ))}
+
+                  {/* Title */}
+                  <h3 className="text-lg font-bold text-foreground group-hover:text-[#1E8EFF] transition-colors mb-3">
+                    {event.title}
+                  </h3>
+
+                  {/* Presenter */}
+                  {presenter && (
+                    <div className="flex items-center gap-2 mb-3">
+                      <span className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">
+                        Featured Pioneer:
+                      </span>
+                      {presenter.url ? (
+                        <span
+                          className="text-xs font-bold text-[#5AB0FF]"
+                          onClick={(e) => { e.preventDefault(); window.open(presenter.url, '_blank', 'noopener,noreferrer'); }}
+                        >
+                          {presenter.name} ↗
+                        </span>
+                      ) : (
+                        <span className="text-xs font-bold text-[#5AB0FF]">{presenter.name}</span>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Topic paragraph */}
+                  {topicSummary && (
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                      {topicSummary}
+                    </p>
+                  )}
+                </Link>
+              );
+            })}
           </div>
 
           <div className="sm:hidden mt-4">
