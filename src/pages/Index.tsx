@@ -117,16 +117,8 @@ const Index = () => {
               to="/events"
               className="inline-block text-[#1E8EFF] border border-[#1E8EFF]/40 font-bold text-sm uppercase tracking-widest px-7 py-3.5 rounded-[2px] hover:bg-[#1E8EFF]/10 transition-colors"
             >
-              View Archive
+              Event Archive
             </Link>
-            <a
-              href="https://t.me/northstarpioneerscommunity"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-block text-muted-foreground border border-border font-bold text-sm uppercase tracking-widest px-7 py-3.5 rounded-[2px] hover:text-foreground hover:border-foreground/40 transition-colors"
-            >
-              Telegram
-            </a>
           </div>
         </div>
       </section>
