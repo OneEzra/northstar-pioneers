@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+
 import { useSeoMeta } from '@unhead/react';
 import { SiteNav } from '@/components/SiteNav';
 import { SiteFooter } from '@/components/SiteFooter';
@@ -21,6 +22,8 @@ const resourceIcon: Record<string, string> = {
 };
 
 function EventCard({ event }: { event: MeetupEvent }) {
+  const [topicsOpen, setTopicsOpen] = useState(false);
+
   return (
     <div className="card-accent overflow-hidden">
       {/* Header */}
@@ -111,74 +114,96 @@ function EventCard({ event }: { event: MeetupEvent }) {
         </div>
       )}
 
-      {/* Topics */}
-      {event.topics.length > 0 && (
-        <div className="px-7 py-5 border-b border-border">
-          <div className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3">
-            Socratic Topics
-          </div>
-          <ul className="space-y-3">
-            {event.topics.map((topic) => (
-              <li key={topic.title}>
-                <div className="flex items-start gap-2">
-                  <span className="text-[#1E8EFF] mt-0.5 shrink-0">›</span>
-                  <div>
+      {/* 3-column action row */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-border border-t border-border">
+        {/* View Topics */}
+        <div className="px-7 py-4 flex items-center">
+          {event.topics.length > 0 ? (
+            <button
+              onClick={() => setTopicsOpen((o) => !o)}
+              className="text-xs font-bold uppercase tracking-widest text-[#1E8EFF] hover:text-[#5AB0FF] transition-colors"
+            >
+              {topicsOpen ? 'Hide Topics ↑' : 'View Topics ↓'}
+            </button>
+          ) : (
+            <span className="text-xs text-muted-foreground uppercase tracking-widest font-bold">No Topics</span>
+          )}
+        </div>
+
+        {/* View Full Details */}
+        <div className="px-7 py-4 flex items-center">
+          <Link
+            to={`/events/${event.slug}`}
+            className="text-xs font-bold uppercase tracking-widest text-[#1E8EFF] hover:text-[#5AB0FF] transition-colors"
+          >
+            View Full Details →
+          </Link>
+        </div>
+
+        {/* Meetup Page */}
+        <div className="px-7 py-4 flex items-center">
+          {event.meetupUrl ? (
+            <a
+              href={event.meetupUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs font-bold uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Meetup Page ↗
+            </a>
+          ) : (
+            <span className="text-xs text-muted-foreground uppercase tracking-widest font-bold opacity-40">—</span>
+          )}
+        </div>
+      </div>
+
+      {/* Topics panel */}
+      {topicsOpen && event.topics.length > 0 && (
+        <div className="px-7 py-5 border-t border-border">
+          <div className="pioneer-label mb-4">Socratic Review Topics</div>
+          <div className="space-y-4">
+            {event.topics.map((topic, i) => (
+              <div key={topic.title} className="card-accent p-6">
+                <div className="flex items-start gap-4">
+                  <div className="text-[#1E8EFF] font-mono text-sm font-bold shrink-0 mt-0.5">
+                    {String(i + 1).padStart(2, '0')}
+                  </div>
+                  <div className="flex-1 min-w-0">
                     {topic.section && (
-                      <span className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground mr-2">
-                        {topic.section} —
-                      </span>
+                      <div className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground mb-1">
+                        {topic.section}
+                      </div>
                     )}
-                    <span className="text-sm font-semibold text-foreground">
-                      {topic.title}
-                    </span>
+                    <h3 className="text-base font-bold text-foreground mb-2">{topic.title}</h3>
                     {topic.description && (
-                      <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
+                      <p className="text-sm text-muted-foreground leading-relaxed">
                         {topic.description}
                       </p>
                     )}
                     {topic.resources && topic.resources.length > 0 && (
-                      <div className="flex flex-wrap gap-2 mt-2">
+                      <div className="flex flex-wrap gap-2 mt-4">
                         {topic.resources.map((r) => (
                           <a
                             key={r.url}
                             href={r.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1 text-[11px] font-bold text-[#5AB0FF] hover:text-[#1E8EFF] transition-colors bg-[rgba(30,142,255,0.08)] border border-[rgba(30,142,255,0.2)] px-2.5 py-1 rounded-[2px]"
+                            className="inline-flex items-center gap-2 text-sm font-bold text-[#5AB0FF] hover:text-[#1E8EFF] transition-colors bg-[rgba(30,142,255,0.08)] border border-[rgba(30,142,255,0.25)] px-4 py-2 rounded-[2px] hover:bg-[rgba(30,142,255,0.14)]"
                           >
                             <span>{resourceIcon[r.type] ?? '↗'}</span>
                             {r.label}
+                            <span className="text-xs opacity-60">↗</span>
                           </a>
                         ))}
                       </div>
                     )}
                   </div>
                 </div>
-              </li>
+              </div>
             ))}
-          </ul>
+          </div>
         </div>
       )}
-
-      {/* Footer */}
-      <div className="px-7 py-4 flex flex-wrap items-center gap-3">
-        <Link
-          to={`/events/${event.slug}`}
-          className="text-xs font-bold uppercase tracking-widest text-[#1E8EFF] hover:underline"
-        >
-          View Full Details →
-        </Link>
-        {event.meetupUrl && (
-          <a
-            href={event.meetupUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-xs font-bold uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors"
-          >
-            Meetup Page ↗
-          </a>
-        )}
-      </div>
     </div>
   );
 }
