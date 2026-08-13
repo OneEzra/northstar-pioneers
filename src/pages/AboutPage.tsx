@@ -111,22 +111,22 @@ const AboutPage = () => {
         <section>
           <div className="pioneer-label mb-6">What We Stand For</div>
           <div className="space-y-4">
-            {[
+              {[
               {
                 title: 'Sovereign Thinking',
-                desc: 'We believe in your right to think independently, access powerful tools, and build without asking permission. Centralized gatekeepers stifle innovation — we don\'t.',
+                desc: 'Everyone has the right to think for themselves, to seize the tools of this new age and put them to work. No one asks permission to wonder. No one asks permission to build.',
               },
               {
                 title: 'Radical Transparency',
-                desc: 'We discuss what\'s actually happening — not the sanitized press release version. Critical analysis, open skepticism, and honest debate are features, not bugs.',
+                desc: 'We speak plain, not the polished dispatch sent back from headquarters. Doubt is welcome here, questions are welcome here — honest debate is how a room stays safe enough to think out loud together.',
               },
               {
                 title: 'Builder Culture',
-                desc: 'Northstar Pioneers is for people who ship. Spectators welcome, but builders drive the agenda. If you\'re making something, we want to hear about it.',
+                desc: 'You don\'t have to ship to march with us. A question is a kind of labor. A half-formed idea, carried into the light, is a kind of building. Come as you are — curious counts.',
               },
               {
                 title: 'Human Flourishing',
-                desc: 'Technology is a means, not an end. We care about what AI and emerging tools actually do for people, communities, and society — not just benchmark scores.',
+                desc: 'Technology is a means, not an end. We leave the old measures behind and ask a bigger question: what do these tools make possible for people, for communities, for the world we\'re seizing together.',
               },
             ].map((v) => (
               <div key={v.title} className="border-l-[3px] border-[#1E8EFF]/30 pl-5 py-1">
