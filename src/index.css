@@ -262,3 +262,8 @@
   box-shadow: 0 0 8px 2px rgba(30,142,255,0.5);
   animation: glow-pulse 2s ease-in-out infinite;
 }
+
+.glow-star {
+  filter: drop-shadow(0 0 5px rgba(30,142,255,0.7));
+  animation: glow-pulse 2s ease-in-out infinite;
+}

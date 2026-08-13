@@ -80,8 +80,20 @@ const Index = () => {
         <div className="max-w-6xl mx-auto px-6 pt-24 pb-20 sm:pt-32 sm:pb-28">
           {/* Eyebrow */}
           <div className="flex items-center gap-3 mb-6">
-            <div className="glow-dot" />
-            <span className="pioneer-label">Monthly Mastermind · Minneapolis, MN</span>
+            <svg
+              className="glow-star"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 100 100"
+              width="18"
+              height="18"
+              aria-hidden="true"
+            >
+              <polygon
+                points="50,5 61,35 95,35 68,57 79,91 50,70 21,91 32,57 5,35 39,35"
+                fill="#1E8EFF"
+              />
+            </svg>
+            <span className="pioneer-label">Monthly Mastermind · Greater Twin Cities, MN</span>
           </div>
 
           {/* Headline */}
