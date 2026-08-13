@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useSeoMeta } from '@unhead/react';
 import { SiteNav } from '@/components/SiteNav';
@@ -47,6 +48,7 @@ const Index = () => {
 
   const nextEvent = getNextEvent();
   const pastEvents = getPastEvents().slice(0, 2);
+  const [venueExpanded, setVenueExpanded] = useState(false);
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -163,12 +165,35 @@ const Index = () => {
               </div>
               <div className="px-8 py-6">
                 <div className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-1">
-                  Venue
+                  Venue Sponsor
                 </div>
                 <div className="text-foreground font-semibold">{nextEvent.venue}</div>
                 <div className="text-sm text-muted-foreground mt-0.5">
                   {nextEvent.address}
                 </div>
+                <button
+                  onClick={() => setVenueExpanded((v) => !v)}
+                  className="text-xs text-[#1E8EFF] hover:underline mt-1.5 block"
+                >
+                  {venueExpanded ? 'Read less ↑' : 'Read more ↓'}
+                </button>
+                {venueExpanded && (
+                  <p className="text-xs text-muted-foreground leading-relaxed mt-2 max-w-xs">
+                    Nerdery is a digital solutions provider with over 20 years of experience
+                    building business-critical software for when off-the-shelf solutions won't
+                    work and failure is not an option. As a strategic ally, we provide the Digital
+                    Strategy, System Modernization, and AI Optimization needed to bridge the gap
+                    between executive vision and technical execution.{' '}
+                    <a
+                      href="https://www.nerdery.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[#1E8EFF] hover:underline"
+                    >
+                      nerdery.com ↗
+                    </a>
+                  </p>
+                )}
               </div>
             </div>
 
