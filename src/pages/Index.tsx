@@ -172,6 +172,21 @@ const Index = () => {
               </div>
             </div>
 
+            {/* Featured Pioneer */}
+            <div className="px-8 py-6 border-t border-border">
+              <div className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-2">
+                Featured Pioneer
+              </div>
+              <a
+                href="https://www.linkedin.com/in/leewinbush/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-foreground font-semibold hover:text-[#1E8EFF] transition-colors"
+              >
+                Lee Winbush ↗
+              </a>
+            </div>
+
             {/* Venue Sponsor Bio */}
             <div className="px-8 py-6 border-t border-border">
               <div className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-2">
