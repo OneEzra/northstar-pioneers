@@ -38,15 +38,17 @@ function EventCard({ event }: { event: MeetupEvent }) {
       </div>
 
       {/* Summary */}
-      <div className="px-7 py-4 border-b border-border">
-        <p className="text-sm text-muted-foreground leading-relaxed">{event.summary}</p>
-      </div>
+      {event.summary && (
+        <div className="px-7 py-4 border-b border-border">
+          <p className="text-sm text-muted-foreground leading-relaxed">{event.summary}</p>
+        </div>
+      )}
 
       {/* Builder Demo */}
       {event.builderDemo && (
         <div className="px-7 py-5 border-b border-border bg-[rgba(30,142,255,0.04)]">
           <div className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-2">
-            Builder Demo
+            Featured Northstar Pioneer
           </div>
           <div className="text-sm font-bold text-foreground mb-1">
             {event.builderDemo.title}

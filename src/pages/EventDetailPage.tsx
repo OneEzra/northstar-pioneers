@@ -213,16 +213,18 @@ const EventDetailPage = () => {
       {/* Content */}
       <div className="max-w-4xl mx-auto px-6 py-12 space-y-10">
         {/* Summary */}
-        <section>
-          <p className="text-lg text-[#D0D0D0] leading-relaxed border-l-4 border-[#1E8EFF] pl-6">
-            {event.summary}
-          </p>
-        </section>
+        {event.summary && (
+          <section>
+            <p className="text-lg text-[#D0D0D0] leading-relaxed border-l-4 border-[#1E8EFF] pl-6">
+              {event.summary}
+            </p>
+          </section>
+        )}
 
         {/* Builder Demo */}
         {event.builderDemo && (
           <section>
-            <div className="pioneer-label mb-5">Builder Demo</div>
+            <div className="pioneer-label mb-5">Featured Northstar Pioneer</div>
             <div
               className="card-accent p-6 border-l-4"
               style={{ borderLeftColor: '#1E8EFF' }}
