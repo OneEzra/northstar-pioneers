@@ -92,7 +92,32 @@ export const events: MeetupEvent[] = [
     meetupUrl: 'https://www.meetup.com/northstar-pioneers/events/',
     summary:
       'Our monthly gathering -- Socratic news review, builder demo, and open networking. Pizza provided.',
-    topics: [],
+    topics: [
+      {
+        title: 'Maple',
+        description:
+          'Maple is the personal AI for your real life, private by design, with data we don\'t share, sell, or use to train AI.',
+        resources: [
+          {
+            type: 'link',
+            label: 'trymaple.ai',
+            url: 'https://www.trymaple.ai',
+          },
+        ],
+      },
+      {
+        title: 'Engineering and Project Methodology in AI',
+        description:
+          'A structured approach to AI-assisted development: SPEC → EXPERIMENT → IMPLEMENT → VERIFY → DEPLOY, with porous or dense feedback loops between stages.',
+        resources: [
+          {
+            type: 'link',
+            label: 'Cascade Methodology — Tony Alicea',
+            url: 'https://tonyalicea.dev/blog/cascade-methodology/',
+          },
+        ],
+      },
+    ],
     builderDemo: undefined,
   },
 

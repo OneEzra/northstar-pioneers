@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useSeoMeta } from '@unhead/react';
 import { SiteNav } from '@/components/SiteNav';
@@ -47,6 +48,7 @@ const Index = () => {
 
   const nextEvent = getNextEvent();
   const pastEvents = getPastEvents().slice(0, 2);
+  const [topicsOpen, setTopicsOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -194,20 +196,73 @@ const Index = () => {
               </p>
             </div>
 
-            {/* Featured Pioneer */}
-            <div className="px-8 py-6 border-t border-border">
-              <div className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-2">
-                Featured Pioneer
+            {/* Featured Pioneer + Topics row */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x divide-border border-t border-border">
+              <div className="px-8 py-6">
+                <div className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-2">
+                  Featured Pioneer
+                </div>
+                <a
+                  href="https://www.linkedin.com/in/leewinbush/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-foreground font-semibold hover:text-[#1E8EFF] transition-colors"
+                >
+                  Lee Winbush ↗
+                </a>
               </div>
-              <a
-                href="https://www.linkedin.com/in/leewinbush/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-foreground font-semibold hover:text-[#1E8EFF] transition-colors"
-              >
-                Lee Winbush ↗
-              </a>
+              <div className="px-8 py-6">
+                <div className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-2">
+                  Socratic Topics
+                </div>
+                {nextEvent.topics.length > 0 ? (
+                  <button
+                    onClick={() => setTopicsOpen((o) => !o)}
+                    className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest border border-[#1E8EFF]/40 text-[#1E8EFF] px-4 py-2 rounded-[2px] hover:bg-[#1E8EFF]/10 transition-colors"
+                  >
+                    {topicsOpen ? 'Hide Topics ↑' : 'View Topics ↓'}
+                  </button>
+                ) : (
+                  <span className="text-sm text-muted-foreground">Topics coming soon</span>
+                )}
+              </div>
             </div>
+
+            {/* Topics panel */}
+            {topicsOpen && nextEvent.topics.length > 0 && (
+              <div className="px-8 py-6 border-t border-border">
+                <ul className="space-y-4">
+                  {nextEvent.topics.map((topic) => (
+                    <li key={topic.title} className="flex items-start gap-2">
+                      <span className="text-[#1E8EFF] mt-0.5 shrink-0">›</span>
+                      <div>
+                        <span className="text-sm font-semibold text-foreground">{topic.title}</span>
+                        {topic.description && (
+                          <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
+                            {topic.description}
+                          </p>
+                        )}
+                        {topic.resources && topic.resources.length > 0 && (
+                          <div className="flex flex-wrap gap-2 mt-2">
+                            {topic.resources.map((r) => (
+                              <a
+                                key={r.url}
+                                href={r.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1 text-[11px] font-bold text-[#5AB0FF] hover:text-[#1E8EFF] transition-colors bg-[rgba(30,142,255,0.08)] border border-[rgba(30,142,255,0.2)] px-2.5 py-1 rounded-[2px]"
+                              >
+                                🔗 {r.label}
+                              </a>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
 
             {/* Format */}
             <div className="px-8 py-6 border-t border-border">
