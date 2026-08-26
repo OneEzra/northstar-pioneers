@@ -122,6 +122,42 @@ export const events: MeetupEvent[] = [
           },
         ],
       },
+      {
+        title: 'Mac Studio M5 Ultra',
+        description:
+          'Apple\'s new Mac Studio with a maxed-out M5 Ultra and 256GB RAM runs about $10,000 to buy — or can be leased for roughly $257/month, basically the same as a Max-tier AI subscription.',
+        resources: [
+          {
+            type: 'link',
+            label: 'Apple Newsroom ↗',
+            url: 'https://www.apple.com/newsroom/2026/08/apple-introduces-new-mac-studio-with-m5-max-and-m5-ultra/',
+          },
+        ],
+      },
+      {
+        title: 'Coldcard Wallet Bug',
+        description:
+          'A 2021 Coldcard firmware bug silently weakened seed generation, and since July 30, 2026 attackers have been brute-forcing those weak seeds without ever touching the physical device.',
+        resources: [
+          {
+            type: 'link',
+            label: 'Bitcoin Magazine ↗',
+            url: 'https://bitcoinmagazine.com/business/chinese-ai-beats-restricted-openai-and-anthropic-cybersecurity-models-bitcoin-industry-warns',
+          },
+        ],
+      },
+      {
+        title: 'Claude Text Watermarking',
+        description:
+          'After signing the EU\'s Code of Practice on Transparency of AI-Generated Content, Anthropic turned on SynthID-style watermarking in Claude\'s text — and shipped it worldwide, not just in Europe.',
+        resources: [
+          {
+            type: 'link',
+            label: 'Anthropic ↗',
+            url: 'https://www.anthropic.com/news/claude-text-watermark',
+          },
+        ],
+      },
     ],
     builderDemo: undefined,
   },
