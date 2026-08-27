@@ -449,7 +449,7 @@ const EventsPage = () => {
                     >
                       {event.title}
                     </h3>
-                    <span className="tag-pill text-[10px]">{event.city ? `Sept · ${event.city}` : 'TBD'}</span>
+                    <span className="tag-pill text-[10px]">{event.city ? `${new Date(event.date).toLocaleString('en-US', { month: 'short' })} · ${event.city}` : 'TBD'}</span>
                   </div>
                   {/* Row 2: metadata + button */}
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
