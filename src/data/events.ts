@@ -86,6 +86,22 @@ export interface MeetupEvent {
 export const events: MeetupEvent[] = [
   // -- UPCOMING --------------------------------------------------
   {
+    slug: '2026-09',
+    title: 'September 2026 Meetup',
+    date: '2026-09-01T17:30:00',
+    time: 'TBD',
+    venue: 'Nerdery',
+    address: '7700 France Ave S, Edina, MN',
+    city: 'Edina',
+    status: 'upcoming',
+    placeholder: true,
+    summary: 'Save the date — details coming soon.',
+    topics: [],
+    builderDemo: undefined,
+  },
+
+  // -- PAST ------------------------------------------------------
+  {
     slug: '2026-08',
     title: 'August 2026 Meetup',
     date: '2026-08-26T17:30:00',
@@ -93,10 +109,10 @@ export const events: MeetupEvent[] = [
     venue: 'Nerdery',
     address: '7700 France Ave S, Edina, MN',
     city: 'Edina',
-    status: 'upcoming',
+    status: 'past',
     meetupUrl: 'https://www.meetup.com/northstar-pioneers/events/',
     summary:
-      'Our monthly gathering -- Socratic news review, builder demo, and open networking. Pizza provided.',
+      'Our monthly gathering — Socratic news review, builder demo, and open networking. Pizza provided.',
     topics: [
       {
         title: 'Maple',
@@ -159,24 +175,19 @@ export const events: MeetupEvent[] = [
         ],
       },
     ],
-    builderDemo: undefined,
+    builderDemo: {
+      title: 'August 2026 Meetup — Topic Deck',
+      presenter: 'Northstar Pioneers',
+      description: 'Slide deck covering all Socratic review topics from the August 2026 gathering.',
+      resources: [
+        {
+          type: 'slides',
+          label: 'View Slide Deck',
+          url: 'https://blossom.ditto.pub/9c8fc0cf3351f483be5b25b5ce5c3e2aab63185d9416f976572a7d42ada32b79.pdf',
+        },
+      ],
+    },
   },
-  {
-    slug: '2026-09',
-    title: 'September 2026 Meetup',
-    date: '2026-09-01T17:30:00',
-    time: 'TBD',
-    venue: 'Nerdery',
-    address: '7700 France Ave S, Edina, MN',
-    city: 'Edina',
-    status: 'upcoming',
-    placeholder: true,
-    summary: 'Save the date — details coming soon.',
-    topics: [],
-    builderDemo: undefined,
-  },
-
-  // -- PAST ------------------------------------------------------
   {
     slug: '2026-07',
     title: 'July 2026 Meetup',
