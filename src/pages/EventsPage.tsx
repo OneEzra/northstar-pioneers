@@ -267,7 +267,7 @@ const EventsPage = () => {
                   </h2>
                 </div>
                 <span className="tag-pill self-start sm:self-auto">
-                  {formatEventDateShort(nextEvent.date)} · {nextEvent.city ?? 'Mpls'}
+                  {nextEvent.time === 'TBD' ? 'TBD' : formatEventDateShort(nextEvent.date)} · {nextEvent.city ?? 'Mpls'}
                 </span>
               </div>
 
@@ -278,7 +278,7 @@ const EventsPage = () => {
                     Date
                   </div>
                   <div className="text-foreground font-semibold">
-                    {formatEventDate(nextEvent.date)}
+                    {nextEvent.time === 'TBD' ? 'TBD' : formatEventDate(nextEvent.date)}
                   </div>
                 </div>
                 <div className="px-8 py-6">
