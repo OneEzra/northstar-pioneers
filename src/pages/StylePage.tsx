@@ -2,16 +2,16 @@ import { useSeoMeta } from '@unhead/react';
 import { SiteNav } from '@/components/SiteNav';
 import { SiteFooter } from '@/components/SiteFooter';
 
-// All logo assets (SVGs served locally from /public)
+// All logo assets (SVGs + PNGs served locally from /public)
 const logos = {
-  horizontalLight: '/nsp-logo-horizontal.svg',
-  horizontalDark: '/nsp-logo-horizontal-dark.svg',
-  horizontalMono: '/nsp-logo-horizontal-mono-white.svg',
-  compactLight: '/nsp-logo-compact.svg',
-  compactDark: '/nsp-logo-compact-dark.svg',
-  badge: '/nsp-badge.svg',
-  starBlue: '/nsp-star.svg',
-  starWhite: '/nsp-star-white.svg',
+  horizontalLight:    { svg: '/nsp-logo-horizontal.svg',           png: '/nsp-logo-horizontal.png' },
+  horizontalDark:     { svg: '/nsp-logo-horizontal-dark.svg',      png: '/nsp-logo-horizontal-dark.png' },
+  horizontalMono:     { svg: '/nsp-logo-horizontal-mono-white.svg', png: '/nsp-logo-horizontal-mono-white.png' },
+  compactLight:       { svg: '/nsp-logo-compact.svg',              png: '/nsp-logo-compact.png' },
+  compactDark:        { svg: '/nsp-logo-compact-dark.svg',         png: '/nsp-logo-compact-dark.png' },
+  badge:              { svg: '/nsp-badge.svg',                     png: '/nsp-badge.png' },
+  starBlue:           { svg: '/nsp-star.svg',                      png: '/nsp-star.png' },
+  starWhite:          { svg: '/nsp-star-white.svg',                png: '/nsp-star-white.png' },
 };
 
 interface ColorSwatchProps {
@@ -41,10 +41,11 @@ interface LogoCardProps {
   src: string;
   label: string;
   bg: string;
-  download?: string;
+  downloadSvg?: string;
+  downloadPng?: string;
 }
 
-function LogoCard({ src, label, bg, download }: LogoCardProps) {
+function LogoCard({ src, label, bg, downloadSvg, downloadPng }: LogoCardProps) {
   return (
     <div className="card-accent overflow-hidden">
       <div
@@ -53,17 +54,28 @@ function LogoCard({ src, label, bg, download }: LogoCardProps) {
       >
         <img src={src} alt={label} className="max-h-16 max-w-full object-contain" />
       </div>
-      <div className="px-5 py-4 flex items-center justify-between gap-3">
+      <div className="px-5 py-4 flex flex-col gap-2">
         <span className="text-xs text-muted-foreground font-medium">{label}</span>
-        {download && (
-          <a
-            href={download}
-            download
-            className="text-[11px] font-bold uppercase tracking-widest text-[#1E8EFF] hover:underline"
-          >
-            Download SVG ↓
-          </a>
-        )}
+        <div className="flex gap-3">
+          {downloadSvg && (
+            <a
+              href={downloadSvg}
+              download
+              className="text-[11px] font-bold uppercase tracking-widest text-[#1E8EFF] hover:underline"
+            >
+              SVG ↓
+            </a>
+          )}
+          {downloadPng && (
+            <a
+              href={downloadPng}
+              download
+              className="text-[11px] font-bold uppercase tracking-widest text-[#1E8EFF] hover:underline"
+            >
+              PNG ↓
+            </a>
+          )}
+        </div>
       </div>
     </div>
   );
@@ -123,22 +135,25 @@ const StylePage = () => {
           <div className="pioneer-label mb-4">Horizontal Lockup</div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-10">
             <LogoCard
-              src={logos.horizontalLight}
+              src={logos.horizontalLight.svg}
               label="Full Color — Light background"
               bg="#FFFFFF"
-              download={logos.horizontalLight}
+              downloadSvg={logos.horizontalLight.svg}
+              downloadPng={logos.horizontalLight.png}
             />
             <LogoCard
-              src={logos.horizontalDark}
+              src={logos.horizontalDark.svg}
               label="Full Color — Dark background"
               bg="#0A0A0A"
-              download={logos.horizontalDark}
+              downloadSvg={logos.horizontalDark.svg}
+              downloadPng={logos.horizontalDark.png}
             />
             <LogoCard
-              src={logos.horizontalMono}
+              src={logos.horizontalMono.svg}
               label="Mono White — Dark background"
               bg="#1C4F8A"
-              download={logos.horizontalMono}
+              downloadSvg={logos.horizontalMono.svg}
+              downloadPng={logos.horizontalMono.png}
             />
           </div>
 
@@ -146,30 +161,39 @@ const StylePage = () => {
           <div className="pioneer-label mb-4">Compact & Badge</div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
             <LogoCard
-              src={logos.compactLight}
+              src={logos.compactLight.svg}
               label="Compact — Light background"
               bg="#FFFFFF"
-              download={logos.compactLight}
+              downloadSvg={logos.compactLight.svg}
+              downloadPng={logos.compactLight.png}
             />
             <LogoCard
-              src={logos.compactDark}
+              src={logos.compactDark.svg}
               label="Compact — Dark background"
               bg="#0A0A0A"
-              download={logos.compactDark}
+              downloadSvg={logos.compactDark.svg}
+              downloadPng={logos.compactDark.png}
             />
             <LogoCard
-              src={logos.badge}
+              src={logos.badge.svg}
               label="Badge"
               bg="#F4F5F7"
-              download={logos.badge}
+              downloadSvg={logos.badge.svg}
+              downloadPng={logos.badge.png}
             />
             <div className="card-accent overflow-hidden">
               <div className="flex items-center justify-center gap-6 p-8 min-h-[140px] bg-[#0A0A0A]">
-                <img src={logos.starBlue} alt="Star — Blue" className="h-14 object-contain" />
-                <img src={logos.starWhite} alt="Star — White" className="h-14 object-contain" />
+                <img src={logos.starBlue.svg} alt="Star — Blue" className="h-14 object-contain" />
+                <img src={logos.starWhite.svg} alt="Star — White" className="h-14 object-contain" />
               </div>
-              <div className="px-5 py-4">
+              <div className="px-5 py-4 flex flex-col gap-2">
                 <span className="text-xs text-muted-foreground font-medium">Star mark — Blue & White</span>
+                <div className="flex gap-3 flex-wrap">
+                  <a href={logos.starBlue.svg} download className="text-[11px] font-bold uppercase tracking-widest text-[#1E8EFF] hover:underline">Star SVG ↓</a>
+                  <a href={logos.starBlue.png} download className="text-[11px] font-bold uppercase tracking-widest text-[#1E8EFF] hover:underline">Star PNG ↓</a>
+                  <a href={logos.starWhite.svg} download className="text-[11px] font-bold uppercase tracking-widest text-[#1E8EFF] hover:underline">White SVG ↓</a>
+                  <a href={logos.starWhite.png} download className="text-[11px] font-bold uppercase tracking-widest text-[#1E8EFF] hover:underline">White PNG ↓</a>
+                </div>
               </div>
             </div>
           </div>
