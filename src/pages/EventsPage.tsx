@@ -267,7 +267,7 @@ const EventsPage = () => {
                   </h2>
                 </div>
                 <span className="tag-pill self-start sm:self-auto">
-                  {nextEvent.time === 'TBD' ? 'TBD' : formatEventDateShort(nextEvent.date)} · {nextEvent.city ?? 'Mpls'}
+                  {formatEventDateShort(nextEvent.date)} · {nextEvent.city ?? 'Mpls'}
                 </span>
               </div>
 
@@ -278,7 +278,7 @@ const EventsPage = () => {
                     Date
                   </div>
                   <div className="text-foreground font-semibold">
-                    {nextEvent.time === 'TBD' ? 'TBD' : formatEventDate(nextEvent.date)}
+                    {formatEventDate(nextEvent.date)}
                   </div>
                 </div>
                 <div className="px-8 py-6">
@@ -326,7 +326,14 @@ const EventsPage = () => {
                   <div className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-2">
                     Featured Pioneer
                   </div>
-                  <span className="text-sm text-muted-foreground">TBD</span>
+                  <a
+                    href="https://www.linkedin.com/in/leewinbush/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-foreground font-semibold hover:text-[#1E8EFF] transition-colors"
+                  >
+                    Lee Winbush ↗
+                  </a>
                 </div>
                 <div className="px-8 py-6">
                   <div className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-2">
@@ -449,7 +456,7 @@ const EventsPage = () => {
                     >
                       {event.title}
                     </h3>
-                    <span className="tag-pill text-[10px]">{event.city ? `${new Date(event.date).toLocaleString('en-US', { month: 'short' })} · ${event.city}` : 'TBD'}</span>
+                    <span className="tag-pill text-[10px]">{event.city ? `Sept · ${event.city}` : 'TBD'}</span>
                   </div>
                   {/* Row 2: metadata + button */}
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">

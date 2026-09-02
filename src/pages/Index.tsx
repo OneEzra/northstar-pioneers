@@ -44,7 +44,7 @@ const Index = () => {
   useSeoMeta({
     title: 'Northstar Pioneers — Twin Cities AI Collective',
     description:
-      'Builders, thinkers, and pioneers who believe intelligence is becoming as essential as electricity. Monthly meetup in Minneapolis, MN.',
+      'Northstar Pioneers are builders, thinkers, and storytellers who believe every generation inherits a task eternal: to learn deeply, to carry it honestly, and to leave the world a little more possible than we found it.',
   });
 
   const nextEvent = getNextEvent();
@@ -93,7 +93,7 @@ const Index = () => {
                 fill="#1E8EFF"
               />
             </svg>
-            <span className="pioneer-label">Monthly Mastermind · Greater Twin Cities, MN</span>
+            <span className="pioneer-label">AI Monthly Mastermind · Greater Twin Cities, MN</span>
           </div>
 
           {/* Headline */}
@@ -110,9 +110,7 @@ const Index = () => {
           </h1>
 
           <p className="text-foreground/80 text-lg sm:text-xl max-w-xl mb-10 leading-relaxed font-light">
-            Northstar Pioneers are builders, thinkers, and storytellers who believe
-            intelligence should be sovereign, shared, and open to everyone brave enough
-            to ask, "what if."
+            Northstar Pioneers are builders, thinkers, and storytellers who believe every generation inherits a task eternal: to learn deeply, to carry it honestly, and to leave the world a little more possible than we found it.
           </p>
 
           {/* CTA row */}
@@ -151,7 +149,7 @@ const Index = () => {
                 </h2>
               </div>
               <span className="tag-pill self-start sm:self-auto">
-                {nextEvent.time === 'TBD' ? 'TBD' : formatEventDateShort(nextEvent.date)} · {nextEvent.city ?? 'Mpls'}
+                {formatEventDateShort(nextEvent.date)} · {nextEvent.city ?? 'Mpls'}
               </span>
             </div>
 
@@ -161,7 +159,7 @@ const Index = () => {
                   Date
                 </div>
                 <div className="text-foreground font-semibold">
-                  {nextEvent.time === 'TBD' ? 'TBD' : formatEventDate(nextEvent.date)}
+                  {formatEventDate(nextEvent.date)}
                 </div>
               </div>
               <div className="px-8 py-6">
@@ -209,7 +207,14 @@ const Index = () => {
                 <div className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-2">
                   Featured Pioneer
                 </div>
-                <span className="text-sm text-muted-foreground">TBD</span>
+                <a
+                  href="https://www.linkedin.com/in/leewinbush/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-foreground font-semibold hover:text-[#1E8EFF] transition-colors"
+                >
+                  Lee Winbush ↗
+                </a>
               </div>
               <div className="px-8 py-6">
                 <div className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-2">
@@ -346,7 +351,7 @@ const Index = () => {
                   >
                     {event.title}
                   </h3>
-                  <span className="tag-pill text-[10px]">{event.city ? `${new Date(event.date).toLocaleString('en-US', { month: 'short' })} · ${event.city}` : 'TBD'}</span>
+                  <span className="tag-pill text-[10px]">{event.city ? `Sept · ${event.city}` : 'TBD'}</span>
                 </div>
                 {/* Row 2: metadata + button */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
