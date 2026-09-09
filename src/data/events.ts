@@ -86,6 +86,36 @@ export interface MeetupEvent {
 export const events: MeetupEvent[] = [
   // -- UPCOMING --------------------------------------------------
   {
+    slug: '2026-09',
+    title: 'September 2026 Meetup',
+    date: '2026-09-23T17:30:00',
+    time: '5:30 - 7:30 PM CDT',
+    venue: 'Nerdery',
+    address: '7700 France Ave S, Edina, MN',
+    city: 'Edina',
+    status: 'upcoming',
+    summary:
+      'Our monthly gathering -- Socratic news review, builder demo, and open networking. Pizza provided.',
+    topics: [],
+    builderDemo: undefined,
+  },
+  {
+    slug: '2026-10',
+    title: 'October 2026 Meetup',
+    date: '2026-10-01T17:30:00',
+    time: 'TBD',
+    venue: 'Nerdery',
+    address: '7700 France Ave S, Edina, MN',
+    city: 'Edina',
+    status: 'upcoming',
+    placeholder: true,
+    summary: 'Save the date — details coming soon.',
+    topics: [],
+    builderDemo: undefined,
+  },
+
+  // -- PAST ------------------------------------------------------
+  {
     slug: '2026-08',
     title: 'August 2026 Meetup',
     date: '2026-08-26T17:30:00',
@@ -93,7 +123,7 @@ export const events: MeetupEvent[] = [
     venue: 'Nerdery',
     address: '7700 France Ave S, Edina, MN',
     city: 'Edina',
-    status: 'upcoming',
+    status: 'past',
     meetupUrl: 'https://www.meetup.com/northstar-pioneers/events/',
     summary:
       'Our monthly gathering -- Socratic news review, builder demo, and open networking. Pizza provided.',
@@ -125,22 +155,6 @@ export const events: MeetupEvent[] = [
     ],
     builderDemo: undefined,
   },
-  {
-    slug: '2026-09',
-    title: 'September 2026 Meetup',
-    date: '2026-09-01T17:30:00',
-    time: 'TBD',
-    venue: 'Nerdery',
-    address: '7700 France Ave S, Edina, MN',
-    city: 'Edina',
-    status: 'upcoming',
-    placeholder: true,
-    summary: 'Save the date — details coming soon.',
-    topics: [],
-    builderDemo: undefined,
-  },
-
-  // -- PAST ------------------------------------------------------
   {
     slug: '2026-07',
     title: 'July 2026 Meetup',
