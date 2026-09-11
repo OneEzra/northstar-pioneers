@@ -186,8 +186,7 @@ export const events: MeetupEvent[] = [
     city: 'Edina',
     status: 'past',
     meetupUrl: 'https://www.meetup.com/northstar-pioneers/events/',
-    summary:
-      'Our monthly gathering -- Socratic news review, builder demo, and open networking. Pizza provided.',
+    summary: '',
     topics: [
       {
         title: 'Maple',
