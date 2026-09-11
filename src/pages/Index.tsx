@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useSeoMeta } from '@unhead/react';
 import { SiteNav } from '@/components/SiteNav';
 import { SiteFooter } from '@/components/SiteFooter';
+import { ShareEventButton } from '@/components/ShareEventButton';
 import {
   getNextEvent,
   getUpcomingEvents,
@@ -335,6 +336,7 @@ const Index = () => {
               >
                 Pioneers Telegram
               </a>
+              <ShareEventButton slug={nextEvent.slug} title={nextEvent.title} className="ml-auto" />
             </div>
           </div>
         </section>
@@ -369,14 +371,17 @@ const Index = () => {
                     <span><span className="font-bold uppercase tracking-wider text-foreground/60">Pioneer</span> — TBD</span>
                     <span><span className="font-bold uppercase tracking-wider text-foreground/60">Topics</span> — TBD</span>
                   </div>
-                  <a
-                    href="https://t.me/northstarpioneerscommunity"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="shrink-0 self-start sm:self-auto text-muted-foreground border border-border font-bold text-xs uppercase tracking-widest px-5 py-2.5 rounded-[2px] hover:text-foreground hover:border-foreground/40 transition-colors"
-                  >
-                    Pioneers Telegram ↗
-                  </a>
+                  <div className="flex items-center gap-4 shrink-0 self-start sm:self-auto">
+                    <ShareEventButton slug={event.slug} title={event.title} />
+                    <a
+                      href="https://t.me/northstarpioneerscommunity"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-muted-foreground border border-border font-bold text-xs uppercase tracking-widest px-5 py-2.5 rounded-[2px] hover:text-foreground hover:border-foreground/40 transition-colors"
+                    >
+                      Pioneers Telegram ↗
+                    </a>
+                  </div>
                 </div>
               </div>
             ))}
