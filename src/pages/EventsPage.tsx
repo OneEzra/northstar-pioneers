@@ -115,8 +115,8 @@ function EventCard({ event }: { event: MeetupEvent }) {
         </div>
       )}
 
-      {/* 3-column action row */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-border border-t border-border">
+      {/* 2-column action row */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x divide-border border-t border-border">
         {/* View Topics */}
         <div className="px-7 py-4 flex items-center">
           {event.topics.length > 0 ? (
@@ -139,22 +139,6 @@ function EventCard({ event }: { event: MeetupEvent }) {
           >
             View Full Details →
           </Link>
-        </div>
-
-        {/* Meetup Page */}
-        <div className="px-7 py-4 flex items-center">
-          {event.meetupUrl ? (
-            <a
-              href={event.meetupUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-xs font-bold uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors"
-            >
-              Meetup Page ↗
-            </a>
-          ) : (
-            <span className="text-xs text-muted-foreground uppercase tracking-widest font-bold opacity-40">—</span>
-          )}
         </div>
       </div>
 
