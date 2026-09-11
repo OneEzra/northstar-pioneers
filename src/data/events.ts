@@ -213,8 +213,43 @@ export const events: MeetupEvent[] = [
           },
         ],
       },
+      {
+        title: 'Mac Studio M5 Ultra',
+        description:
+          'Apple\'s new Mac Studio with the M5 Ultra chip pushes the boundary of what\'s possible for local AI workloads on consumer hardware.',
+        resources: [
+          {
+            type: 'link',
+            label: 'Apple — Mac Studio M5 Ultra',
+            url: 'https://www.apple.com/mac-studio/',
+          },
+        ],
+      },
+      {
+        title: 'Coldcard Wallet Bug',
+        description:
+          'A discovered vulnerability in the Coldcard hardware wallet raised questions about security assumptions in air-gapped signing devices.',
+        resources: [],
+      },
+      {
+        title: 'Claude Text Watermarking',
+        description:
+          'Anthropic is exploring text watermarking in Claude outputs — invisible signals embedded in generated text to help identify AI-authored content.',
+        resources: [
+          {
+            type: 'link',
+            label: 'Anthropic — Claude',
+            url: 'https://www.anthropic.com/claude',
+          },
+        ],
+      },
     ],
-    builderDemo: undefined,
+    builderDemo: {
+      title: 'Personal Belt: Health, Fitness & Life Countdown',
+      presenter: 'Lee Winbush',
+      description:
+        'Lee built a personal belt — a wearable health and fitness tracker tailored to his own workout style, complete with a custom timer for his training sessions and a countdown clock to his 50th birthday. A great example of using AI-assisted development to ship something deeply personal and immediately useful.',
+    },
   },
   {
     slug: '2026-07',
