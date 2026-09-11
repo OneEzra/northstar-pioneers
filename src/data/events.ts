@@ -247,6 +247,7 @@ export const events: MeetupEvent[] = [
     builderDemo: {
       title: 'Personalized Health & Fitness Tracker',
       presenter: 'Lee Winbush',
+      presenterLinkedIn: 'https://www.linkedin.com/in/leewinbush/',
       description:
         'Lee built a personalized health and fitness tracker tailored to his own workout style, complete with a custom timer for his training sessions and a countdown clock to his 50th birthday. A great example of using AI-assisted development to ship something deeply personal and immediately useful.',
     },
