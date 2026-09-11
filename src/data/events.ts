@@ -245,10 +245,10 @@ export const events: MeetupEvent[] = [
       },
     ],
     builderDemo: {
-      title: 'Personal Belt: Health, Fitness & Life Countdown',
+      title: 'Personalized Health & Fitness Tracker',
       presenter: 'Lee Winbush',
       description:
-        'Lee built a personal belt — a wearable health and fitness tracker tailored to his own workout style, complete with a custom timer for his training sessions and a countdown clock to his 50th birthday. A great example of using AI-assisted development to ship something deeply personal and immediately useful.',
+        'Lee built a personalized health and fitness tracker tailored to his own workout style, complete with a custom timer for his training sessions and a countdown clock to his 50th birthday. A great example of using AI-assisted development to ship something deeply personal and immediately useful.',
     },
   },
   {
