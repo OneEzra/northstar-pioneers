@@ -158,7 +158,13 @@ export const events: MeetupEvent[] = [
         ],
       },
     ],
-    builderDemo: undefined,
+    builderDemo: {
+      title: 'Bitcoin Vending Machine Payment Interface',
+      presenter: 'Tommy Volk',
+      presenterUrl: 'https://github.com/tvolk131',
+      description:
+        'Learn how Tommy built a vending machine payment interface that uses Bitcoin to trigger vending operations.',
+    },
   },
   {
     slug: '2026-10',
