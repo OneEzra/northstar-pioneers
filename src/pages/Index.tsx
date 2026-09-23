@@ -357,14 +357,14 @@ const Index = () => {
                   </h3>
                   <span className="tag-pill text-[10px]">
                     {event.city
-                      ? `${new Date(event.date).toLocaleDateString('en-US', { month: 'short' })} · ${event.city}`
+                      ? `${formatEventDateShort(event.date)} · ${event.city}`
                       : 'TBD'}
                   </span>
                 </div>
                 {/* Row 2: metadata + button */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div className="flex items-center gap-4 text-xs text-muted-foreground flex-wrap">
-                    <span><span className="font-bold uppercase tracking-wider text-foreground/60">Date</span> — TBD</span>
+                    <span><span className="font-bold uppercase tracking-wider text-foreground/60">Date</span> — {formatEventDate(event.date)}</span>
                     <span><span className="font-bold uppercase tracking-wider text-foreground/60">Venue</span> — {event.venue}</span>
                     <span><span className="font-bold uppercase tracking-wider text-foreground/60">Pioneer</span> — TBD</span>
                     <span><span className="font-bold uppercase tracking-wider text-foreground/60">Topics</span> — TBD</span>
