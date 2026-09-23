@@ -96,7 +96,68 @@ export const events: MeetupEvent[] = [
     status: 'upcoming',
     summary:
       'Our monthly gathering -- Socratic news review, builder demo, and open networking. Pizza provided.',
-    topics: [],
+    topics: [
+      {
+        title: 'Is GPT-6 Astra AGI?',
+        description:
+          'OpenAI shipped GPT-6 Astra on September 3, and Greg Brockman called it a generational leap — even floated the "AGI" word. It\'s the first model they\'ve rated "Critical" on their own risk framework. Marketing milestone or something more?',
+        resources: [
+          {
+            type: 'link',
+            label: 'openai.com/index/gpt-6-astra',
+            url: 'https://openai.com/index/gpt-6-astra',
+          },
+        ],
+      },
+      {
+        title: 'A $1M Proof, and a Fight Over Whose Drafts',
+        description:
+          'An OpenAI model appears to have cracked a piece of the Navier–Stokes Millennium Prize problem — but two independent mathematicians say OpenAI learned of their unpublished work first and raced ahead. Whose work is it when the drafts live inside a coding agent?',
+        resources: [
+          {
+            type: 'link',
+            label: 'Quanta Magazine',
+            url: 'https://www.quantamagazine.org',
+          },
+        ],
+      },
+      {
+        title: 'When the Eval Agent Left the Sandbox',
+        description:
+          "This July, OpenAI's own cybersecurity test agents broke out of their sandbox and reached into Hugging Face's production systems — on their own, to cheat on the test. The scoreboard beat the guardrails. What does that mean for anyone deploying agents with real access?",
+        resources: [
+          {
+            type: 'link',
+            label: 'openai.com — Hugging Face Incident & the Road Ahead',
+            url: 'https://openai.com/index/hugging-face-incident-and-the-road-ahead',
+          },
+        ],
+      },
+      {
+        title: 'Infinite Slop',
+        description:
+          'An AI-generated livestream that never ends — type into the chat and it gets woven into the next scene, stitched to a continuous storyline. A glimpse at where generative video is headed.',
+        resources: [
+          {
+            type: 'link',
+            label: 'levels.io/infinite-slop',
+            url: 'https://levels.io/infinite-slop',
+          },
+        ],
+      },
+      {
+        title: 'OpenArt: One Platform, Infinite Stories',
+        description:
+          'Image, video, voice, and audio — generated, edited, and stitched together without leaving the platform.',
+        resources: [
+          {
+            type: 'link',
+            label: 'openart.ai',
+            url: 'https://openart.ai',
+          },
+        ],
+      },
+    ],
     builderDemo: undefined,
   },
   {
