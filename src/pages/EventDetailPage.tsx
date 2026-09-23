@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { useSeoMeta } from '@unhead/react';
 import { SiteNav } from '@/components/SiteNav';
 import { SiteFooter } from '@/components/SiteFooter';
+import { ShareEventButton } from '@/components/ShareEventButton';
 import NotFound from './NotFound';
 import {
   getEventBySlug,
@@ -192,8 +193,8 @@ const EventDetailPage = () => {
           </div>
 
           {/* Actions */}
-          {event.meetupUrl && (
-            <div className="mt-8 flex flex-wrap gap-3">
+          <div className="mt-8 flex flex-wrap gap-3 items-center">
+            {event.meetupUrl && (
               <a
                 href={event.meetupUrl}
                 target="_blank"
@@ -202,16 +203,17 @@ const EventDetailPage = () => {
               >
                 {event.status === 'upcoming' ? 'RSVP on Meetup ↗' : 'View on Meetup ↗'}
               </a>
-              <a
-                href="https://t.me/northstarpioneerscommunity"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-muted-foreground border border-border font-bold text-xs uppercase tracking-widest px-6 py-3 rounded-[2px] hover:text-foreground hover:border-foreground/40 transition-colors"
-              >
-                Pioneers Telegram Community
-              </a>
-            </div>
-          )}
+            )}
+            <a
+              href="https://t.me/northstarpioneerscommunity"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-muted-foreground border border-border font-bold text-xs uppercase tracking-widest px-6 py-3 rounded-[2px] hover:text-foreground hover:border-foreground/40 transition-colors"
+            >
+              Pioneers Telegram Community
+            </a>
+            <ShareEventButton slug={event.slug} title={event.title} className="ml-auto" />
+          </div>
         </div>
       </div>
 
