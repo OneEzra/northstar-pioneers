@@ -41,7 +41,9 @@ export const NSP_ADMIN_PUBKEY: string =
  * another admin re-save those first.
  */
 const EXTRA_ADMIN_PUBKEYS: string[] = [
-  // 'hex pubkey of co-organizer',
+  // Ezra (personal "oneezra"): npub1qpudfjck2f2jgad6v8ky88x4psmu8gay8xznmqcd0jwn8zpx4h3qrxqkv4
+  '0078d4cb1652552475ba61ec439cd50c37c3a3a439853d830d7c9d338826ade2',
+  // To add someone: convert their npub to hex and add a line here, with a comment saying who it is.
   ...((import.meta.env.VITE_NSP_EXTRA_ADMIN_PUBKEYS as string | undefined) ?? '')
     .split(',')
     .map((k) => k.trim())

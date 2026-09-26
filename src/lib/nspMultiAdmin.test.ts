@@ -27,7 +27,8 @@ const oct = {
 
 describe('multiple admins', () => {
   test('the organizer and the co-organizer are both admins; a stranger is not', () => {
-    expect(mod.NSP_ADMIN_PUBKEYS).toEqual([mod.NSP_ADMIN_PUBKEY, COFOUNDER]);
+    expect(mod.NSP_ADMIN_PUBKEYS[0]).toBe(mod.NSP_ADMIN_PUBKEY);
+    expect(mod.NSP_ADMIN_PUBKEYS).toContain(COFOUNDER);
     expect(mod.isNspAdmin(COFOUNDER)).toBe(true);
     expect(mod.isNspAdmin(STRANGER)).toBe(false);
   });
@@ -57,4 +58,10 @@ describe('multiple admins', () => {
     expect(e?.title).toBe('December Meetup');
     expect(e?.state).toBe('active');
   });
+});
+
+test("Ezra's personal account is a configured admin", async () => {
+  const { nip19 } = await import('nostr-tools');
+  const hex = nip19.decode('npub1qpudfjck2f2jgad6v8ky88x4psmu8gay8xznmqcd0jwn8zpx4h3qrxqkv4').data as string;
+  expect(mod.isNspAdmin(hex)).toBe(true);
 });
