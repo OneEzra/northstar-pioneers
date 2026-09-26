@@ -3,9 +3,13 @@
 //
 //  HOW TO ADD AN EVENT
 //  1. Copy one of the objects below.
-//  2. Set `status` to "upcoming" for future events, "past" for completed ones.
-//  3. Add topics, demos, and resources (slides, links, etc.).
-//  4. Set `slug` to a URL-friendly identifier (e.g. "2025-08").
+//  2. Set `slug` to the meetup date, e.g. "2026-10-27".
+//  3. Set `date` (start) in Central time, e.g. "2026-10-27T17:30".
+//     `end` is optional -- it defaults to 2 hours after the start.
+//  4. Add topics, demos, and resources whenever they're known.
+//
+//  Upcoming vs. past is worked out automatically from the end time,
+//  so the next meetup moves into the spotlight on its own.
 //
 //  RESOURCE TYPES
 //   "slides"  -- slide deck (HTML, PDF, PPTX, PNG)
@@ -40,19 +44,22 @@ export interface Topic {
   presenter?: string;
 }
 
-export interface MeetupEvent {
+/** An event as written in this file (or loaded from Nostr). */
+export interface MeetupEventInput {
+  /** URL id -- the meetup date, e.g. "2026-10-27" */
   slug: string;
+  /** Older URL ids that should redirect here, e.g. "2026-10" */
+  aliases?: string[];
   /** Display title, e.g. "August 2025 Meetup" */
   title: string;
-  /** ISO 8601 date-time, e.g. "2025-08-18T17:00:00" */
+  /** Start, as Central (America/Chicago) wall-clock time, e.g. "2026-10-27T17:30" */
   date: string;
-  /** Human-readable time range */
-  time: string;
+  /** End, Central wall-clock time. Defaults to 2 hours after the start. */
+  end?: string;
   venue: string;
   address: string;
   /** Short city name for tags/pills, e.g. "Edina", "Mpls" */
   city?: string;
-  status: 'upcoming' | 'past';
   meetupUrl?: string;
   /** Short summary shown on the card */
   summary: string;
@@ -75,25 +82,37 @@ export interface MeetupEvent {
   photoUrl?: string;
   /** Number of attendees (for past events) */
   attendees?: number;
-  /** True for save-the-date placeholders with no confirmed details yet */
-  placeholder?: boolean;
+}
+
+export type EventStatus = 'upcoming' | 'past';
+
+/** An event ready for display, with computed timing and status. */
+export interface MeetupEvent extends MeetupEventInput {
+  /** Start as a full ISO timestamp (UTC) */
+  date: string;
+  /** End as a full ISO timestamp (UTC) */
+  end: string;
+  /** Display time range in Central time, e.g. "5:30 – 7:30 PM CDT" */
+  time: string;
+  /** Computed from the end time */
+  status: EventStatus;
+  /** True when no featured pioneer or topics are set yet */
+  placeholder: boolean;
 }
 
 // -----------------------------------------------------------------
-//  EVENTS  (newest first within each status group)
+//  EVENTS  (any order -- sorting and status are automatic)
 // -----------------------------------------------------------------
 
-export const events: MeetupEvent[] = [
-  // -- UPCOMING --------------------------------------------------
+export const events: MeetupEventInput[] = [
   {
-    slug: '2026-09',
+    slug: '2026-09-23',
+    aliases: ['2026-09'],
     title: 'September 2026 Meetup',
-    date: '2026-09-23T17:30:00',
-    time: '5:30 - 7:30 PM CDT',
+    date: '2026-09-23T17:30',
     venue: 'Nerdery',
     address: '7700 France Ave S, Edina, MN',
     city: 'Edina',
-    status: 'upcoming',
     summary:
       'Our monthly gathering -- Socratic news review, builder demo, and open networking. Pizza provided.',
     topics: [
@@ -167,44 +186,38 @@ export const events: MeetupEvent[] = [
     },
   },
   {
-    slug: '2026-10',
+    slug: '2026-10-27',
+    aliases: ['2026-10'],
     title: 'October 2026 Meetup',
-    date: '2026-10-27T17:30:00',
-    time: '5:30 PM CDT',
+    date: '2026-10-27T17:30',
     venue: 'Nerdery',
     address: '7700 France Ave S, Edina, MN',
     city: 'Edina',
-    status: 'upcoming',
-    placeholder: true,
     summary: 'Save the date — details coming soon.',
     topics: [],
     builderDemo: undefined,
   },
   {
-    slug: '2026-11',
+    slug: '2026-11-17',
+    aliases: ['2026-11'],
     title: 'November 2026 Meetup',
-    date: '2026-11-17T17:30:00',
-    time: '5:30 PM CST',
+    date: '2026-11-17T17:30',
     venue: 'Nerdery',
     address: '7700 France Ave S, Edina, MN',
     city: 'Edina',
-    status: 'upcoming',
-    placeholder: true,
     summary: 'Save the date — details coming soon.',
     topics: [],
     builderDemo: undefined,
   },
 
-  // -- PAST ------------------------------------------------------
   {
-    slug: '2026-08',
+    slug: '2026-08-26',
+    aliases: ['2026-08'],
     title: 'August 2026 Meetup',
-    date: '2026-08-26T17:30:00',
-    time: '5:30 - 7:30 PM CDT',
+    date: '2026-08-26T17:30',
     venue: 'Nerdery',
     address: '7700 France Ave S, Edina, MN',
     city: 'Edina',
-    status: 'past',
     meetupUrl: 'https://www.meetup.com/northstar-pioneers/events/',
     summary:
       'Our monthly gathering -- Socratic news review, builder demo, and open networking. Pizza provided.',
@@ -237,13 +250,12 @@ export const events: MeetupEvent[] = [
     builderDemo: undefined,
   },
   {
-    slug: '2026-07',
+    slug: '2026-07-20',
+    aliases: ['2026-07'],
     title: 'July 2026 Meetup',
-    date: '2026-07-20T17:30:00',
-    time: '5:30 - 7:30 PM CDT',
+    date: '2026-07-20T17:30',
     venue: 'Improving',
     address: '3033 Excelsior Blvd #180, Minneapolis, MN 55416',
-    status: 'past',
     meetupUrl: 'https://www.meetup.com/northstar-pioneers/events/315300557/',
     summary: '',
     topics: [
@@ -331,13 +343,12 @@ export const events: MeetupEvent[] = [
   },
 
   {
-    slug: '2026-06',
+    slug: '2026-06-09',
+    aliases: ['2026-06'],
     title: 'Inaugural Gathering',
-    date: '2026-06-09T17:00:00',
-    time: '5:00 - 7:00 PM CDT',
+    date: '2026-06-09T17:00',
     venue: 'Improving',
     address: '3033 Excelsior Blvd #180, Minneapolis, MN 55416',
-    status: 'past',
     meetupUrl: 'https://www.meetup.com/northstar-pioneers/events/314465552/',
     summary:
       'The inaugural Northstar Pioneers gathering. Topics spanned learning with AI, defining AGI, infrastructure, and capital flows reshaping the industry.',
@@ -492,35 +503,118 @@ export const events: MeetupEvent[] = [
   },
 ];
 
+// --- Timing ------------------------------------------------------
+
+/** All meetups are scheduled in Central time. */
+export const EVENT_TIME_ZONE = 'America/Chicago';
+
+/** Default meetup length when no end time is given. */
+export const DEFAULT_DURATION_MS = 2 * 60 * 60 * 1000;
+
+/** Offset (ms) of `timeZone` from UTC at the given instant. */
+function tzOffsetMs(instant: number, timeZone: string): number {
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone,
+    hourCycle: 'h23',
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    second: 'numeric',
+  }).formatToParts(new Date(instant));
+  const get = (type: string) => Number(parts.find((p) => p.type === type)?.value ?? 0);
+  const asUtc = Date.UTC(get('year'), get('month') - 1, get('day'), get('hour'), get('minute'), get('second'));
+  return asUtc - (instant - (instant % 1000));
+}
+
+/**
+ * Convert a Central wall-clock time ("2026-10-27T17:30") to epoch ms.
+ * Strings that already carry an offset or "Z" are parsed as-is.
+ */
+export function parseEventTime(value: string, timeZone = EVENT_TIME_ZONE): number {
+  if (/[zZ]|[+-]\d\d:?\d\d$/.test(value)) return new Date(value).getTime();
+  const m = value.match(/^(\d{4})-(\d\d)-(\d\d)(?:T(\d\d):(\d\d)(?::(\d\d))?)?$/);
+  if (!m) return new Date(value).getTime();
+  const [, y, mo, d, h = '0', mi = '0', se = '0'] = m;
+  const guess = Date.UTC(+y, +mo - 1, +d, +h, +mi, +se);
+  // Two passes handle the hour around daylight-saving changes.
+  const first = guess - tzOffsetMs(guess, timeZone);
+  return guess - tzOffsetMs(first, timeZone);
+}
+
+/** "5:30 – 7:30 PM CDT" (or "11:30 AM – 1:30 PM CST") in Central time. */
+function formatTimeRange(start: number, end: number): string {
+  const fmt = (ms: number, withZone: boolean) =>
+    new Intl.DateTimeFormat('en-US', {
+      timeZone: EVENT_TIME_ZONE,
+      hour: 'numeric',
+      minute: '2-digit',
+      ...(withZone ? { timeZoneName: 'short' } : {}),
+    }).format(new Date(ms));
+  const startStr = fmt(start, false); // "5:30 PM"
+  const endStr = fmt(end, true); // "7:30 PM CDT"
+  const startPeriod = startStr.slice(-2);
+  const sameHalf = endStr.includes(` ${startPeriod} `);
+  return `${sameHalf ? startStr.slice(0, -3) : startStr} – ${endStr}`;
+}
+
+/** Add computed timing, status, and placeholder flag to a stored event. */
+export function resolveEvent(input: MeetupEventInput, now: number = Date.now()): MeetupEvent {
+  const start = parseEventTime(input.date);
+  const end = input.end ? parseEventTime(input.end) : start + DEFAULT_DURATION_MS;
+  return {
+    ...input,
+    date: new Date(start).toISOString(),
+    end: new Date(end).toISOString(),
+    time: formatTimeRange(start, end),
+    status: now < end ? 'upcoming' : 'past',
+    placeholder: !input.builderDemo && input.topics.length === 0,
+  };
+}
+
 // --- Helpers ---------------------------------------------------
 
+/** All events with computed status. */
+export function getAllEvents(now: number = Date.now()): MeetupEvent[] {
+  return events.map((e) => resolveEvent(e, now));
+}
+
 /** Returns all upcoming events sorted by date (soonest first) */
-export function getUpcomingEvents(): MeetupEvent[] {
-  return events
+export function getUpcomingEvents(now: number = Date.now()): MeetupEvent[] {
+  return getAllEvents(now)
     .filter((e) => e.status === 'upcoming')
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 }
 
-/** Returns the next upcoming event, or null */
-export function getNextEvent(): MeetupEvent | null {
-  return getUpcomingEvents().find((e) => !e.placeholder) ?? getUpcomingEvents()[0] ?? null;
+/** The soonest upcoming event -- the one in the spotlight -- or null */
+export function getNextEvent(now: number = Date.now()): MeetupEvent | null {
+  return getUpcomingEvents(now)[0] ?? null;
+}
+
+/** Upcoming events after the spotlight one ("On the Horizon") */
+export function getHorizonEvents(now: number = Date.now()): MeetupEvent[] {
+  return getUpcomingEvents(now).slice(1);
 }
 
 /** Returns all past events, newest first */
-export function getPastEvents(): MeetupEvent[] {
-  return events
+export function getPastEvents(now: number = Date.now()): MeetupEvent[] {
+  return getAllEvents(now)
     .filter((e) => e.status === 'past')
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 }
 
-/** Find an event by slug */
-export function getEventBySlug(slug: string): MeetupEvent | undefined {
-  return events.find((e) => e.slug === slug);
+/** Find an event by slug, or by an older alias slug (e.g. "2026-09") */
+export function getEventBySlug(slug: string, now: number = Date.now()): MeetupEvent | undefined {
+  const input =
+    events.find((e) => e.slug === slug) ?? events.find((e) => e.aliases?.includes(slug));
+  return input ? resolveEvent(input, now) : undefined;
 }
 
 /** Format a date string for display, e.g. "Monday, June 9, 2025" */
 export function formatEventDate(dateStr: string): string {
   return new Date(dateStr).toLocaleDateString('en-US', {
+    timeZone: EVENT_TIME_ZONE,
     weekday: 'long',
     year: 'numeric',
     month: 'long',
@@ -528,17 +622,19 @@ export function formatEventDate(dateStr: string): string {
   });
 }
 
-/** Format a date string to short form, e.g. "Jun 9" */
+/** Short date, e.g. "Jun 9" */
 export function formatEventDateShort(dateStr: string): string {
   return new Date(dateStr).toLocaleDateString('en-US', {
+    timeZone: EVENT_TIME_ZONE,
     month: 'short',
     day: 'numeric',
   });
 }
 
-/** Format just the month+year, e.g. "June 2025" */
+/** Month and year, e.g. "June 2025" */
 export function formatEventMonth(dateStr: string): string {
   return new Date(dateStr).toLocaleDateString('en-US', {
+    timeZone: EVENT_TIME_ZONE,
     month: 'long',
     year: 'numeric',
   });

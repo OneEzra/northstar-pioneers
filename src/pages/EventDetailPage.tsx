@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, Navigate, useParams } from 'react-router-dom';
 import { useSeoMeta } from '@unhead/react';
 import { SiteNav } from '@/components/SiteNav';
 import { SiteFooter } from '@/components/SiteFooter';
@@ -125,6 +125,9 @@ const EventDetailPage = () => {
   });
 
   if (!event) return <NotFound />;
+
+  // Old links (e.g. /events/2026-09) redirect to the date-based URL
+  if (slug !== event.slug) return <Navigate to={`/events/${event.slug}`} replace />;
 
   const pastEvents = getPastEvents();
   const currentIndex = pastEvents.findIndex((e) => e.slug === event.slug);

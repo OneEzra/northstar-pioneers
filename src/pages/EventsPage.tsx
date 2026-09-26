@@ -6,10 +6,9 @@ import { SiteNav } from '@/components/SiteNav';
 import { SiteFooter } from '@/components/SiteFooter';
 import { ShareEventButton } from '@/components/ShareEventButton';
 import {
-  events,
   getPastEvents,
   getNextEvent,
-  getUpcomingEvents,
+  getHorizonEvents,
   formatEventDate,
   formatEventDateShort,
   type MeetupEvent,
@@ -208,7 +207,7 @@ const EventsPage = () => {
 
   const pastEvents = getPastEvents();
   const nextEvent = getNextEvent();
-  const placeholderEvents = getUpcomingEvents().filter((e) => e.placeholder);
+  const placeholderEvents = getHorizonEvents();
   const [topicsOpen, setTopicsOpen] = useState(false);
 
   return (
@@ -462,8 +461,8 @@ const EventsPage = () => {
                     <div className="flex items-center gap-4 text-xs text-muted-foreground flex-wrap">
                       <span><span className="font-bold uppercase tracking-wider text-foreground/60">Date</span> — {formatEventDate(event.date)}</span>
                       <span><span className="font-bold uppercase tracking-wider text-foreground/60">Venue</span> — {event.venue}</span>
-                      <span><span className="font-bold uppercase tracking-wider text-foreground/60">Pioneer</span> — TBD</span>
-                      <span><span className="font-bold uppercase tracking-wider text-foreground/60">Topics</span> — TBD</span>
+                      <span><span className="font-bold uppercase tracking-wider text-foreground/60">Pioneer</span> — {event.builderDemo?.presenter ?? 'TBD'}</span>
+                      <span><span className="font-bold uppercase tracking-wider text-foreground/60">Topics</span> — {event.topics.length > 0 ? `${event.topics.length} selected` : 'TBD'}</span>
                     </div>
                     <div className="flex items-center gap-4 shrink-0 self-start sm:self-auto">
                       <ShareEventButton slug={event.slug} title={event.title} />

@@ -5,16 +5,18 @@ import { SiteNav } from '@/components/SiteNav';
 import { SiteFooter } from '@/components/SiteFooter';
 import {
   getNextEvent,
-  getUpcomingEvents,
+  getHorizonEvents,
   getPastEvents,
   formatEventDate,
   formatEventDateShort,
   type MeetupEvent,
+  EVENT_TIME_ZONE,
 } from '@/data/events';
 
 /** Format date as "Jul 20, 2026" */
 function formatDateWithYear(dateStr: string): string {
   return new Date(dateStr).toLocaleDateString('en-US', {
+    timeZone: EVENT_TIME_ZONE,
     month: 'short',
     day: 'numeric',
     year: 'numeric',
@@ -48,8 +50,7 @@ const Index = () => {
   });
 
   const nextEvent = getNextEvent();
-  const upcomingEvents = getUpcomingEvents();
-  const placeholderEvents = upcomingEvents.filter((e) => e.placeholder);
+  const placeholderEvents = getHorizonEvents();
   const pastEvents = getPastEvents().slice(0, 2);
   const [topicsOpen, setTopicsOpen] = useState(false);
 
@@ -366,8 +367,8 @@ const Index = () => {
                   <div className="flex items-center gap-4 text-xs text-muted-foreground flex-wrap">
                     <span><span className="font-bold uppercase tracking-wider text-foreground/60">Date</span> — {formatEventDate(event.date)}</span>
                     <span><span className="font-bold uppercase tracking-wider text-foreground/60">Venue</span> — {event.venue}</span>
-                    <span><span className="font-bold uppercase tracking-wider text-foreground/60">Pioneer</span> — TBD</span>
-                    <span><span className="font-bold uppercase tracking-wider text-foreground/60">Topics</span> — TBD</span>
+                    <span><span className="font-bold uppercase tracking-wider text-foreground/60">Pioneer</span> — {event.builderDemo?.presenter ?? 'TBD'}</span>
+                    <span><span className="font-bold uppercase tracking-wider text-foreground/60">Topics</span> — {event.topics.length > 0 ? `${event.topics.length} selected` : 'TBD'}</span>
                   </div>
                   <a
                     href="https://t.me/northstarpioneerscommunity"
