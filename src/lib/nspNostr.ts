@@ -12,7 +12,8 @@
 //      JSON that only this site reads.
 //
 //  Publishing either record again with the same ID replaces it.
-//  Only records signed by NSP_ADMIN_PUBKEY are trusted.
+//  Only records signed by an account in NSP_ADMIN_PUBKEYS are trusted.
+//  When admins edit the same event, the most recent save wins.
 // -----------------------------------------------------------------
 
 import type { NostrEvent } from '@nostrify/nostrify';
@@ -33,6 +34,24 @@ import {
 export const NSP_ADMIN_PUBKEY: string =
   (import.meta.env.VITE_NSP_ADMIN_PUBKEY as string | undefined) ??
   '85554f0441c805079bd560415af0f8ff1e04e5b545f6cd07fb032f51b6f64cdc';
+
+/**
+ * Additional admins (hex pubkeys). Add a co-organizer here and redeploy.
+ * Removing someone hides the events/programs they last saved -- have
+ * another admin re-save those first.
+ */
+const EXTRA_ADMIN_PUBKEYS: string[] = [
+  // 'hex pubkey of co-organizer',
+  ...((import.meta.env.VITE_NSP_EXTRA_ADMIN_PUBKEYS as string | undefined) ?? '')
+    .split(',')
+    .map((k) => k.trim())
+    .filter((k) => /^[0-9a-f]{64}$/.test(k)),
+];
+
+/** Every account allowed to manage events. */
+export const NSP_ADMIN_PUBKEYS: string[] = [NSP_ADMIN_PUBKEY, ...EXTRA_ADMIN_PUBKEYS];
+
+export const isNspAdmin = (pubkey?: string | null): boolean => !!pubkey && NSP_ADMIN_PUBKEYS.includes(pubkey);
 
 /**
  * Relays events are published to and read from, for every visitor.
@@ -140,7 +159,7 @@ export function buildCalendarEvent(e: CalendarFields, pubkey = NSP_ADMIN_PUBKEY)
 
 /** Parse a calendar event we published. Returns null if it isn't one of ours or is malformed. */
 export function parseCalendarEvent(ev: NostrEvent): CalendarFields | null {
-  if (ev.kind !== KIND_CALENDAR_EVENT || ev.pubkey !== NSP_ADMIN_PUBKEY) return null;
+  if (ev.kind !== KIND_CALENDAR_EVENT || !isNspAdmin(ev.pubkey)) return null;
   const slug = tag(ev, 'd');
   const title = tag(ev, 'title');
   const start = Number(tag(ev, 'start'));
@@ -155,6 +174,7 @@ export function parseCalendarEvent(ev: NostrEvent): CalendarFields | null {
 
   return {
     slug,
+    author: ev.pubkey,
     title,
     date: toCentralWallTime(start),
     end: Number.isFinite(endRaw) && endRaw > start ? toCentralWallTime(endRaw) : undefined,
@@ -230,7 +250,7 @@ export function buildProgramEvent(slug: string, program: EventProgram, pubkey = 
 
 /** Parse a program record we published. URLs are sanitized; bad data returns null. */
 export function parseProgramEvent(ev: NostrEvent): { slug: string; program: EventProgram } | null {
-  if (ev.kind !== KIND_APP_DATA || ev.pubkey !== NSP_ADMIN_PUBKEY) return null;
+  if (ev.kind !== KIND_APP_DATA || !isNspAdmin(ev.pubkey)) return null;
   const d = tag(ev, 'd');
   if (!d?.startsWith(PROGRAM_D_PREFIX)) return null;
   const slug = d.slice(PROGRAM_D_PREFIX.length);
@@ -268,11 +288,14 @@ export function parseProgramEvent(ev: NostrEvent): { slug: string; program: Even
 
 // --- Merge -------------------------------------------------------
 
-/** Keep only the newest version of each replaceable record (relays may return several). */
+/**
+ * Keep only the newest version of each record (relays may return several,
+ * and several admins may have saved the same event ID). Newest save wins.
+ */
 export function latestByD(events: NostrEvent[]): NostrEvent[] {
   const best = new Map<string, NostrEvent>();
   for (const ev of events) {
-    const key = `${ev.kind}:${ev.pubkey}:${tag(ev, 'd') ?? ''}`;
+    const key = `${ev.kind}:${tag(ev, 'd') ?? ''}`;
     const cur = best.get(key);
     if (!cur || ev.created_at > cur.created_at || (ev.created_at === cur.created_at && ev.id < cur.id)) {
       best.set(key, ev);
@@ -287,7 +310,9 @@ export function latestByD(events: NostrEvent[]): NostrEvent[] {
  * (e.g. before an event has been published, or if relays are down).
  */
 export function mergeEvents(backup: MeetupEventInput[], nostrEvents: NostrEvent[]): MeetupEventInput[] {
-  const latest = latestByD(nostrEvents);
+  // Drop anything not signed by an admin BEFORE picking the newest version,
+  // so an outsider's newer record can never displace a real one.
+  const latest = latestByD(nostrEvents.filter((ev) => isNspAdmin(ev.pubkey)));
   const calendar = new Map<string, CalendarFields>();
   const programs = new Map<string, EventProgram>();
   for (const ev of latest) {

@@ -117,7 +117,7 @@ describe('reschedule', () => {
 });
 
 test('calendar list references every meetup', () => {
-  const cal = buildCalendarList(['2026-10-27', '2026-09-23', '2026-10-27']);
+  const cal = buildCalendarList([{ slug: '2026-10-27' }, { slug: '2026-09-23' }, { slug: '2026-10-27' }]);
   expect(cal.kind).toBe(31924);
   expect(cal.tags.filter(([t]) => t === 'a')).toHaveLength(2);
 });

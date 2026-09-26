@@ -42,7 +42,7 @@ import {
   validateEventForm,
   type EventForm,
 } from '@/lib/nspAdmin';
-import { NSP_ADMIN_PUBKEY, buildCalendarEvent, buildProgramEvent, type EventTemplate } from '@/lib/nspNostr';
+import { NSP_ADMIN_PUBKEYS, buildCalendarEvent, buildProgramEvent, isNspAdmin, type EventTemplate } from '@/lib/nspNostr';
 
 const EMPTY_PROGRAM: EventProgram = { topics: [] };
 
@@ -114,6 +114,7 @@ function EventPills({ e, published }: { e: MeetupEvent; published: MeetupEvents[
 
 function EventList({ data, onEdit, onNew }: { data: MeetupEvents; onEdit: (slug: string) => void; onNew: () => void }) {
   const { run, isPending } = usePublisher();
+  const signer = useCurrentUser().user?.pubkey ?? '';
   const [confirmMigrate, setConfirmMigrate] = useState(false);
   const ready = !data.isLoading && !data.isError;
 
@@ -128,13 +129,13 @@ function EventList({ data, onEdit, onNew }: { data: MeetupEvents; onEdit: (slug:
   const migrate = async () => {
     const templates: EventTemplate[] = [];
     for (const e of unpublished) {
-      templates.push(buildCalendarEvent(toCalendarFields(e)));
+      templates.push(buildCalendarEvent(toCalendarFields(e), signer));
       const program = programOf(e);
       if (hasProgram(program) && !data.published.program.has(e.slug)) {
-        templates.push(buildProgramEvent(e.slug, cleanProgram(program)));
+        templates.push(buildProgramEvent(e.slug, cleanProgram(program), signer));
       }
     }
-    templates.push(buildCalendarList(data.all.map((e) => e.slug)));
+    templates.push(buildCalendarList(data.all.map((e) => ({ slug: e.slug, author: data.published.calendar.has(e.slug) ? e.author : signer })), signer));
     await run(templates, `Published ${unpublished.length} events to Nostr`);
     setConfirmMigrate(false);
   };
@@ -257,6 +258,7 @@ function EventEditor({
   const [moving, setMoving] = useState(false);
   const [move, setMove] = useState({ day: form.day, startTime: form.startTime, endTime: form.endTime });
   const { run, isPending } = usePublisher();
+  const signer = useCurrentUser().user?.pubkey ?? '';
 
   const errors = validateEventForm(form);
   const shownErrors = showErrors ? errors : {};
@@ -269,8 +271,8 @@ function EventEditor({
     // Re-check the ID right before saving so a new event can never replace another one.
     const finalSlug = isNew ? suggestSlug(form.day, taken, shortName) : form.slug;
     const fields = formToCalendarFields({ ...form, slug: finalSlug }, existing);
-    const templates = [buildCalendarEvent(fields)];
-    if (isNew) templates.push(buildCalendarList([...data.all.map((e) => e.slug), finalSlug]));
+    const templates = [buildCalendarEvent(fields, signer)];
+    if (isNew) templates.push(buildCalendarList([...data.all, { slug: finalSlug, author: signer }], signer));
     if (await run(templates, isNew ? 'Event created' : 'Event updated')) {
       if (isNew) onOpen(finalSlug);
     }
@@ -279,23 +281,23 @@ function EventEditor({
   const saveProgram = async () => {
     if (!existing) return;
     const clean = cleanProgram(program);
-    if (await run([buildProgramEvent(existing.slug, clean)], 'Program saved')) setProgram(clean);
+    if (await run([buildProgramEvent(existing.slug, clean, existing.author ?? signer)], 'Program saved')) setProgram(clean);
   };
 
   const setState = async (state: 'active' | 'cancelled') => {
     if (!existing) return;
     const fields = { ...toCalendarFields(existing), state, rescheduledTo: undefined };
-    await run([buildCalendarEvent(fields)], state === 'cancelled' ? 'Event cancelled' : 'Event restored');
+    await run([buildCalendarEvent(fields, signer)], state === 'cancelled' ? 'Event cancelled' : 'Event restored');
     setConfirm(null);
   };
 
   const reschedule = async () => {
     if (!existing) return;
     const plan = planReschedule(existing, move.day, move.startTime, move.endTime, taken);
-    const templates = [buildCalendarEvent(plan.next), buildCalendarEvent(plan.old)];
+    const templates = [buildCalendarEvent(plan.next, signer), buildCalendarEvent(plan.old, signer)];
     const prog = cleanProgram(program);
-    if (hasProgram(prog)) templates.push(buildProgramEvent(plan.next.slug, prog));
-    templates.push(buildCalendarList([...data.all.map((e) => e.slug), plan.next.slug]));
+    if (hasProgram(prog)) templates.push(buildProgramEvent(plan.next.slug, prog, signer));
+    templates.push(buildCalendarList([...data.all, { slug: plan.next.slug, author: signer }], signer));
     if (await run(templates, `Moved to ${formatEventDate(new Date(`${move.day}T12:00:00Z`).toISOString())}`)) {
       setMoving(false);
       onOpen(plan.next.slug);
@@ -461,7 +463,7 @@ const AdminPage = () => {
   const data = useMeetupEvents();
   const [view, setView] = useState<{ mode: 'list' } | { mode: 'edit'; slug: string | null }>({ mode: 'list' });
 
-  const isAdmin = user?.pubkey === NSP_ADMIN_PUBKEY;
+  const isAdmin = isNspAdmin(user?.pubkey);
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -489,11 +491,14 @@ const AdminPage = () => {
 
         {user && !isAdmin && (
           <div className="card-accent p-8 max-w-xl space-y-3">
-            <h2 className="text-xl font-bold">This isn't the organizer account</h2>
+            <h2 className="text-xl font-bold">This isn't an organizer account</h2>
             <p className="text-sm text-muted-foreground">You're signed in as</p>
             <p className="font-mono text-xs break-all">{nip19.npubEncode(user.pubkey)}</p>
-            <p className="text-sm text-muted-foreground">Only this account can manage events:</p>
-            <p className="font-mono text-xs break-all">{nip19.npubEncode(NSP_ADMIN_PUBKEY)}</p>
+            <p className="text-sm text-muted-foreground">
+              Only organizer accounts can manage events. To add one, send its npub (never the nsec) to the
+              site maintainer.
+            </p>
+            <p className="text-xs text-muted-foreground">{NSP_ADMIN_PUBKEYS.length} organizer account{NSP_ADMIN_PUBKEYS.length === 1 ? '' : 's'} set up.</p>
           </div>
         )}
 

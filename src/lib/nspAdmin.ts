@@ -257,15 +257,22 @@ export function planReschedule(
 
 // --- Calendar list (NIP-52 kind 31924) ---------------------------
 
-/** The calendar that groups every meetup, so calendar apps can follow it. */
-export function buildCalendarList(slugs: string[], pubkey = NSP_ADMIN_PUBKEY): EventTemplate {
+/**
+ * The calendar that groups every meetup, so calendar apps can follow it.
+ * Each entry points at the event as saved by its author (any admin).
+ */
+export function buildCalendarList(
+  entries: { slug: string; author?: string }[],
+  pubkey = NSP_ADMIN_PUBKEY,
+): EventTemplate {
+  const coords = new Set(entries.map((e) => `${KIND_CALENDAR_EVENT}:${e.author ?? pubkey}:${e.slug}`));
   return {
     kind: KIND_CALENDAR,
     content: 'Monthly AI meetups in the Greater Twin Cities. northstarpioneers.com',
     tags: [
       ['d', CALENDAR_D],
       ['title', 'Northstar Pioneers Meetups'],
-      ...[...new Set(slugs)].sort().map((s) => ['a', `${KIND_CALENDAR_EVENT}:${pubkey}:${s}`]),
+      ...[...coords].sort().map((c) => ['a', c]),
     ],
   };
 }

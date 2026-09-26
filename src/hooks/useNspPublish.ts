@@ -4,7 +4,7 @@ import type { NostrEvent } from '@nostrify/nostrify';
 
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 import { MEETUP_EVENTS_QUERY_KEY } from '@/hooks/useMeetupEvents';
-import { NSP_ADMIN_PUBKEY, NSP_EVENT_RELAYS, type EventTemplate } from '@/lib/nspNostr';
+import { NSP_EVENT_RELAYS, isNspAdmin, type EventTemplate } from '@/lib/nspNostr';
 
 export interface PublishResult {
   events: NostrEvent[];
@@ -26,7 +26,7 @@ export function useNspPublish() {
   return useMutation({
     mutationFn: async (templates: EventTemplate[]): Promise<PublishResult> => {
       if (!user) throw new Error('Sign in first.');
-      if (user.pubkey !== NSP_ADMIN_PUBKEY) throw new Error('This account is not the organizer account.');
+      if (!isNspAdmin(user.pubkey)) throw new Error('This account is not an organizer account.');
 
       const signed: NostrEvent[] = [];
       let now = Math.floor(Date.now() / 1000);

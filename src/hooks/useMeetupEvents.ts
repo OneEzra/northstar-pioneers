@@ -17,7 +17,7 @@ import {
   EVENT_TAG,
   KIND_APP_DATA,
   KIND_CALENDAR_EVENT,
-  NSP_ADMIN_PUBKEY,
+  NSP_ADMIN_PUBKEYS,
   NSP_EVENT_RELAYS,
   PROGRAM_TAG,
   mergeEvents,
@@ -45,8 +45,8 @@ export function useMeetupNostrRecords() {
       const group = nostr.group(NSP_EVENT_RELAYS);
       return group.query(
         [
-          { kinds: [KIND_CALENDAR_EVENT], authors: [NSP_ADMIN_PUBKEY], '#t': [EVENT_TAG], limit: 500 },
-          { kinds: [KIND_APP_DATA], authors: [NSP_ADMIN_PUBKEY], '#t': [PROGRAM_TAG], limit: 500 },
+          { kinds: [KIND_CALENDAR_EVENT], authors: NSP_ADMIN_PUBKEYS, '#t': [EVENT_TAG], limit: 500 },
+          { kinds: [KIND_APP_DATA], authors: NSP_ADMIN_PUBKEYS, '#t': [PROGRAM_TAG], limit: 500 },
         ],
         { signal: AbortSignal.timeout(8000) },
       );

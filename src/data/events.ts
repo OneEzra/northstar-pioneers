@@ -50,6 +50,8 @@ export interface MeetupEventInput {
   slug: string;
   /** Older URL ids that should redirect here, e.g. "2026-10" */
   aliases?: string[];
+  /** Nostr account that last saved this event (set when loaded from Nostr) */
+  author?: string;
   /** Display title, e.g. "August 2025 Meetup" */
   title: string;
   /** Start, as Central (America/Chicago) wall-clock time, e.g. "2026-10-27T17:30" */
