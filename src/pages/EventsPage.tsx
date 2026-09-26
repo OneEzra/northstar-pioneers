@@ -4,13 +4,11 @@ import { Link } from 'react-router-dom';
 import { useSeoMeta } from '@unhead/react';
 import { SiteNav } from '@/components/SiteNav';
 import { SiteFooter } from '@/components/SiteFooter';
+import { useMeetupEvents } from '@/hooks/useMeetupEvents';
 import { ShareEventButton } from '@/components/ShareEventButton';
 import { NextGatheringCard } from '@/components/events/NextGatheringCard';
 import { HorizonEventCard } from '@/components/events/HorizonEventCard';
 import {
-  getPastEvents,
-  getNextEvent,
-  getHorizonEvents,
   formatEventDateShort,
   type MeetupEvent,
 } from '@/data/events';
@@ -205,9 +203,7 @@ const EventsPage = () => {
       'Monthly meetup archive — topics, demos, and resources from every Northstar Pioneers gathering.',
   });
 
-  const pastEvents = getPastEvents();
-  const nextEvent = getNextEvent();
-  const placeholderEvents = getHorizonEvents();
+  const { past: pastEvents, next: nextEvent, horizon: placeholderEvents } = useMeetupEvents();
 
   return (
     <div className="min-h-screen bg-background text-foreground">

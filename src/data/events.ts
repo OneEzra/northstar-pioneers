@@ -82,7 +82,16 @@ export interface MeetupEventInput {
   photoUrl?: string;
   /** Number of attendees (for past events) */
   attendees?: number;
+  /** Active (default), cancelled, or rescheduled to another event */
+  state?: EventState;
+  /** When rescheduled: the slug of the replacement event */
+  rescheduledTo?: string;
 }
+
+export type EventState = 'active' | 'cancelled' | 'rescheduled';
+
+/** The details that can be filled in over time, kept in a separate record. */
+export type EventProgram = Pick<MeetupEventInput, 'topics' | 'builderDemo' | 'photoUrl' | 'attendees'>;
 
 export type EventStatus = 'upcoming' | 'past';
 
@@ -573,43 +582,52 @@ export function resolveEvent(input: MeetupEventInput, now: number = Date.now()):
   };
 }
 
-// --- Helpers ---------------------------------------------------
+// --- Selection -------------------------------------------------
+//  Every section of the site (Next Gathering, On the Horizon, the
+//  archive, detail pages, the Gatherings count) is derived from ONE
+//  list of events via these functions.
 
-/** All events with computed status. */
-export function getAllEvents(now: number = Date.now()): MeetupEvent[] {
-  return events.map((e) => resolveEvent(e, now));
+const byStartAsc = (a: MeetupEvent, b: MeetupEvent) =>
+  new Date(a.date).getTime() - new Date(b.date).getTime();
+
+/** Resolve a list of stored events into display events. */
+export function resolveAll(list: MeetupEventInput[], now: number = Date.now()): MeetupEvent[] {
+  return list.map((e) => resolveEvent(e, now));
 }
 
-/** Returns all upcoming events sorted by date (soonest first) */
-export function getUpcomingEvents(now: number = Date.now()): MeetupEvent[] {
-  return getAllEvents(now)
-    .filter((e) => e.status === 'upcoming')
-    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+const isActive = (e: MeetupEvent) => (e.state ?? 'active') === 'active';
+
+/** Active upcoming events, soonest first */
+export function selectUpcoming(list: MeetupEvent[]): MeetupEvent[] {
+  return list.filter((e) => isActive(e) && e.status === 'upcoming').sort(byStartAsc);
 }
 
 /** The soonest upcoming event -- the one in the spotlight -- or null */
-export function getNextEvent(now: number = Date.now()): MeetupEvent | null {
-  return getUpcomingEvents(now)[0] ?? null;
+export function selectNext(list: MeetupEvent[]): MeetupEvent | null {
+  return selectUpcoming(list)[0] ?? null;
 }
 
 /** Upcoming events after the spotlight one ("On the Horizon") */
-export function getHorizonEvents(now: number = Date.now()): MeetupEvent[] {
-  return getUpcomingEvents(now).slice(1);
+export function selectHorizon(list: MeetupEvent[]): MeetupEvent[] {
+  return selectUpcoming(list).slice(1);
 }
 
-/** Returns all past events, newest first */
-export function getPastEvents(now: number = Date.now()): MeetupEvent[] {
-  return getAllEvents(now)
-    .filter((e) => e.status === 'past')
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+/** Past events that actually happened, newest first */
+export function selectPast(list: MeetupEvent[]): MeetupEvent[] {
+  return list.filter((e) => isActive(e) && e.status === 'past').sort(byStartAsc).reverse();
 }
 
-/** Find an event by slug, or by an older alias slug (e.g. "2026-09") */
-export function getEventBySlug(slug: string, now: number = Date.now()): MeetupEvent | undefined {
-  const input =
-    events.find((e) => e.slug === slug) ?? events.find((e) => e.aliases?.includes(slug));
-  return input ? resolveEvent(input, now) : undefined;
+/** Find by slug, or by an older alias slug (e.g. "2026-09") */
+export function selectBySlug(list: MeetupEvent[], slug: string): MeetupEvent | undefined {
+  return list.find((e) => e.slug === slug) ?? list.find((e) => e.aliases?.includes(slug));
 }
+
+// Convenience wrappers over the built-in backup list (used in tests)
+export const getAllEvents = (now = Date.now()) => resolveAll(events, now);
+export const getNextEvent = (now = Date.now()) => selectNext(getAllEvents(now));
+export const getHorizonEvents = (now = Date.now()) => selectHorizon(getAllEvents(now));
+export const getPastEvents = (now = Date.now()) => selectPast(getAllEvents(now));
+export const getEventBySlug = (slug: string, now = Date.now()) => selectBySlug(getAllEvents(now), slug);
 
 /** Format a date string for display, e.g. "Monday, June 9, 2025" */
 export function formatEventDate(dateStr: string): string {

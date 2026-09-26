@@ -2,12 +2,10 @@ import { Link } from 'react-router-dom';
 import { useSeoMeta } from '@unhead/react';
 import { SiteNav } from '@/components/SiteNav';
 import { SiteFooter } from '@/components/SiteFooter';
+import { useMeetupEvents } from '@/hooks/useMeetupEvents';
 import { NextGatheringCard } from '@/components/events/NextGatheringCard';
 import { HorizonEventCard } from '@/components/events/HorizonEventCard';
 import {
-  getNextEvent,
-  getHorizonEvents,
-  getPastEvents,
   type MeetupEvent,
   EVENT_TIME_ZONE,
 } from '@/data/events';
@@ -48,9 +46,8 @@ const Index = () => {
       'Northstar Pioneers are builders, thinkers, and storytellers who believe every generation inherits a task eternal: to learn deeply, to carry it honestly, and to leave the world a little more possible than we found it.',
   });
 
-  const nextEvent = getNextEvent();
-  const placeholderEvents = getHorizonEvents();
-  const pastEvents = getPastEvents().slice(0, 2);
+  const { next: nextEvent, horizon: placeholderEvents, past: allPastEvents } = useMeetupEvents();
+  const pastEvents = allPastEvents.slice(0, 2);
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -195,7 +192,7 @@ const Index = () => {
                   desc: 'Builders across the Twin Cities',
                 },
                 {
-                  num: String(getPastEvents().length),
+                  num: String(allPastEvents.length),
                   label: 'Gatherings',
                   desc: 'And growing every month',
                 },

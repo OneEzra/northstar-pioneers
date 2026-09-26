@@ -3,11 +3,10 @@ import { Link, Navigate, useParams } from 'react-router-dom';
 import { useSeoMeta } from '@unhead/react';
 import { SiteNav } from '@/components/SiteNav';
 import { SiteFooter } from '@/components/SiteFooter';
+import { useMeetupEvents } from '@/hooks/useMeetupEvents';
 import { ShareEventButton } from '@/components/ShareEventButton';
 import NotFound from './NotFound';
 import {
-  getEventBySlug,
-  getPastEvents,
   formatEventDate,
   type Resource,
   type Topic,
@@ -115,7 +114,8 @@ function TopicCard({ topic, index }: { topic: Topic; index: number }) {
 
 const EventDetailPage = () => {
   const { slug } = useParams<{ slug: string }>();
-  const event = slug ? getEventBySlug(slug) : undefined;
+  const { bySlug, past: pastEvents, isLoading } = useMeetupEvents();
+  const event = slug ? bySlug(slug) : undefined;
 
   useSeoMeta({
     title: event
@@ -124,12 +124,18 @@ const EventDetailPage = () => {
     description: event?.summary,
   });
 
+  // A brand-new event may only exist on Nostr -- wait for it before giving up
+  if (!event && isLoading) return <div className="min-h-screen bg-background" />;
   if (!event) return <NotFound />;
+
+  // Rescheduled events forward to their new date
+  if (event.state === 'rescheduled' && event.rescheduledTo) {
+    return <Navigate to={`/events/${event.rescheduledTo}`} replace />;
+  }
 
   // Old links (e.g. /events/2026-09) redirect to the date-based URL
   if (slug !== event.slug) return <Navigate to={`/events/${event.slug}`} replace />;
 
-  const pastEvents = getPastEvents();
   const currentIndex = pastEvents.findIndex((e) => e.slug === event.slug);
   const prevEvent = currentIndex < pastEvents.length - 1 ? pastEvents[currentIndex + 1] : null;
   const nextEventInList = currentIndex > 0 ? pastEvents[currentIndex - 1] : null;
@@ -165,11 +171,15 @@ const EventDetailPage = () => {
         />
         <div className="max-w-4xl mx-auto px-6 py-12">
           <div className="flex flex-wrap items-center gap-3 mb-4">
-            <span
-              className={`tag-pill ${event.status === 'upcoming' ? 'border-[#1E8EFF] text-[#1E8EFF]' : ''}`}
-            >
-              {event.status === 'upcoming' ? 'Upcoming' : 'Past Event'}
-            </span>
+            {event.state === 'cancelled' ? (
+              <span className="tag-pill border-destructive text-destructive">Cancelled</span>
+            ) : (
+              <span
+                className={`tag-pill ${event.status === 'upcoming' ? 'border-[#1E8EFF] text-[#1E8EFF]' : ''}`}
+              >
+                {event.status === 'upcoming' ? 'Upcoming' : 'Past Event'}
+              </span>
+            )}
           </div>
           <h1
             className="font-black uppercase text-3xl sm:text-5xl text-foreground leading-tight mb-6"
@@ -197,7 +207,7 @@ const EventDetailPage = () => {
 
           {/* Actions */}
           <div className="mt-8 flex flex-wrap gap-3 items-center">
-            {event.meetupUrl && (
+            {event.meetupUrl && event.state !== 'cancelled' && (
               <a
                 href={event.meetupUrl}
                 target="_blank"
