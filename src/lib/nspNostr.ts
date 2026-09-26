@@ -26,8 +26,13 @@ import {
   type MeetupEventInput,
 } from '@/data/events';
 
-/** Organizer account (hex of npub1s4257pzpeqzs0x74vpq44u8clu0qfed4ghmv6plmqvh4rdhkfnwqu7xqsr) */
-export const NSP_ADMIN_PUBKEY = '85554f0441c805079bd560415af0f8ff1e04e5b545f6cd07fb032f51b6f64cdc';
+/**
+ * Organizer account (hex of npub1s4257pzpeqzs0x74vpq44u8clu0qfed4ghmv6plmqvh4rdhkfnwqu7xqsr).
+ * VITE_NSP_ADMIN_PUBKEY overrides it for automated browser tests only.
+ */
+export const NSP_ADMIN_PUBKEY: string =
+  (import.meta.env.VITE_NSP_ADMIN_PUBKEY as string | undefined) ??
+  '85554f0441c805079bd560415af0f8ff1e04e5b545f6cd07fb032f51b6f64cdc';
 
 /**
  * Relays events are published to and read from, for every visitor.
@@ -309,4 +314,17 @@ export function mergeEvents(backup: MeetupEventInput[], nostrEvents: NostrEvent[
     if (base) bySlug.set(slug, { ...base, ...program });
   }
   return [...bySlug.values()];
+}
+
+/** Which event IDs already have a calendar event / program on Nostr. */
+export function publishedSlugs(events: NostrEvent[]): { calendar: Set<string>; program: Set<string> } {
+  const calendar = new Set<string>();
+  const program = new Set<string>();
+  for (const ev of events) {
+    const cal = parseCalendarEvent(ev);
+    if (cal) calendar.add(cal.slug);
+    const prog = parseProgramEvent(ev);
+    if (prog) program.add(prog.slug);
+  }
+  return { calendar, program };
 }

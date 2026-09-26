@@ -25,9 +25,11 @@ function getNip07Provider(): Nip07Provider | undefined {
 
 export interface LoginAreaProps {
   className?: string;
+  /** Button text when signed out */
+  label?: string;
 }
 
-export function LoginArea({ className }: LoginAreaProps) {
+export function LoginArea({ className, label = 'Join' }: LoginAreaProps) {
   const { currentUser } = useLoggedInAccounts();
   const [authDialogOpen, setAuthDialogOpen] = useState(false);
   const [quickLoginPubkey, setQuickLoginPubkey] = useState<string | null>(null);
@@ -57,7 +59,7 @@ export function LoginArea({ className }: LoginAreaProps) {
           onClick={handleJoin}
           className="flex items-center gap-2 px-5 py-2 rounded-full bg-primary text-primary-foreground font-medium transition-all hover:bg-primary/90 animate-scale-in"
         >
-          <span className="truncate">Join</span>
+          <span className="truncate">{label}</span>
         </Button>
       )}
 

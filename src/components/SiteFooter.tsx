@@ -78,7 +78,10 @@ export function SiteFooter() {
 
         <div className="mt-10 pt-6 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="text-xs text-muted-foreground">
-            © {new Date().getFullYear()} Northstar Pioneers · Minnesota
+            © {new Date().getFullYear()} Northstar Pioneers · Minnesota ·{' '}
+            <Link to="/admin" className="hover:text-[#1E8EFF] transition-colors">
+              Admin
+            </Link>
           </p>
           <a
             href="https://shakespeare.diy"

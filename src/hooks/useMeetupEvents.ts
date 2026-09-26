@@ -21,6 +21,7 @@ import {
   NSP_EVENT_RELAYS,
   PROGRAM_TAG,
   mergeEvents,
+  publishedSlugs,
 } from '@/lib/nspNostr';
 
 export const MEETUP_EVENTS_QUERY_KEY = ['nsp-meetup-events'] as const;
@@ -71,6 +72,11 @@ export interface MeetupEvents {
   isLoading: boolean;
   /** Where the data came from */
   source: 'nostr' | 'backup';
+  /** Event IDs that have a calendar event / program on Nostr */
+  published: { calendar: Set<string>; program: Set<string> };
+  /** True when the Nostr lookup failed (the backup list is showing) */
+  isError: boolean;
+  refetch: () => void;
 }
 
 /**
@@ -79,7 +85,7 @@ export interface MeetupEvents {
  */
 export function useMeetupEvents(): MeetupEvents {
   const now = useNow();
-  const { data, isLoading } = useMeetupNostrRecords();
+  const { data, isLoading, isError, refetch } = useMeetupNostrRecords();
 
   return useMemo(() => {
     const merged = mergeEvents(backupEvents, data ?? []);
@@ -93,6 +99,9 @@ export function useMeetupEvents(): MeetupEvents {
       bySlug: (slug: string) => selectBySlug(all, slug),
       isLoading,
       source: data && data.length > 0 ? 'nostr' : 'backup',
+      published: publishedSlugs(data ?? []),
+      isError,
+      refetch: () => void refetch(),
     };
-  }, [data, isLoading, now]);
+  }, [data, isLoading, isError, refetch, now]);
 }
