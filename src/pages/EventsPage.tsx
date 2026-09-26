@@ -5,11 +5,12 @@ import { useSeoMeta } from '@unhead/react';
 import { SiteNav } from '@/components/SiteNav';
 import { SiteFooter } from '@/components/SiteFooter';
 import { ShareEventButton } from '@/components/ShareEventButton';
+import { NextGatheringCard } from '@/components/events/NextGatheringCard';
+import { HorizonEventCard } from '@/components/events/HorizonEventCard';
 import {
   getPastEvents,
   getNextEvent,
   getHorizonEvents,
-  formatEventDate,
   formatEventDateShort,
   type MeetupEvent,
 } from '@/data/events';
@@ -24,7 +25,6 @@ const resourceIcon: Record<string, string> = {
 
 function EventCard({ event }: { event: MeetupEvent }) {
   const [topicsOpen, setTopicsOpen] = useState(false);
-
   return (
     <div className="card-accent overflow-hidden">
       {/* Header */}
@@ -208,7 +208,6 @@ const EventsPage = () => {
   const pastEvents = getPastEvents();
   const nextEvent = getNextEvent();
   const placeholderEvents = getHorizonEvents();
-  const [topicsOpen, setTopicsOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -244,194 +243,7 @@ const EventsPage = () => {
         {nextEvent && (
           <section className="mb-14">
             <div className="pioneer-label mb-4">Upcoming</div>
-            <div className="card-accent p-0 overflow-hidden">
-              {/* Top bar */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-8 py-6 border-b border-border">
-                <div>
-                  <div className="text-xs font-bold uppercase tracking-widest text-[#5AB0FF] mb-1">
-                    Upcoming
-                  </div>
-                  <h2 className="text-2xl sm:text-3xl font-extrabold text-foreground">
-                    {nextEvent.title}
-                  </h2>
-                </div>
-                <span className="tag-pill self-start sm:self-auto">
-                  {formatEventDateShort(nextEvent.date)} · {nextEvent.city ?? 'Mpls'}
-                </span>
-              </div>
-
-              {/* Date / Time / Venue */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-0 divide-y md:divide-y-0 md:divide-x divide-border">
-                <div className="px-8 py-6">
-                  <div className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-1">
-                    Date
-                  </div>
-                  <div className="text-foreground font-semibold">
-                    {formatEventDate(nextEvent.date)}
-                  </div>
-                </div>
-                <div className="px-8 py-6">
-                  <div className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-1">
-                    Time
-                  </div>
-                  <div className="text-foreground font-semibold">{nextEvent.time}</div>
-                </div>
-                <div className="px-8 py-6">
-                  <div className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-1">
-                    Venue Sponsor
-                  </div>
-                  <div className="text-foreground font-semibold">{nextEvent.venue}</div>
-                  <div className="text-sm text-muted-foreground mt-0.5">
-                    {nextEvent.address}
-                  </div>
-                </div>
-              </div>
-
-              {/* Venue Sponsor Bio */}
-              <div className="px-8 py-6 border-t border-border">
-                <div className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-2">
-                  About the Venue Sponsor
-                </div>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  Nerdery is a digital solutions provider with over 20 years of experience
-                  building business-critical software for when off-the-shelf solutions won't
-                  work and failure is not an option. As a strategic ally, we provide the Digital
-                  Strategy, System Modernization, and AI Optimization needed to bridge the gap
-                  between executive vision and technical execution.{' '}
-                  <a
-                    href="https://www.nerdery.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-[#1E8EFF] hover:underline"
-                  >
-                    nerdery.com ↗
-                  </a>
-                </p>
-              </div>
-
-              {/* Featured Pioneer + Topics row */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x divide-border border-t border-border">
-                <div className="px-8 py-6">
-                  <div className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-2">
-                    Featured Pioneer
-                  </div>
-                  {nextEvent.builderDemo ? (
-                    <a
-                      href={nextEvent.builderDemo.presenterUrl ?? nextEvent.builderDemo.presenterLinkedIn ?? '#'}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-foreground font-semibold hover:text-[#1E8EFF] transition-colors"
-                    >
-                      {nextEvent.builderDemo.presenter} ↗
-                    </a>
-                  ) : (
-                    <span className="text-sm text-muted-foreground">TBD</span>
-                  )}
-                </div>
-                <div className="px-8 py-6">
-                  <div className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-2">
-                    Socratic Topics
-                  </div>
-                  {nextEvent.topics.length > 0 ? (
-                    <button
-                      onClick={() => setTopicsOpen((o) => !o)}
-                      className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest border border-[#1E8EFF]/40 text-[#1E8EFF] px-4 py-2 rounded-[2px] hover:bg-[#1E8EFF]/10 transition-colors"
-                    >
-                      {topicsOpen ? 'Hide Topics ↑' : 'View Topics ↓'}
-                    </button>
-                  ) : (
-                    <span className="text-sm text-muted-foreground">Topics coming soon</span>
-                  )}
-                </div>
-              </div>
-
-              {/* Topics panel */}
-              {topicsOpen && nextEvent.topics.length > 0 && (
-                <div className="px-8 py-6 border-t border-border">
-                  <div className="pioneer-label mb-4">Socratic Review Topics</div>
-                  <div className="space-y-4">
-                    {nextEvent.topics.map((topic, i) => (
-                      <div key={topic.title} className="card-accent p-6">
-                        <div className="flex items-start gap-4">
-                          <div className="text-[#1E8EFF] font-mono text-sm font-bold shrink-0 mt-0.5">
-                            {String(i + 1).padStart(2, '0')}
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <h3 className="text-base font-bold text-foreground mb-2">{topic.title}</h3>
-                            {topic.description && (
-                              <p className="text-sm text-muted-foreground leading-relaxed">
-                                {topic.description}
-                              </p>
-                            )}
-                            {topic.resources && topic.resources.length > 0 && (
-                              <div className="flex flex-wrap gap-2 mt-4">
-                                {topic.resources.map((r) => (
-                                  <a
-                                    key={r.url}
-                                    href={r.url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="inline-flex items-center gap-2 text-sm font-bold text-[#5AB0FF] hover:text-[#1E8EFF] transition-colors bg-[rgba(30,142,255,0.08)] border border-[rgba(30,142,255,0.25)] px-4 py-2 rounded-[2px] hover:bg-[rgba(30,142,255,0.14)]"
-                                  >
-                                    <span>🔗</span>
-                                    {r.label}
-                                    <span className="text-xs opacity-60">↗</span>
-                                  </a>
-                                ))}
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Format */}
-              <div className="px-8 py-6 border-t border-border">
-                <div className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-4">
-                  Format
-                </div>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                  {[
-                    { icon: '🍕', label: 'Welcome', desc: 'Connect & grab a slice' },
-                    { icon: '🗞️', label: 'Socratic Review', desc: '5–10 frontier topics' },
-                    { icon: '🛠️', label: 'Builder Demo', desc: 'See what members are building' },
-                    { icon: '🤝', label: 'Networking', desc: 'Open discussion' },
-                  ].map((step) => (
-                    <div key={step.label} className="flex flex-col gap-1">
-                      <span className="text-2xl">{step.icon}</span>
-                      <span className="text-sm font-bold text-foreground">{step.label}</span>
-                      <span className="text-xs text-muted-foreground">{step.desc}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* RSVP */}
-              <div className="px-8 py-5 border-t border-border flex flex-wrap gap-3 items-center">
-                {nextEvent.meetupUrl && (
-                  <a
-                    href={nextEvent.meetupUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="bg-[#1E8EFF] text-black font-bold text-xs uppercase tracking-widest px-6 py-3 rounded-[2px] hover:brightness-110 transition-all"
-                  >
-                    RSVP on Meetup ↗
-                  </a>
-                )}
-                <a
-                  href="https://t.me/northstarpioneerscommunity"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-muted-foreground border border-border font-bold text-xs uppercase tracking-widest px-6 py-3 rounded-[2px] hover:text-foreground hover:border-foreground/40 transition-colors"
-                >
-                  Pioneers Telegram
-                </a>
-                <ShareEventButton slug={nextEvent.slug} title={nextEvent.title} className="ml-auto" />
-              </div>
-            </div>
+            <NextGatheringCard event={nextEvent} />
           </section>
         )}
 
@@ -441,42 +253,7 @@ const EventsPage = () => {
             <div className="pioneer-label mb-4">On the Horizon</div>
             <div className="space-y-3">
               {placeholderEvents.map((event) => (
-                <div key={event.slug} className="card-accent px-7 py-5 flex flex-col gap-3">
-                  {/* Row 1: title + pill */}
-                  <div className="flex items-center justify-between gap-3">
-                    <h3
-                      className="text-lg font-extrabold text-foreground leading-tight"
-                      style={{ fontFamily: "'Barlow Condensed', sans-serif" }}
-                    >
-                      {event.title}
-                    </h3>
-                    <span className="tag-pill text-[10px]">
-                      {event.city
-                        ? `${formatEventDateShort(event.date)} · ${event.city}`
-                        : 'TBD'}
-                    </span>
-                  </div>
-                  {/* Row 2: metadata + button */}
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                    <div className="flex items-center gap-4 text-xs text-muted-foreground flex-wrap">
-                      <span><span className="font-bold uppercase tracking-wider text-foreground/60">Date</span> — {formatEventDate(event.date)}</span>
-                      <span><span className="font-bold uppercase tracking-wider text-foreground/60">Venue</span> — {event.venue}</span>
-                      <span><span className="font-bold uppercase tracking-wider text-foreground/60">Pioneer</span> — {event.builderDemo?.presenter ?? 'TBD'}</span>
-                      <span><span className="font-bold uppercase tracking-wider text-foreground/60">Topics</span> — {event.topics.length > 0 ? `${event.topics.length} selected` : 'TBD'}</span>
-                    </div>
-                    <div className="flex items-center gap-4 shrink-0 self-start sm:self-auto">
-                      <ShareEventButton slug={event.slug} title={event.title} />
-                      <a
-                        href="https://t.me/northstarpioneerscommunity"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-muted-foreground border border-border font-bold text-xs uppercase tracking-widest px-5 py-2.5 rounded-[2px] hover:text-foreground hover:border-foreground/40 transition-colors"
-                      >
-                        Pioneers Telegram ↗
-                      </a>
-                    </div>
-                  </div>
-                </div>
+                <HorizonEventCard key={event.slug} event={event} />
               ))}
             </div>
           </section>
