@@ -654,6 +654,16 @@ export function selectPast(list: MeetupEvent[]): MeetupEvent[] {
   return list.filter((e) => isActive(e) && e.status === 'past').sort(byStartAsc).reverse();
 }
 
+/**
+ * Featured pioneers, one entry per event that has a presenter set,
+ * newest first. Upcoming ones (already announced) come first.
+ */
+export function selectPioneers(list: MeetupEvent[]): MeetupEvent[] {
+  return list
+    .filter((e) => isActive(e) && !!e.builderDemo?.presenter)
+    .sort((a, b) => b.date.localeCompare(a.date));
+}
+
 /** Find by slug, or by an older alias slug (e.g. "2026-09") */
 export function selectBySlug(list: MeetupEvent[], slug: string): MeetupEvent | undefined {
   return list.find((e) => e.slug === slug) ?? list.find((e) => e.aliases?.includes(slug));
@@ -664,6 +674,7 @@ export const getAllEvents = (now = Date.now()) => resolveAll(events, now);
 export const getNextEvent = (now = Date.now()) => selectNext(getAllEvents(now));
 export const getHorizonEvents = (now = Date.now()) => selectHorizon(getAllEvents(now));
 export const getPastEvents = (now = Date.now()) => selectPast(getAllEvents(now));
+export const getPioneers = (now = Date.now()) => selectPioneers(getAllEvents(now));
 export const getEventBySlug = (slug: string, now = Date.now()) => selectBySlug(getAllEvents(now), slug);
 
 /** Format a date string for display, e.g. "Monday, June 9, 2025" */

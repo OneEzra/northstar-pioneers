@@ -71,3 +71,12 @@ describe('getEventBySlug', () => {
     expect(getEventBySlug('nope')).toBeUndefined();
   });
 });
+
+describe('selectPioneers', () => {
+  test('lists every featured pioneer, newest first, skipping TBD events', async () => {
+    const { getPioneers } = await import('./events');
+    const list = getPioneers(parseEventTime('2026-09-29T12:00'));
+    expect(list.map((e) => e.builderDemo?.presenter)).toEqual(['Tommy Volk', 'Lee Winbush', 'Kyle', 'Lonnie Lassman']);
+    expect(list.map((e) => e.slug)).toEqual(['2026-09-23', '2026-08-26', '2026-07-20', '2026-06-09']);
+  });
+});

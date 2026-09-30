@@ -7,6 +7,7 @@ import EventDetailPage from "./pages/EventDetailPage";
 import AboutPage from "./pages/AboutPage";
 import StylePage from "./pages/StylePage";
 import AdminPage from './pages/AdminPage';
+import PioneersPage from './pages/PioneersPage';
 import { NIP19Page } from "./pages/NIP19Page";
 import NotFound from "./pages/NotFound";
 
@@ -18,6 +19,7 @@ export function AppRouter() {
         <Route path="/" element={<Index />} />
         <Route path="/events" element={<EventsPage />} />
         <Route path="/events/:slug" element={<EventDetailPage />} />
+        <Route path="/pioneers" element={<PioneersPage />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/style" element={<StylePage />} />
         <Route path="/admin" element={<AdminPage />} />

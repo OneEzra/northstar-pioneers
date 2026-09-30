@@ -28,6 +28,7 @@ export function SiteFooter() {
               {[
                 { label: 'Home', to: '/' },
                 { label: 'Events Archive', to: '/events' },
+                { label: 'Pioneers', to: '/pioneers' },
                 { label: 'About', to: '/about' },
                 { label: 'Style Guide', to: '/style' },
               ].map((l) => (

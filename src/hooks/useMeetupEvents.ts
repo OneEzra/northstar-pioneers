@@ -10,6 +10,7 @@ import {
   selectHorizon,
   selectNext,
   selectPast,
+  selectPioneers,
   selectUpcoming,
   type MeetupEvent,
 } from '@/data/events';
@@ -67,6 +68,8 @@ export interface MeetupEvents {
   horizon: MeetupEvent[];
   /** Past events, newest first */
   past: MeetupEvent[];
+  /** Events with a featured pioneer, newest first */
+  pioneers: MeetupEvent[];
   bySlug: (slug: string) => MeetupEvent | undefined;
   /** True until the first Nostr response (or failure) */
   isLoading: boolean;
@@ -96,6 +99,7 @@ export function useMeetupEvents(): MeetupEvents {
       next: selectNext(all),
       horizon: selectHorizon(all),
       past: selectPast(all),
+      pioneers: selectPioneers(all),
       bySlug: (slug: string) => selectBySlug(all, slug),
       isLoading,
       source: data && data.length > 0 ? 'nostr' : 'backup',
