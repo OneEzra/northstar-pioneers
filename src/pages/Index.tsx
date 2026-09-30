@@ -1,9 +1,9 @@
 import { Link } from 'react-router-dom';
-import { useSeoMeta } from '@unhead/react';
 import { SiteNav } from '@/components/SiteNav';
 import { SiteFooter } from '@/components/SiteFooter';
 import { useMeetupEvents } from '@/hooks/useMeetupEvents';
 import { MEETUP_GROUP_URL, meetupLinkFor } from '@/lib/meetup';
+import { usePageSeo, DEFAULT_TITLE, DEFAULT_DESCRIPTION, eventJsonLd } from '@/lib/seo';
 import { NextGatheringCard } from '@/components/events/NextGatheringCard';
 import { HorizonEventCard } from '@/components/events/HorizonEventCard';
 import {
@@ -41,14 +41,15 @@ function getPresenterInfo(event: MeetupEvent): { name: string; url: string } | n
 }
 
 const Index = () => {
-  useSeoMeta({
-    title: 'Northstar Pioneers — Twin Cities AI Collective',
-    description:
-      'Northstar Pioneers are builders, thinkers, and storytellers who believe every generation inherits a task eternal: to learn deeply, to carry it honestly, and to leave the world a little more possible than we found it.',
-  });
-
   const { next: nextEvent, horizon: placeholderEvents, past: allPastEvents, isLoading: eventsLoading } = useMeetupEvents();
   const pastEvents = allPastEvents.slice(0, 2);
+
+  usePageSeo({
+    title: DEFAULT_TITLE,
+    description: DEFAULT_DESCRIPTION,
+    path: '/',
+    jsonLd: [nextEvent, ...placeholderEvents].filter((e): e is MeetupEvent => !!e && e.state !== 'cancelled').map(eventJsonLd),
+  });
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -106,8 +107,11 @@ const Index = () => {
             The Task <span className="text-[#1E8EFF]">Eternal.</span>
           </h1>
 
-          <p className="text-foreground/80 text-lg sm:text-xl max-w-xl mb-10 leading-relaxed font-light">
+          <p className="text-foreground/80 text-lg sm:text-xl max-w-xl mb-4 leading-relaxed font-light">
             Northstar Pioneers are builders, thinkers, and storytellers who believe every generation inherits a task eternal: to learn deeply, to carry it honestly, and to leave the world a little more possible than we found it.
+          </p>
+          <p className="text-muted-foreground text-base max-w-xl mb-10 leading-relaxed">
+            A free monthly AI meetup in the Twin Cities (Minneapolis–St. Paul): Socratic AI news review, a live builder demo, and open networking.
           </p>
 
           {/* CTA row */}

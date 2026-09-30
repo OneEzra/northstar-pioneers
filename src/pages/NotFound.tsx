@@ -1,13 +1,15 @@
-import { useSeoMeta } from "@unhead/react";
+import { usePageSeo } from "@/lib/seo";
 import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
 
 const NotFound = () => {
   const location = useLocation();
 
-  useSeoMeta({
-    title: "404 - Page Not Found",
+  usePageSeo({
+    title: "Page Not Found — Northstar Pioneers",
     description: "The page you are looking for could not be found. Return to the home page to continue browsing.",
+    path: location.pathname,
+    noindex: true,
   });
 
   useEffect(() => {

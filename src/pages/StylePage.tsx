@@ -1,11 +1,13 @@
-import { useSeoMeta } from '@unhead/react';
+import { usePageSeo } from '@/lib/seo';
 import { SiteNav } from '@/components/SiteNav';
 import { SiteFooter } from '@/components/SiteFooter';
 
 const StylePage = () => {
-  useSeoMeta({
+  usePageSeo({
     title: 'Brand & Style Guide — Northstar Pioneers',
     description: 'The brand and UI style guide for Northstar Pioneers — colors, typography, logo usage, and components.',
+    path: '/style',
+    noindex: true,
   });
 
   return (

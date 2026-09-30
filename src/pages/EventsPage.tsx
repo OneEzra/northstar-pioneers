@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-import { useSeoMeta } from '@unhead/react';
+import { usePageSeo } from '@/lib/seo';
 import { SiteNav } from '@/components/SiteNav';
 import { SiteFooter } from '@/components/SiteFooter';
 import { useMeetupEvents } from '@/hooks/useMeetupEvents';
@@ -197,10 +197,11 @@ function EventCard({ event }: { event: MeetupEvent }) {
 }
 
 const EventsPage = () => {
-  useSeoMeta({
-    title: 'Events Archive — Northstar Pioneers',
+  usePageSeo({
+    title: 'AI Meetup Events & Archive — Northstar Pioneers, Twin Cities MN',
     description:
-      'Monthly meetup archive — topics, demos, and resources from every Northstar Pioneers gathering.',
+      'Upcoming and past Northstar Pioneers AI meetups in the Twin Cities — dates, featured pioneers, topics, demos, and resources from every monthly gathering.',
+    path: '/events',
   });
 
   const { past: pastEvents, next: nextEvent, horizon: placeholderEvents, isLoading: eventsLoading } = useMeetupEvents();

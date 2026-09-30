@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, Navigate, useParams } from 'react-router-dom';
-import { useSeoMeta } from '@unhead/react';
+import { usePageSeo, eventJsonLd } from '@/lib/seo';
 import { SiteNav } from '@/components/SiteNav';
 import { SiteFooter } from '@/components/SiteFooter';
 import { useMeetupEvents } from '@/hooks/useMeetupEvents';
@@ -8,6 +8,7 @@ import { meetupLinkFor } from '@/lib/meetup';
 import { ShareEventButton } from '@/components/ShareEventButton';
 import NotFound from './NotFound';
 import {
+  EVENT_TIME_ZONE,
   formatEventDate,
   type Resource,
   type Topic,
@@ -113,16 +114,32 @@ function TopicCard({ topic, index }: { topic: Topic; index: number }) {
   );
 }
 
+/** "Tuesday, October 27, 2026, 5:30 PM" in Central time */
+function formatSeoDate(iso: string): string {
+  return new Date(iso).toLocaleString('en-US', {
+    timeZone: EVENT_TIME_ZONE,
+    weekday: 'long', month: 'long', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit',
+  });
+}
+
 const EventDetailPage = () => {
   const { slug } = useParams<{ slug: string }>();
   const { bySlug, past: pastEvents, isLoading } = useMeetupEvents();
   const event = slug ? bySlug(slug) : undefined;
 
-  useSeoMeta({
+  const pioneer = event?.builderDemo?.presenter;
+  usePageSeo({
     title: event
-      ? `${event.title} -- Northstar Pioneers`
-      : 'Event Not Found -- Northstar Pioneers',
-    description: event?.summary,
+      ? `${event.title}${pioneer ? ` with ${pioneer}` : ''} — Northstar Pioneers AI Meetup, ${event.city ?? 'Twin Cities'} MN`
+      : 'Event Not Found — Northstar Pioneers',
+    description: event
+      ? `${formatSeoDate(event.date)} at ${event.venue}, ${event.address}. ${event.summary}`
+      : undefined,
+    path: `/events/${event?.slug ?? slug ?? ''}`,
+    image: event?.photoUrl || undefined,
+    // Unknown IDs and forwarding stubs stay out of search results
+    noindex: !event || event.state === 'rescheduled',
+    jsonLd: event && event.state !== 'rescheduled' ? [eventJsonLd(event)] : [],
   });
 
   // A brand-new event may only exist on Nostr -- wait for it before giving up

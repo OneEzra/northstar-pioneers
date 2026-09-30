@@ -17,6 +17,22 @@ export interface PublishResult {
 
 const shortRelay = (url: string) => url.replace(/^wss:\/\//, '').replace(/\/$/, '');
 
+const dTag = (tags: string[][]) => tags.find(([n]) => n === 'd')?.[1] ?? '';
+
+/**
+ * Timestamp for a new version of a record: now, but always later than any
+ * version already known. Relays keep only the newest version of an
+ * addressable record and break ties by event ID, so an edit saved within
+ * seconds of the last save must never reuse (or undercut) its timestamp.
+ */
+export function nextCreatedAt(template: EventTemplate, known: NostrEvent[], now: number): number {
+  const d = dTag(template.tags);
+  const latest = known
+    .filter((e) => e.kind === template.kind && dTag(e.tags) === d)
+    .reduce((max, e) => Math.max(max, e.created_at), 0);
+  return Math.max(now, latest + 1);
+}
+
 /**
  * Sign records with the signed-in admin account and send each one to every
  * event relay. Succeeds if every record reached at least one relay; reports
@@ -32,11 +48,16 @@ export function useNspPublish() {
       if (!user) throw new Error('Sign in first.');
       if (!isNspAdmin(user.pubkey)) throw new Error('This account is not an organizer account.');
 
+      const known = queryClient
+        .getQueriesData<NostrEvent[]>({ queryKey: MEETUP_EVENTS_QUERY_KEY })
+        .flatMap(([, data]) => data ?? []);
       const signed: NostrEvent[] = [];
       let now = Math.floor(Date.now() / 1000);
       for (const t of templates) {
-        // Each record gets a unique, increasing timestamp so the newest edit always wins.
-        signed.push(await user.signer.signEvent({ ...t, created_at: now++ }));
+        // Unique, increasing timestamps, later than every known version, so the newest edit always wins.
+        const created_at = nextCreatedAt(t, known, now);
+        signed.push(await user.signer.signEvent({ ...t, created_at }));
+        now = created_at + 1;
       }
 
       let minAccepted = Infinity;

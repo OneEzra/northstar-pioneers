@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { useSeoMeta } from '@unhead/react';
+import { usePageSeo } from '@/lib/seo';
 
 import { SiteNav } from '@/components/SiteNav';
 import { SiteFooter } from '@/components/SiteFooter';
@@ -144,10 +144,11 @@ function PioneerCard({ event }: { event: MeetupEvent }) {
 }
 
 const PioneersPage = () => {
-  useSeoMeta({
-    title: 'Pioneers — Northstar Pioneers',
+  usePageSeo({
+    title: 'Featured Pioneers — Builders Demoing AI at Northstar Pioneers, Twin Cities',
     description:
-      'Featured Northstar Pioneers — the builders who have demoed their work at our monthly Twin Cities AI meetup.',
+      'Featured Northstar Pioneers — the builders who demo their AI projects at our free monthly Twin Cities AI meetup, with topics and links.',
+    path: '/pioneers',
   });
 
   const { pioneers, isLoading } = useMeetupEvents();

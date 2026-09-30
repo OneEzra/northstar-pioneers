@@ -1,13 +1,14 @@
 import { Link } from 'react-router-dom';
-import { useSeoMeta } from '@unhead/react';
+import { usePageSeo } from '@/lib/seo';
 import { SiteNav } from '@/components/SiteNav';
 import { SiteFooter } from '@/components/SiteFooter';
 
 const AboutPage = () => {
-  useSeoMeta({
-    title: 'About — Northstar Pioneers',
+  usePageSeo({
+    title: 'About Northstar Pioneers — Twin Cities AI Meetup',
     description:
-      'Northstar Pioneers is a monthly AI meetup in Minneapolis, MN for builders, thinkers, and pioneers.',
+      'Northstar Pioneers (North Star Pioneers) is a free monthly AI meetup in Minneapolis and the Twin Cities, MN for builders, thinkers, and storytellers.',
+    path: '/about',
   });
 
   return (
