@@ -2,13 +2,14 @@ import { useState } from 'react';
 import { ShareEventButton } from '@/components/ShareEventButton';
 import { getVenueSponsor } from '@/data/venues';
 import { meetupLinkFor } from '@/lib/meetup';
+import { Skeleton } from '@/components/ui/skeleton';
 import { formatEventDate, formatEventDateShort, type MeetupEvent } from '@/data/events';
 
 /**
  * The spotlight card for the next meetup. Used on both the Home page
  * ("Next Gathering") and the Events page ("Upcoming") so they never drift.
  */
-export function NextGatheringCard({ event }: { event: MeetupEvent }) {
+export function NextGatheringCard({ event, loading = false }: { event: MeetupEvent; loading?: boolean }) {
   const [topicsOpen, setTopicsOpen] = useState(false);
   const sponsor = getVenueSponsor(event.venue);
   const rsvp = meetupLinkFor(event);
@@ -93,7 +94,7 @@ export function NextGatheringCard({ event }: { event: MeetupEvent }) {
               {event.builderDemo.presenter} ↗
             </a>
           ) : (
-            <span className="text-sm text-muted-foreground">TBD</span>
+            loading ? <Skeleton className="h-5 w-40" /> : <span className="text-sm text-muted-foreground">TBD</span>
           )}
         </div>
         <div className="px-8 py-6">
@@ -108,7 +109,7 @@ export function NextGatheringCard({ event }: { event: MeetupEvent }) {
               {topicsOpen ? 'Hide Topics ↑' : 'View Topics ↓'}
             </button>
           ) : (
-            <span className="text-sm text-muted-foreground">Topics coming soon</span>
+            loading ? <Skeleton className="h-5 w-32" /> : <span className="text-sm text-muted-foreground">Topics coming soon</span>
           )}
         </div>
       </div>

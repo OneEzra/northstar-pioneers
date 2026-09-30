@@ -47,7 +47,7 @@ const Index = () => {
       'Northstar Pioneers are builders, thinkers, and storytellers who believe every generation inherits a task eternal: to learn deeply, to carry it honestly, and to leave the world a little more possible than we found it.',
   });
 
-  const { next: nextEvent, horizon: placeholderEvents, past: allPastEvents } = useMeetupEvents();
+  const { next: nextEvent, horizon: placeholderEvents, past: allPastEvents, isLoading: eventsLoading } = useMeetupEvents();
   const pastEvents = allPastEvents.slice(0, 2);
 
   return (
@@ -134,7 +134,7 @@ const Index = () => {
       {nextEvent && (
         <section className="max-w-6xl mx-auto px-6 mb-20">
           <div className="pioneer-label mb-6">Next Gathering</div>
-          <NextGatheringCard event={nextEvent} />
+          <NextGatheringCard event={nextEvent} loading={eventsLoading} />
         </section>
       )}
 

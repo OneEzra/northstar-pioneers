@@ -203,7 +203,7 @@ const EventsPage = () => {
       'Monthly meetup archive — topics, demos, and resources from every Northstar Pioneers gathering.',
   });
 
-  const { past: pastEvents, next: nextEvent, horizon: placeholderEvents } = useMeetupEvents();
+  const { past: pastEvents, next: nextEvent, horizon: placeholderEvents, isLoading: eventsLoading } = useMeetupEvents();
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -239,7 +239,7 @@ const EventsPage = () => {
         {nextEvent && (
           <section className="mb-14">
             <div className="pioneer-label mb-4">Upcoming</div>
-            <NextGatheringCard event={nextEvent} />
+            <NextGatheringCard event={nextEvent} loading={eventsLoading} />
           </section>
         )}
 

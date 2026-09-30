@@ -69,8 +69,9 @@ export const NSP_EVENT_RELAYS = [
   'wss://offchain.pub/',
   'wss://nostr.mom/',
   'wss://relay.snort.social/',
-  'wss://relay.damus.io/',
 ];
+// (relay.damus.io was dropped on 2026-09-30: it never answered from the
+// organizer's network, and made every page load wait for its timeout.)
 // (relay.primal.net was dropped on 2026-09-30: it doesn't store calendar
 // events, kind 31923, so publishing there did nothing.)
 

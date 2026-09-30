@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNostr } from '@nostrify/react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import type { NostrEvent, NostrFilter } from '@nostrify/nostrify';
 
 import { useCurrentUser } from '@/hooks/useCurrentUser';
@@ -41,26 +41,33 @@ function useNow(intervalMs = 60_000): number {
   return now;
 }
 
-/** How long to wait for any one relay before moving on without it. */
+/** How long to wait for any one relay before giving up on it. */
 const RELAY_TIMEOUT_MS = 6000;
+/** After the first relay answers, how long to wait for other fast ones before showing results. */
+const SETTLE_MS = 300;
 
 /**
  * Raw Nostr records for all meetups.
  *
- * Each relay is asked separately, with its own timeout, and the answers
- * are merged -- so one slow relay, or one that refuses part of a request,
- * can't cut the others off. Calendar events (public) and legacy program
- * records are separate requests for the same reason: some relays refuse
- * kind 30078 to anyone but its author.
+ * Each relay is asked separately, with its own timeout, so one slow relay,
+ * or one that refuses part of a request, can't hold up or cut off the rest.
+ * Results show as soon as the first relay answers (plus a short moment for
+ * other fast ones); slower relays are merged in when they arrive, and the
+ * newest version of each event always wins.
+ *
+ * Calendar events (public) and legacy program records are separate requests:
+ * some relays refuse kind 30078 to anyone but its author.
  */
 export function useMeetupNostrRecords() {
   const { nostr } = useNostr();
   const { user } = useCurrentUser();
+  const queryClient = useQueryClient();
   const me = user?.pubkey;
+  const queryKey = [...MEETUP_EVENTS_QUERY_KEY, me ?? 'visitor'];
 
   return useQuery({
-    queryKey: [...MEETUP_EVENTS_QUERY_KEY, me ?? 'visitor'],
-    queryFn: async (): Promise<NostrEvent[]> => {
+    queryKey,
+    queryFn: (): Promise<NostrEvent[]> => {
       const requests: Promise<NostrEvent[]>[] = [];
       for (const url of NSP_EVENT_RELAYS) {
         const relay = nostr.relay(url);
@@ -73,10 +80,41 @@ export function useMeetupNostrRecords() {
           requests.push(ask({ kinds: [KIND_APP_DATA], authors: [me], '#t': [PROGRAM_TAG], limit: 500 }));
         }
       }
-      const settled = await Promise.allSettled(requests);
-      const ok = settled.filter((r): r is PromiseFulfilledResult<NostrEvent[]> => r.status === 'fulfilled');
-      if (ok.length === 0) throw new Error('No relay answered');
-      return ok.flatMap((r) => r.value);
+
+      return new Promise<NostrEvent[]>((resolve, reject) => {
+        const collected: NostrEvent[] = [];
+        let done = false;
+        let pending = requests.length;
+        let answered = 0;
+        const finish = () => {
+          if (done) return;
+          done = true;
+          resolve([...collected]);
+        };
+        for (const request of requests) {
+          request
+            .then((events) => {
+              answered++;
+              if (done) {
+                // Late relay: merge its records into what's already showing
+                if (events.length) {
+                  queryClient.setQueryData<NostrEvent[]>(queryKey, (old) => [...(old ?? []), ...events]);
+                }
+              } else {
+                collected.push(...events);
+                if (answered === 1) setTimeout(finish, SETTLE_MS);
+              }
+            })
+            .catch(() => undefined)
+            .finally(() => {
+              pending--;
+              if (pending === 0) {
+                if (answered > 0) finish();
+                else if (!done) reject(new Error('No relay answered'));
+              }
+            });
+        }
+      });
     },
     staleTime: 60_000,
     retry: 1,

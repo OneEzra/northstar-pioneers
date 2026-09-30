@@ -6,6 +6,7 @@ import { SiteFooter } from '@/components/SiteFooter';
 import { useMeetupEvents } from '@/hooks/useMeetupEvents';
 import { EVENT_TIME_ZONE, type MeetupEvent } from '@/data/events';
 import { meetupLinkFor } from '@/lib/meetup';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const resourceIcon: Record<string, string> = {
   slides: '📄',
@@ -149,7 +150,7 @@ const PioneersPage = () => {
       'Featured Northstar Pioneers — the builders who have demoed their work at our monthly Twin Cities AI meetup.',
   });
 
-  const { pioneers } = useMeetupEvents();
+  const { pioneers, isLoading } = useMeetupEvents();
   // Upcoming: soonest first. Past: newest first.
   const upcoming = pioneers.filter((e) => e.status === 'upcoming').reverse();
   const past = pioneers.filter((e) => e.status === 'past');
@@ -184,12 +185,18 @@ const PioneersPage = () => {
       </div>
 
       <div className="max-w-5xl mx-auto px-6 py-12 space-y-12">
-        {upcoming.length > 0 && (
+        {(upcoming.length > 0 || isLoading) && (
           <section className="space-y-5">
             <div className="pioneer-label">Upcoming</div>
-            {upcoming.map((e) => (
-              <PioneerCard key={e.slug} event={e} />
-            ))}
+            {upcoming.length > 0
+              ? upcoming.map((e) => <PioneerCard key={e.slug} event={e} />)
+              : (
+                  <div className="card-accent p-7 space-y-3" aria-busy="true" aria-label="Loading upcoming pioneers">
+                    <Skeleton className="h-7 w-24" />
+                    <Skeleton className="h-8 w-64" />
+                    <Skeleton className="h-4 w-full max-w-lg" />
+                  </div>
+                )}
           </section>
         )}
 

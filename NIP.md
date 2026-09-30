@@ -33,4 +33,4 @@ Before 2026-09-30, the program was a separate kind 30078 record (`d` = `northsta
 
 ## Relays
 
-Read and written: `relay.ditto.pub`, `nos.lol`, `offchain.pub`, `nostr.mom`, `relay.snort.social`, `relay.damus.io`. Each relay is queried separately with its own timeout, and results are merged; the newest version of each event ID wins.
+Read and written: `relay.ditto.pub`, `nos.lol`, `offchain.pub`, `nostr.mom`, `relay.snort.social`. Each relay is queried separately; results show as soon as the first relay answers, later answers are merged in, and the newest version of each event ID wins.
