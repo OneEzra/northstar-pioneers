@@ -2,6 +2,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { suggestSlug, type EventForm } from '@/lib/nspAdmin';
+import { isMeetupEventUrl } from '@/lib/meetup';
 
 interface Props {
   form: EventForm;
@@ -114,7 +115,16 @@ export function EventDetailsForm({ form, onChange, errors, isNew, shortName, onS
           <Input id="city" value={form.city} onChange={(e) => set('city', e.target.value)} />
         </Field>
         <div className="sm:col-span-2">
-          <Field id="meetup" label="Meetup.com RSVP link" error={errors.meetupUrl}>
+          <Field
+            id="meetup"
+            label="Meetup event link"
+            error={errors.meetupUrl}
+            hint={
+              form.meetupUrl && !isMeetupEventUrl(form.meetupUrl)
+                ? "This isn't a specific Meetup event page -- RSVP buttons will go to the group instead."
+                : 'Create the event on Meetup first, then paste its link here. Until then, RSVP goes to the group page.'
+            }
+          >
             <Input
               id="meetup"
               type="url"

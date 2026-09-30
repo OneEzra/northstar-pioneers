@@ -3,6 +3,7 @@ import { useSeoMeta } from '@unhead/react';
 import { SiteNav } from '@/components/SiteNav';
 import { SiteFooter } from '@/components/SiteFooter';
 import { useMeetupEvents } from '@/hooks/useMeetupEvents';
+import { MEETUP_GROUP_URL, meetupLinkFor } from '@/lib/meetup';
 import { NextGatheringCard } from '@/components/events/NextGatheringCard';
 import { HorizonEventCard } from '@/components/events/HorizonEventCard';
 import {
@@ -112,7 +113,7 @@ const Index = () => {
           {/* CTA row */}
           <div className="flex flex-wrap gap-4 items-center">
             <a
-              href="https://www.meetup.com/northstar-pioneers/"
+              href={(nextEvent && meetupLinkFor(nextEvent)?.url) ?? MEETUP_GROUP_URL}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-block bg-[#1E8EFF] text-black font-bold text-sm uppercase tracking-widest px-7 py-3.5 rounded-[2px] hover:brightness-110 transition-all"

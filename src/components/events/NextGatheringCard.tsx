@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { ShareEventButton } from '@/components/ShareEventButton';
 import { getVenueSponsor } from '@/data/venues';
+import { meetupLinkFor } from '@/lib/meetup';
 import { formatEventDate, formatEventDateShort, type MeetupEvent } from '@/data/events';
 
 /**
@@ -10,6 +11,7 @@ import { formatEventDate, formatEventDateShort, type MeetupEvent } from '@/data/
 export function NextGatheringCard({ event }: { event: MeetupEvent }) {
   const [topicsOpen, setTopicsOpen] = useState(false);
   const sponsor = getVenueSponsor(event.venue);
+  const rsvp = meetupLinkFor(event);
 
   return (
     <div className="card-accent p-0 overflow-hidden">
@@ -177,14 +179,14 @@ export function NextGatheringCard({ event }: { event: MeetupEvent }) {
 
       {/* RSVP */}
       <div className="px-8 py-5 border-t border-border flex flex-wrap gap-3 items-center">
-        {event.meetupUrl && (
+        {rsvp && (
           <a
-            href={event.meetupUrl}
+            href={rsvp.url}
             target="_blank"
             rel="noopener noreferrer"
             className="bg-[#1E8EFF] text-black font-bold text-xs uppercase tracking-widest px-6 py-3 rounded-[2px] hover:brightness-110 transition-all"
           >
-            RSVP on Meetup ↗
+            {rsvp.label} ↗
           </a>
         )}
         <a

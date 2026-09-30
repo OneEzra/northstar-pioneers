@@ -4,6 +4,7 @@ import { useSeoMeta } from '@unhead/react';
 import { SiteNav } from '@/components/SiteNav';
 import { SiteFooter } from '@/components/SiteFooter';
 import { useMeetupEvents } from '@/hooks/useMeetupEvents';
+import { meetupLinkFor } from '@/lib/meetup';
 import { ShareEventButton } from '@/components/ShareEventButton';
 import NotFound from './NotFound';
 import {
@@ -136,6 +137,7 @@ const EventDetailPage = () => {
   // Old links (e.g. /events/2026-09) redirect to the date-based URL
   if (slug !== event.slug) return <Navigate to={`/events/${event.slug}`} replace />;
 
+  const meetup = meetupLinkFor(event);
   const currentIndex = pastEvents.findIndex((e) => e.slug === event.slug);
   const prevEvent = currentIndex < pastEvents.length - 1 ? pastEvents[currentIndex + 1] : null;
   const nextEventInList = currentIndex > 0 ? pastEvents[currentIndex - 1] : null;
@@ -207,14 +209,14 @@ const EventDetailPage = () => {
 
           {/* Actions */}
           <div className="mt-8 flex flex-wrap gap-3 items-center">
-            {event.meetupUrl && event.state !== 'cancelled' && (
+            {meetup && (
               <a
-                href={event.meetupUrl}
+                href={meetup.url}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="bg-[#1E8EFF] text-black font-bold text-xs uppercase tracking-widest px-6 py-3 rounded-[2px] hover:brightness-110 transition-all"
               >
-                {event.status === 'upcoming' ? 'RSVP on Meetup ↗' : 'View on Meetup ↗'}
+                {meetup.label} ↗
               </a>
             )}
             <a

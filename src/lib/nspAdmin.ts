@@ -21,7 +21,7 @@ export const DEFAULTS = {
   venue: 'Nerdery',
   address: '7700 France Ave S, Edina, MN',
   city: 'Edina',
-  meetupUrl: 'https://www.meetup.com/northstar-pioneers/',
+  meetupUrl: '',
   summary:
     'Our monthly gathering -- Socratic news review, builder demo, and open networking. Pizza provided.',
 };

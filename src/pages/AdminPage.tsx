@@ -27,6 +27,7 @@ import { useCurrentUser } from '@/hooks/useCurrentUser';
 import { useMeetupEvents, type MeetupEvents } from '@/hooks/useMeetupEvents';
 import { useNspPublish } from '@/hooks/useNspPublish';
 import { useToast } from '@/hooks/useToast';
+import { isMeetupEventUrl } from '@/lib/meetup';
 import { formatEventDate, formatEventDateShort, type EventProgram, type MeetupEvent } from '@/data/events';
 import {
   buildCalendarList,
@@ -107,6 +108,9 @@ function EventPills({ e, published }: { e: MeetupEvent; published: MeetupEvents[
       )}
       {!published.current.has(e.slug) && (
         <Pill tone="warn">{published.calendar.has(e.slug) ? 'Needs publishing' : 'Not on Nostr yet'}</Pill>
+      )}
+      {e.status === 'upcoming' && (e.state ?? 'active') === 'active' && !isMeetupEventUrl(e.meetupUrl) && (
+        <Pill tone="warn">No Meetup link</Pill>
       )}
     </div>
   );

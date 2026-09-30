@@ -5,6 +5,7 @@ import { SiteNav } from '@/components/SiteNav';
 import { SiteFooter } from '@/components/SiteFooter';
 import { useMeetupEvents } from '@/hooks/useMeetupEvents';
 import { EVENT_TIME_ZONE, type MeetupEvent } from '@/data/events';
+import { meetupLinkFor } from '@/lib/meetup';
 
 const resourceIcon: Record<string, string> = {
   slides: '📄',
@@ -28,6 +29,7 @@ function PioneerCard({ event }: { event: MeetupEvent }) {
   const demo = event.builderDemo!;
   const { month, day, year } = dateParts(event.date);
   const upcoming = event.status === 'upcoming';
+  const meetup = meetupLinkFor(event);
 
   return (
     <article className="card-accent overflow-hidden">
@@ -41,9 +43,6 @@ function PioneerCard({ event }: { event: MeetupEvent }) {
             {month} {day}
           </div>
           <div className="text-xs font-bold uppercase tracking-widest text-muted-foreground sm:mt-1">{year}</div>
-          {upcoming && (
-            <span className="tag-pill text-[10px] sm:mt-3 border-[#1E8EFF] text-[#1E8EFF]">Up next</span>
-          )}
         </div>
 
         {/* Pioneer */}
@@ -105,17 +104,39 @@ function PioneerCard({ event }: { event: MeetupEvent }) {
         </div>
       </div>
 
-      {/* Event link */}
-      <div className="px-7 py-4 border-t border-border flex flex-wrap items-center justify-between gap-2">
+      {/* Event + Meetup links */}
+      <div className="px-7 py-4 border-t border-border flex flex-wrap items-center justify-between gap-3">
         <span className="text-xs text-muted-foreground">
           {upcoming ? 'Presenting at' : 'Presented at'} the {event.title} · {event.venue}
         </span>
-        <Link
-          to={`/events/${event.slug}`}
-          className="text-xs font-bold uppercase tracking-widest text-[#1E8EFF] hover:text-[#5AB0FF] transition-colors"
-        >
-          View Event →
-        </Link>
+        <div className="flex flex-wrap items-center gap-4">
+          <Link
+            to={`/events/${event.slug}`}
+            className="text-xs font-bold uppercase tracking-widest text-[#1E8EFF] hover:text-[#5AB0FF] transition-colors"
+          >
+            View Event →
+          </Link>
+          {meetup &&
+            (upcoming ? (
+              <a
+                href={meetup.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-[#1E8EFF] text-black font-bold text-xs uppercase tracking-widest px-5 py-2.5 rounded-[2px] hover:brightness-110 transition-all"
+              >
+                {meetup.label} ↗
+              </a>
+            ) : (
+              <a
+                href={meetup.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-muted-foreground border border-border font-bold text-xs uppercase tracking-widest px-5 py-2.5 rounded-[2px] hover:text-foreground hover:border-foreground/40 transition-colors"
+              >
+                {meetup.label} ↗
+              </a>
+            ))}
+        </div>
       </div>
     </article>
   );
@@ -129,6 +150,9 @@ const PioneersPage = () => {
   });
 
   const { pioneers } = useMeetupEvents();
+  // Upcoming: soonest first. Past: newest first.
+  const upcoming = pioneers.filter((e) => e.status === 'upcoming').reverse();
+  const past = pioneers.filter((e) => e.status === 'past');
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -153,20 +177,32 @@ const PioneersPage = () => {
             Featured <span className="text-[#1E8EFF]">Pioneers</span>
           </h1>
           <p className="text-muted-foreground mt-3 max-w-xl">
-            Every meetup, one member shows what they've built. Here's everyone who has taken the stage,
-            newest first.
+            Every meetup, one member shows what they've built. See who's up next, and everyone who has
+            taken the stage.
           </p>
         </div>
       </div>
 
-      <div className="max-w-5xl mx-auto px-6 py-12 space-y-5">
-        {pioneers.length === 0 ? (
-          <p className="text-muted-foreground">Our first featured pioneer will be announced soon.</p>
-        ) : (
-          pioneers.map((e) => <PioneerCard key={e.slug} event={e} />)
+      <div className="max-w-5xl mx-auto px-6 py-12 space-y-12">
+        {upcoming.length > 0 && (
+          <section className="space-y-5">
+            <div className="pioneer-label">Upcoming</div>
+            {upcoming.map((e) => (
+              <PioneerCard key={e.slug} event={e} />
+            ))}
+          </section>
         )}
 
-        <div className="card-accent p-7 mt-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <section className="space-y-5">
+          <div className="pioneer-label">Past Pioneers</div>
+          {past.length === 0 ? (
+            <p className="text-muted-foreground">Our first featured pioneer will be announced soon.</p>
+          ) : (
+            past.map((e) => <PioneerCard key={e.slug} event={e} />)
+          )}
+        </section>
+
+        <div className="card-accent p-7 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <div className="font-bold text-foreground">Built something worth showing?</div>
             <p className="text-sm text-muted-foreground">Tell us in the Pioneers Telegram — we'd love to feature you.</p>
