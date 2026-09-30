@@ -11,12 +11,16 @@ export interface PublishResult {
   /** Fewest relays that accepted any one record */
   minAccepted: number;
   relayCount: number;
+  /** Relays that refused at least one record, with their reason */
+  refused: { relay: string; reason: string }[];
 }
 
+const shortRelay = (url: string) => url.replace(/^wss:\/\//, '').replace(/\/$/, '');
+
 /**
- * Sign records with the organizer account and send each one to every
- * event relay. Succeeds if every record reached at least one relay.
- * Updates the site's event list immediately, without waiting for relays.
+ * Sign records with the signed-in admin account and send each one to every
+ * event relay. Succeeds if every record reached at least one relay; reports
+ * which relays refused and why. Updates the site's event list immediately.
  */
 export function useNspPublish() {
   const { nostr } = useNostr();
@@ -36,21 +40,37 @@ export function useNspPublish() {
       }
 
       let minAccepted = Infinity;
+      const refused = new Map<string, string>();
       for (const event of signed) {
         const results = await Promise.allSettled(
           NSP_EVENT_RELAYS.map((url) => nostr.relay(url).event(event, { signal: AbortSignal.timeout(8000) })),
         );
-        const accepted = results.filter((r) => r.status === 'fulfilled').length;
+        let accepted = 0;
+        results.forEach((r, i) => {
+          if (r.status === 'fulfilled') accepted++;
+          else {
+            const reason = r.reason instanceof Error ? r.reason.message : String(r.reason);
+            refused.set(shortRelay(NSP_EVENT_RELAYS[i]), reason);
+          }
+        });
         if (accepted === 0) {
           throw new Error('No relay accepted the update. Check your connection and try again.');
         }
         minAccepted = Math.min(minAccepted, accepted);
       }
 
-      return { events: signed, minAccepted: signed.length ? minAccepted : 0, relayCount: NSP_EVENT_RELAYS.length };
+      return {
+        events: signed,
+        minAccepted: signed.length ? minAccepted : 0,
+        relayCount: NSP_EVENT_RELAYS.length,
+        refused: [...refused].map(([relay, reason]) => ({ relay, reason })),
+      };
     },
     onSuccess: ({ events }) => {
-      queryClient.setQueryData<NostrEvent[]>(MEETUP_EVENTS_QUERY_KEY, (old) => [...(old ?? []), ...events]);
+      queryClient.setQueriesData<NostrEvent[]>({ queryKey: MEETUP_EVENTS_QUERY_KEY }, (old) => [
+        ...(old ?? []),
+        ...events,
+      ]);
     },
   });
 }

@@ -9,6 +9,7 @@ import {
   mergeEvents,
   parseCalendarEvent,
   parseProgramEvent,
+  publishedSlugs,
   type CalendarFields,
 } from './nspNostr';
 
@@ -145,5 +146,46 @@ describe('mergeEvents -- one list for the whole site', () => {
     const all2 = resolveAll(mergeEvents(backup, [pastMoved]), now);
     expect(selectPast(all2).map((e) => e.slug)).not.toContain('2026-08-26');
     expect(selectBySlug(all2, '2026-08-26')?.rescheduledTo).toBe('2026-08-27');
+  });
+});
+
+describe('program inside the calendar event (current format)', () => {
+  const now = parseEventTime('2026-09-30T12:00');
+  const robert = {
+    topics: [{ title: 'Topic A' }],
+    builderDemo: { title: 'DecentHealth', presenter: 'Robert Phillips', description: 'd', presenterUrl: 'https://decenthealth.io' },
+  };
+
+  test('one public record carries logistics and pioneer', () => {
+    const ev = sign(buildCalendarEvent(october, NSP_ADMIN_PUBKEY, robert));
+    expect(ev.tags.some(([t]) => t === 'nsp_program')).toBe(true);
+    const next = selectNext(resolveAll(mergeEvents(backup, [ev]), now));
+    expect(next?.builderDemo?.presenter).toBe('Robert Phillips');
+    expect(next?.builderDemo?.presenterUrl).toBe('https://decenthealth.io/');
+    expect(publishedSlugs([ev]).current.has('2026-10-27')).toBe(true);
+  });
+
+  test('an old-format event still picks up its legacy program (the move-over case)', () => {
+    const oldCal = sign({ ...buildCalendarEvent(october), tags: buildCalendarEvent(october).tags.filter(([t]) => t !== 'nsp_program') }, { created_at: 100 });
+    const legacy = sign(buildProgramEvent('2026-10-27', robert), { created_at: 200 });
+    const next = selectNext(resolveAll(mergeEvents(backup, [oldCal, legacy]), now));
+    expect(next?.builderDemo?.presenter).toBe('Robert Phillips');
+    const state = publishedSlugs([oldCal, legacy]);
+    expect(state.calendar.has('2026-10-27')).toBe(true);
+    expect(state.current.has('2026-10-27')).toBe(false);
+  });
+
+  test('the most recent save wins between formats', () => {
+    const legacy = sign(buildProgramEvent('2026-10-27', robert), { created_at: 100 });
+    const clearedLater = sign(buildCalendarEvent(october, NSP_ADMIN_PUBKEY, { topics: [] }), { created_at: 200 });
+    expect(selectNext(resolveAll(mergeEvents(backup, [legacy, clearedLater]), now))?.builderDemo).toBeUndefined();
+  });
+
+  test('unsafe links inside the embedded program are dropped', () => {
+    const ev = sign(buildCalendarEvent(october, NSP_ADMIN_PUBKEY, {
+      topics: [],
+      builderDemo: { title: 't', presenter: 'P', description: 'd', presenterUrl: 'javascript:alert(1)' },
+    }));
+    expect(selectNext(resolveAll(mergeEvents(backup, [ev]), now))?.builderDemo?.presenterUrl).toBeUndefined();
   });
 });

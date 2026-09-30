@@ -1,17 +1,19 @@
 // -----------------------------------------------------------------
 //  Northstar Pioneers <-> Nostr
 //
-//  Each meetup is stored on Nostr as two linked, replaceable records
-//  that share the same ID (e.g. "2026-10-27"):
+//  Each meetup is ONE public, replaceable NIP-52 calendar event
+//  (kind 31923) whose ID is the date (e.g. "2026-10-27"):
+//   - standard tags: title, start/end, venue, summary, Meetup link,
+//     status -- any NIP-52 calendar app (e.g. Plektos) can show it;
+//   - an `nsp_program` tag with JSON for the details filled in over
+//     time: featured pioneer, Socratic topics, resources, photo.
+//  Publishing again with the same ID replaces it. See NIP.md.
 //
-//   1. Calendar event  (NIP-52, kind 31923) -- the logistics: title,
-//      start/end, venue, summary, Meetup link, status. Any NIP-52
-//      calendar app (e.g. Plektos) can show it.
-//   2. Program record  (NIP-78, kind 30078) -- the details filled in
-//      over time: featured pioneer, Socratic topics, resources, photo.
-//      JSON that only this site reads.
-//
-//  Publishing either record again with the same ID replaces it.
+//  Legacy: program details used to live in separate kind 30078 records.
+//  Some relays (e.g. relay.ditto.pub) treat 30078 as private, so
+//  visitors couldn't read them. They're still read as a fallback for
+//  signed-in admins, and re-publishing an event moves them into the
+//  calendar event.
 //  Only records signed by an account in NSP_ADMIN_PUBKEYS are trusted.
 //  When admins edit the same event, the most recent save wins.
 // -----------------------------------------------------------------
@@ -62,11 +64,15 @@ export const isNspAdmin = (pubkey?: string | null): boolean => !!pubkey && NSP_A
  * 2026-09-26, so they're not relied on here.)
  */
 export const NSP_EVENT_RELAYS = [
-  'wss://relay.primal.net/',
-  'wss://nos.lol/',
-  'wss://relay.damus.io/',
   'wss://relay.ditto.pub/',
+  'wss://nos.lol/',
+  'wss://offchain.pub/',
+  'wss://nostr.mom/',
+  'wss://relay.snort.social/',
+  'wss://relay.damus.io/',
 ];
+// (relay.primal.net was dropped on 2026-09-30: it doesn't store calendar
+// events, kind 31923, so publishing there did nothing.)
 
 export const KIND_CALENDAR_EVENT = 31923;
 export const KIND_CALENDAR = 31924;
@@ -75,6 +81,9 @@ export const KIND_APP_DATA = 30078;
 /** `t` tags that let us query just our records */
 export const EVENT_TAG = 'northstarpioneers';
 export const PROGRAM_TAG = 'northstarpioneers-program';
+
+/** Tag on the calendar event that carries the program JSON */
+export const PROGRAM_TAG_NAME = 'nsp_program';
 
 /** The NIP-52 calendar that groups all meetups */
 export const CALENDAR_D = 'northstar-pioneers-meetups';
@@ -127,8 +136,16 @@ export interface EventTemplate {
   tags: string[][];
 }
 
-/** Build the NIP-52 calendar event for a meetup. */
-export function buildCalendarEvent(e: CalendarFields, pubkey = NSP_ADMIN_PUBKEY): EventTemplate {
+/**
+ * Build the NIP-52 calendar event for a meetup, including its program
+ * (pioneer, topics, ...). Always pass the current program: the event is
+ * replaced as a whole, so leaving it out would clear the pioneer.
+ */
+export function buildCalendarEvent(
+  e: CalendarFields,
+  pubkey = NSP_ADMIN_PUBKEY,
+  program: EventProgram = { topics: [] },
+): EventTemplate {
   const start = Math.floor(parseEventTime(e.date) / 1000);
   const end = e.end ? Math.floor(parseEventTime(e.end) / 1000) : start + 2 * 60 * 60;
   const days = new Set([Math.floor(start / 86400), Math.floor(end / 86400)]);
@@ -155,6 +172,9 @@ export function buildCalendarEvent(e: CalendarFields, pubkey = NSP_ADMIN_PUBKEY)
   if (e.meetupUrl) tags.push(['r', e.meetupUrl]);
   if (e.rescheduledTo) tags.push(['rescheduled_to', e.rescheduledTo]);
   for (const alias of e.aliases ?? []) tags.push(['alias', alias]);
+  // Always present on current-format events, even when empty, so it is
+  // authoritative (an empty program clears an old pioneer).
+  tags.push([PROGRAM_TAG_NAME, JSON.stringify({ v: 1, ...program })]);
 
   return { kind: KIND_CALENDAR_EVENT, content: e.summary, tags };
 }
@@ -250,28 +270,20 @@ export function buildProgramEvent(slug: string, program: EventProgram, pubkey = 
   };
 }
 
-/** Parse a program record we published. URLs are sanitized; bad data returns null. */
-export function parseProgramEvent(ev: NostrEvent): { slug: string; program: EventProgram } | null {
-  if (ev.kind !== KIND_APP_DATA || !isNspAdmin(ev.pubkey)) return null;
-  const d = tag(ev, 'd');
-  if (!d?.startsWith(PROGRAM_D_PREFIX)) return null;
-  const slug = d.slice(PROGRAM_D_PREFIX.length);
-  if (!SLUG_PATTERN.test(slug)) return null;
-
+/** Validate program JSON (from either format). URLs are sanitized; bad data returns null. */
+function programFromJson(raw: string | undefined): EventProgram | null {
+  if (!raw) return null;
   let json: unknown;
   try {
-    json = JSON.parse(ev.content);
+    json = JSON.parse(raw);
   } catch {
     return null;
   }
   const parsed = programSchema.safeParse(json);
   if (!parsed.success) return null;
   const p = parsed.data;
-
   return {
-    slug,
-    program: {
-      topics: p.topics.map((t) => ({
+    topics: p.topics.map((t) => ({
         ...t,
         expandedImageUrl: sanitizeUrl(t.expandedImageUrl),
         resources: cleanResources(t.resources),
@@ -284,8 +296,24 @@ export function parseProgramEvent(ev: NostrEvent): { slug: string; program: Even
       },
       photoUrl: sanitizeUrl(p.photoUrl),
       attendees: p.attendees,
-    },
   };
+}
+
+/** The program embedded in a current-format calendar event, or null if it has none. */
+export function parseEmbeddedProgram(ev: NostrEvent): EventProgram | null {
+  if (ev.kind !== KIND_CALENDAR_EVENT || !isNspAdmin(ev.pubkey)) return null;
+  return programFromJson(tag(ev, PROGRAM_TAG_NAME));
+}
+
+/** Parse a legacy program record (kind 30078). */
+export function parseProgramEvent(ev: NostrEvent): { slug: string; program: EventProgram } | null {
+  if (ev.kind !== KIND_APP_DATA || !isNspAdmin(ev.pubkey)) return null;
+  const d = tag(ev, 'd');
+  if (!d?.startsWith(PROGRAM_D_PREFIX)) return null;
+  const slug = d.slice(PROGRAM_D_PREFIX.length);
+  if (!SLUG_PATTERN.test(slug)) return null;
+  const program = programFromJson(ev.content);
+  return program ? { slug, program } : null;
 }
 
 // --- Merge -------------------------------------------------------
@@ -316,12 +344,22 @@ export function mergeEvents(backup: MeetupEventInput[], nostrEvents: NostrEvent[
   // so an outsider's newer record can never displace a real one.
   const latest = latestByD(nostrEvents.filter((ev) => isNspAdmin(ev.pubkey)));
   const calendar = new Map<string, CalendarFields>();
-  const programs = new Map<string, EventProgram>();
+  // For each event, the most recently saved program wins -- whether it's
+  // embedded in the calendar event or in a legacy kind 30078 record.
+  const programs = new Map<string, { program: EventProgram; at: number }>();
+  const offer = (slug: string, program: EventProgram, at: number) => {
+    const cur = programs.get(slug);
+    if (!cur || at > cur.at) programs.set(slug, { program, at });
+  };
   for (const ev of latest) {
     const cal = parseCalendarEvent(ev);
-    if (cal) calendar.set(cal.slug, cal);
+    if (cal) {
+      calendar.set(cal.slug, cal);
+      const embedded = parseEmbeddedProgram(ev);
+      if (embedded) offer(cal.slug, embedded, ev.created_at);
+    }
     const prog = parseProgramEvent(ev);
-    if (prog) programs.set(prog.slug, prog.program);
+    if (prog) offer(prog.slug, prog.program, ev.created_at);
   }
 
   const bySlug = new Map<string, MeetupEventInput>();
@@ -336,22 +374,33 @@ export function mergeEvents(backup: MeetupEventInput[], nostrEvents: NostrEvent[
       aliases: cal.aliases ?? base?.aliases,
     });
   }
-  for (const [slug, program] of programs) {
+  for (const [slug, { program }] of programs) {
     const base = bySlug.get(slug);
     if (base) bySlug.set(slug, { ...base, ...program });
   }
   return [...bySlug.values()];
 }
 
-/** Which event IDs already have a calendar event / program on Nostr. */
-export function publishedSlugs(events: NostrEvent[]): { calendar: Set<string>; program: Set<string> } {
-  const calendar = new Set<string>();
-  const program = new Set<string>();
-  for (const ev of events) {
+export interface PublishedState {
+  /** Has a calendar event on Nostr */
+  calendar: Set<string>;
+  /** Has a legacy (kind 30078) program record */
+  program: Set<string>;
+  /** Calendar event is in the current format (program embedded, readable by everyone) */
+  current: Set<string>;
+}
+
+/** What's already on Nostr, per event ID (newest version of each record). */
+export function publishedSlugs(events: NostrEvent[]): PublishedState {
+  const state: PublishedState = { calendar: new Set(), program: new Set(), current: new Set() };
+  for (const ev of latestByD(events.filter((e) => isNspAdmin(e.pubkey)))) {
     const cal = parseCalendarEvent(ev);
-    if (cal) calendar.add(cal.slug);
+    if (cal) {
+      state.calendar.add(cal.slug);
+      if (parseEmbeddedProgram(ev)) state.current.add(cal.slug);
+    }
     const prog = parseProgramEvent(ev);
-    if (prog) program.add(prog.slug);
+    if (prog) state.program.add(prog.slug);
   }
-  return { calendar, program };
+  return state;
 }

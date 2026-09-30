@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNostr } from '@nostrify/react';
 import { useQuery } from '@tanstack/react-query';
-import type { NostrEvent } from '@nostrify/nostrify';
+import type { NostrEvent, NostrFilter } from '@nostrify/nostrify';
+
+import { useCurrentUser } from '@/hooks/useCurrentUser';
 
 import {
   events as backupEvents,
@@ -21,8 +23,10 @@ import {
   NSP_ADMIN_PUBKEYS,
   NSP_EVENT_RELAYS,
   PROGRAM_TAG,
+  isNspAdmin,
   mergeEvents,
   publishedSlugs,
+  type PublishedState,
 } from '@/lib/nspNostr';
 
 export const MEETUP_EVENTS_QUERY_KEY = ['nsp-meetup-events'] as const;
@@ -37,20 +41,42 @@ function useNow(intervalMs = 60_000): number {
   return now;
 }
 
-/** Raw Nostr records for all meetups (calendar events + programs). */
+/** How long to wait for any one relay before moving on without it. */
+const RELAY_TIMEOUT_MS = 6000;
+
+/**
+ * Raw Nostr records for all meetups.
+ *
+ * Each relay is asked separately, with its own timeout, and the answers
+ * are merged -- so one slow relay, or one that refuses part of a request,
+ * can't cut the others off. Calendar events (public) and legacy program
+ * records are separate requests for the same reason: some relays refuse
+ * kind 30078 to anyone but its author.
+ */
 export function useMeetupNostrRecords() {
   const { nostr } = useNostr();
+  const { user } = useCurrentUser();
+  const me = user?.pubkey;
+
   return useQuery({
-    queryKey: MEETUP_EVENTS_QUERY_KEY,
+    queryKey: [...MEETUP_EVENTS_QUERY_KEY, me ?? 'visitor'],
     queryFn: async (): Promise<NostrEvent[]> => {
-      const group = nostr.group(NSP_EVENT_RELAYS);
-      return group.query(
-        [
-          { kinds: [KIND_CALENDAR_EVENT], authors: NSP_ADMIN_PUBKEYS, '#t': [EVENT_TAG], limit: 500 },
-          { kinds: [KIND_APP_DATA], authors: NSP_ADMIN_PUBKEYS, '#t': [PROGRAM_TAG], limit: 500 },
-        ],
-        { signal: AbortSignal.timeout(8000) },
-      );
+      const requests: Promise<NostrEvent[]>[] = [];
+      for (const url of NSP_EVENT_RELAYS) {
+        const relay = nostr.relay(url);
+        const ask = (filter: NostrFilter) =>
+          relay.query([filter], { signal: AbortSignal.timeout(RELAY_TIMEOUT_MS) });
+        requests.push(ask({ kinds: [KIND_CALENDAR_EVENT], authors: NSP_ADMIN_PUBKEYS, '#t': [EVENT_TAG], limit: 500 }));
+        // Legacy program records: only an admin reading their own can get these
+        // from strict relays, and only admins need them (to re-publish).
+        if (me && isNspAdmin(me)) {
+          requests.push(ask({ kinds: [KIND_APP_DATA], authors: [me], '#t': [PROGRAM_TAG], limit: 500 }));
+        }
+      }
+      const settled = await Promise.allSettled(requests);
+      const ok = settled.filter((r): r is PromiseFulfilledResult<NostrEvent[]> => r.status === 'fulfilled');
+      if (ok.length === 0) throw new Error('No relay answered');
+      return ok.flatMap((r) => r.value);
     },
     staleTime: 60_000,
     retry: 1,
@@ -76,7 +102,7 @@ export interface MeetupEvents {
   /** Where the data came from */
   source: 'nostr' | 'backup';
   /** Event IDs that have a calendar event / program on Nostr */
-  published: { calendar: Set<string>; program: Set<string> };
+  published: PublishedState;
   /** True when the Nostr lookup failed (the backup list is showing) */
   isError: boolean;
   refetch: () => void;

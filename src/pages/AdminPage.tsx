@@ -42,12 +42,9 @@ import {
   validateEventForm,
   type EventForm,
 } from '@/lib/nspAdmin';
-import { NSP_ADMIN_PUBKEYS, buildCalendarEvent, buildProgramEvent, isNspAdmin, type EventTemplate } from '@/lib/nspNostr';
+import { NSP_ADMIN_PUBKEYS, buildCalendarEvent, isNspAdmin, type EventTemplate } from '@/lib/nspNostr';
 
 const EMPTY_PROGRAM: EventProgram = { topics: [] };
-
-const hasProgram = (p: EventProgram) =>
-  p.topics.length > 0 || !!p.builderDemo || !!p.photoUrl || !!p.attendees;
 
 /** A sensible default date for a new event: 4 weeks after the last one. */
 function nextDefaultDay(all: MeetupEvent[]): string {
@@ -64,7 +61,10 @@ function usePublisher() {
   const run = async (templates: EventTemplate[], success: string): Promise<boolean> => {
     try {
       const r = await publish.mutateAsync(templates);
-      toast({ title: success, description: `Saved to ${r.minAccepted} of ${r.relayCount} relays.` });
+      const refused = r.refused.length
+        ? ` Not saved by: ${r.refused.map((x) => `${x.relay} (${x.reason})`).join('; ')}.`
+        : '';
+      toast({ title: success, description: `Saved to ${r.minAccepted} of ${r.relayCount} relays.${refused}` });
       return true;
     } catch (err) {
       toast({
@@ -105,7 +105,9 @@ function EventPills({ e, published }: { e: MeetupEvent; published: MeetupEvents[
       ) : (
         <Pill tone={e.status === 'upcoming' ? 'blue' : 'muted'}>{e.status === 'upcoming' ? 'Upcoming' : 'Past'}</Pill>
       )}
-      {!published.calendar.has(e.slug) && <Pill tone="warn">Not on Nostr yet</Pill>}
+      {!published.current.has(e.slug) && (
+        <Pill tone="warn">{published.calendar.has(e.slug) ? 'Needs publishing' : 'Not on Nostr yet'}</Pill>
+      )}
     </div>
   );
 }
@@ -124,16 +126,13 @@ function EventList({ data, onEdit, onNew }: { data: MeetupEvents; onEdit: (slug:
   upcoming.sort(sortAsc);
   past.sort((a, b) => sortAsc(b, a));
 
-  const unpublished = data.all.filter((e) => !data.published.calendar.has(e.slug));
+  // Not on Nostr at all, or published in the old format that visitors can't fully read
+  const unpublished = data.all.filter((e) => !data.published.current.has(e.slug));
 
   const migrate = async () => {
     const templates: EventTemplate[] = [];
     for (const e of unpublished) {
-      templates.push(buildCalendarEvent(toCalendarFields(e), signer));
-      const program = programOf(e);
-      if (hasProgram(program) && !data.published.program.has(e.slug)) {
-        templates.push(buildProgramEvent(e.slug, cleanProgram(program), signer));
-      }
+      templates.push(buildCalendarEvent(toCalendarFields(e), signer, cleanProgram(programOf(e))));
     }
     templates.push(buildCalendarList(data.all.map((e) => ({ slug: e.slug, author: data.published.calendar.has(e.slug) ? e.author : signer })), signer));
     await run(templates, `Published ${unpublished.length} events to Nostr`);
@@ -183,10 +182,11 @@ function EventList({ data, onEdit, onNew }: { data: MeetupEvents; onEdit: (slug:
         <div className="card-accent p-5 flex flex-col sm:flex-row sm:items-center gap-4 justify-between">
           <div>
             <div className="font-bold text-foreground">
-              {unpublished.length} event{unpublished.length === 1 ? ' is' : 's are'} only in the site's backup file
+              {unpublished.length} event{unpublished.length === 1 ? ' needs' : 's need'} publishing
             </div>
             <p className="text-sm text-muted-foreground">
-              Publish them to Nostr so everything is managed here. The site looks the same afterward.
+              Publishes each event with its pioneer and topics in the format every visitor can read.
+              Check the pioneers below look right first.
             </p>
           </div>
           <Button onClick={() => setConfirmMigrate(true)} disabled={isPending}>
@@ -215,8 +215,22 @@ function EventList({ data, onEdit, onNew }: { data: MeetupEvents; onEdit: (slug:
           <AlertDialogHeader>
             <AlertDialogTitle>Publish {unpublished.length} events to Nostr?</AlertDialogTitle>
             <AlertDialogDescription>
-              {unpublished.map((e) => e.slug).join(', ')} will be signed with your account and published,
-              along with their pioneers and topics. You can edit any of them afterward.
+              Each will be signed with your account and published with the pioneer and topics shown:
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <ul className="text-sm space-y-1 max-h-64 overflow-auto">
+            {unpublished.map((e) => (
+              <li key={e.slug} className="flex justify-between gap-4">
+                <span className="font-mono text-xs">{e.slug}</span>
+                <span className="text-muted-foreground text-xs text-right">
+                  {e.builderDemo?.presenter ?? 'No pioneer'} · {e.topics.length} topic{e.topics.length === 1 ? '' : 's'}
+                </span>
+              </li>
+            ))}
+          </ul>
+          <AlertDialogHeader>
+            <AlertDialogDescription>
+              If a pioneer or topics are missing here, cancel and sign in with the account you used to add them.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -271,7 +285,7 @@ function EventEditor({
     // Re-check the ID right before saving so a new event can never replace another one.
     const finalSlug = isNew ? suggestSlug(form.day, taken, shortName) : form.slug;
     const fields = formToCalendarFields({ ...form, slug: finalSlug }, existing);
-    const templates = [buildCalendarEvent(fields, signer)];
+    const templates = [buildCalendarEvent(fields, signer, existing ? cleanProgram(programOf(existing)) : EMPTY_PROGRAM)];
     if (isNew) templates.push(buildCalendarList([...data.all, { slug: finalSlug, author: signer }], signer));
     if (await run(templates, isNew ? 'Event created' : 'Event updated')) {
       if (isNew) onOpen(finalSlug);
@@ -281,22 +295,24 @@ function EventEditor({
   const saveProgram = async () => {
     if (!existing) return;
     const clean = cleanProgram(program);
-    if (await run([buildProgramEvent(existing.slug, clean, existing.author ?? signer)], 'Program saved')) setProgram(clean);
+    if (await run([buildCalendarEvent(toCalendarFields(existing), signer, clean)], 'Pioneer & topics saved')) setProgram(clean);
   };
 
   const setState = async (state: 'active' | 'cancelled') => {
     if (!existing) return;
     const fields = { ...toCalendarFields(existing), state, rescheduledTo: undefined };
-    await run([buildCalendarEvent(fields, signer)], state === 'cancelled' ? 'Event cancelled' : 'Event restored');
+    await run([buildCalendarEvent(fields, signer, cleanProgram(programOf(existing)))], state === 'cancelled' ? 'Event cancelled' : 'Event restored');
     setConfirm(null);
   };
 
   const reschedule = async () => {
     if (!existing) return;
     const plan = planReschedule(existing, move.day, move.startTime, move.endTime, taken);
-    const templates = [buildCalendarEvent(plan.next, signer), buildCalendarEvent(plan.old, signer)];
     const prog = cleanProgram(program);
-    if (hasProgram(prog)) templates.push(buildProgramEvent(plan.next.slug, prog, signer));
+    const templates = [
+      buildCalendarEvent(plan.next, signer, prog),
+      buildCalendarEvent(plan.old, signer, cleanProgram(programOf(existing))),
+    ];
     templates.push(buildCalendarList([...data.all, { slug: plan.next.slug, author: signer }], signer));
     if (await run(templates, `Moved to ${formatEventDate(new Date(`${move.day}T12:00:00Z`).toISOString())}`)) {
       setMoving(false);
