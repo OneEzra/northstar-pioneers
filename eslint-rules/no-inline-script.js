@@ -27,6 +27,20 @@ export default {
           attr.key && attr.key.value === 'src'
         );
 
+        // JSON-LD is a non-executable data block used by search engines.
+        const isJsonLd = node.attributes && node.attributes.some(attr =>
+          attr.key && attr.key.value === 'type' && attr.value &&
+          attr.value.value === 'application/ld+json'
+        );
+        if (isJsonLd && hasContent) {
+          try {
+            JSON.parse(node.value.value);
+            return;
+          } catch {
+            // Invalid data still fails the inline-script rule.
+          }
+        }
+
         // If the script has content but no src attribute, it's an inline script
         if (hasContent && !hasSrc) {
           context.report({
