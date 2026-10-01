@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { SiteNav } from '@/components/SiteNav';
 import { SiteFooter } from '@/components/SiteFooter';
+import { WelcomeVideo } from '@/components/WelcomeVideo';
 import { useMeetupEvents } from '@/hooks/useMeetupEvents';
 import { MEETUP_GROUP_URL, meetupLinkFor } from '@/lib/meetup';
 import { usePageSeo, DEFAULT_TITLE, DEFAULT_DESCRIPTION, eventJsonLd } from '@/lib/seo';
@@ -41,6 +42,7 @@ function getPresenterInfo(event: MeetupEvent): { name: string; url: string } | n
 }
 
 const Index = () => {
+  const welcomeVideoUrl = import.meta.env.VITE_WELCOME_VIDEO_URL as string | undefined;
   const { next: nextEvent, horizon: placeholderEvents, past: allPastEvents, isLoading: eventsLoading } = useMeetupEvents();
   const pastEvents = allPastEvents.slice(0, 2);
 
@@ -133,6 +135,8 @@ const Index = () => {
           </div>
         </div>
       </section>
+
+      {welcomeVideoUrl && <WelcomeVideo src={welcomeVideoUrl} />}
 
       {/* ── NEXT EVENT ────────────────────────────────────────── */}
       {nextEvent && (
