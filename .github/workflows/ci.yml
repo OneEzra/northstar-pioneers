@@ -1,0 +1,29 @@
+name: Build check
+
+# The live site is hosted on Netlify (deployed from Shakespeare), not GitHub Pages.
+# This only checks that every push still type-checks, lints, passes tests, and builds.
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Type-check, lint, test, and build
+        run: npm test
