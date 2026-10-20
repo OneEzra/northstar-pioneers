@@ -6,6 +6,7 @@ import { SiteFooter } from '@/components/SiteFooter';
 import { useMeetupEvents } from '@/hooks/useMeetupEvents';
 import { meetupLinkFor } from '@/lib/meetup';
 import { ShareEventButton } from '@/components/ShareEventButton';
+import { PresentLink } from '@/components/present/PresentLink';
 import NotFound from './NotFound';
 import {
   EVENT_TIME_ZONE,
@@ -328,7 +329,10 @@ const EventDetailPage = () => {
         {/* Socratic Topics */}
         {event.topics.length > 0 && (
           <section>
-            <div className="pioneer-label mb-5">Socratic Review Topics</div>
+            <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 mb-5">
+              <div className="pioneer-label">Socratic Review Topics</div>
+              <PresentLink slug={event.slug} />
+            </div>
             <div className="space-y-4">
               {event.topics.map((topic, i) => (
                 <TopicCard key={topic.title} topic={topic} index={i} />

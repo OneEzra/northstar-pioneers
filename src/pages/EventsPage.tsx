@@ -8,6 +8,7 @@ import { useMeetupEvents } from '@/hooks/useMeetupEvents';
 import { ShareEventButton } from '@/components/ShareEventButton';
 import { NextGatheringCard } from '@/components/events/NextGatheringCard';
 import { HorizonEventCard } from '@/components/events/HorizonEventCard';
+import { PresentLink } from '@/components/present/PresentLink';
 import {
   formatEventDateShort,
   type MeetupEvent,
@@ -148,7 +149,10 @@ function EventCard({ event }: { event: MeetupEvent }) {
       {/* Topics panel */}
       {topicsOpen && event.topics.length > 0 && (
         <div className="px-7 py-5 border-t border-border">
-          <div className="pioneer-label mb-4">Socratic Review Topics</div>
+          <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 mb-4">
+            <div className="pioneer-label">Socratic Review Topics</div>
+            <PresentLink slug={event.slug} />
+          </div>
           <div className="space-y-4">
             {event.topics.map((topic, i) => (
               <div key={topic.title} className="card-accent p-6">

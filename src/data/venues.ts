@@ -8,6 +8,8 @@ export interface VenueSponsor {
   about: string;
   url: string;
   urlLabel: string;
+  /** Optional white-on-transparent logo for the presentation venue slide */
+  logoUrl?: string;
 }
 
 export const venueSponsors: Record<string, VenueSponsor> = {
@@ -16,6 +18,7 @@ export const venueSponsors: Record<string, VenueSponsor> = {
       "Nerdery is a digital solutions provider with over 20 years of experience building business-critical software for when off-the-shelf solutions won't work and failure is not an option. As a strategic ally, we provide the Digital Strategy, System Modernization, and AI Optimization needed to bridge the gap between executive vision and technical execution.",
     url: 'https://www.nerdery.com',
     urlLabel: 'nerdery.com',
+    logoUrl: '/sponsors/nerdery-logo-white.png',
   },
 };
 
