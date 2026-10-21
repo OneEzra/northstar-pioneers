@@ -11,7 +11,8 @@ interface QRCodeCanvasProps {
 }
 
 const LOGO_SRC = '/star-mark-blue.svg';
-const LOGO_FRACTION = 0.22;
+const BACKING_FRACTION = 0.17;
+const STAR_FILL = 0.84;
 
 export function QRCodeCanvas({ value, size = 256, level = 'M', logo = true, className }: QRCodeCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -42,15 +43,15 @@ export function QRCodeCanvas({ value, size = 256, level = 'M', logo = true, clas
           if (cancelled) return;
           const ctx = canvas.getContext('2d');
           if (!ctx) return;
-          const box = canvas.width * LOGO_FRACTION;
-          const pad = box * 0.18;
-          const x = (canvas.width - box) / 2;
-          const y = (canvas.height - box) / 2;
+          const backing = canvas.width * BACKING_FRACTION;
+          const star = backing * STAR_FILL;
+          const bx = (canvas.width - backing) / 2;
+          const by = (canvas.height - backing) / 2;
           ctx.fillStyle = '#ffffff';
           ctx.beginPath();
-          ctx.roundRect(x - pad, y - pad, box + pad * 2, box + pad * 2, box * 0.2);
+          ctx.roundRect(bx, by, backing, backing, backing * 0.2);
           ctx.fill();
-          ctx.drawImage(img, x, y, box, box);
+          ctx.drawImage(img, (canvas.width - star) / 2, (canvas.height - star) / 2, star, star);
         };
         img.src = LOGO_SRC;
       }

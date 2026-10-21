@@ -84,7 +84,7 @@ function Card({ eyebrow, children, style }: { eyebrow: string; children: ReactNo
 function Qr({ value, size, style }: { value: string; size: number; style?: CSSProperties }) {
   return (
     <div className="bg-white shrink-0" style={{ padding: size * 0.06, borderRadius: 12, lineHeight: 0, ...style }}>
-      <QRCodeCanvas value={value} size={size} level="M" />
+      <QRCodeCanvas value={value} size={size} level="M" logo={false} />
     </div>
   );
 }
@@ -128,7 +128,7 @@ function ConnectSlide({ slide, event }: { slide: Extract<Slide, { kind: 'connect
       <div className="absolute flex" style={{ left: 96, right: 96, top: 440, gap: 48 }}>
         {items.map((it) => (
           <div key={it.label} className="flex-1 bg-white text-[#111] flex flex-col items-center" style={{ borderRadius: 16, padding: '44px 32px 40px' }}>
-            <QRCodeCanvas value={it.url} size={330} level="M" />
+            <QRCodeCanvas value={it.url} size={330} level="M" logo={false} />
             <div className="uppercase" style={{ ...CONDENSED, fontWeight: 800, fontSize: 52, marginTop: 24, lineHeight: 1 }}>
               {it.label}
             </div>
