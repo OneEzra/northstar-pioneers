@@ -10,10 +10,7 @@ export function HorizonEventCard({ event }: { event: MeetupEvent }) {
     <div className="card-accent px-7 py-5 flex flex-col gap-3">
       {/* Row 1: title + pill */}
       <div className="flex items-center justify-between gap-3">
-        <h3
-          className="text-lg font-extrabold text-foreground leading-tight"
-          style={{ fontFamily: "'Barlow Condensed', sans-serif" }}
-        >
+        <h3 className="text-xl font-extrabold text-foreground">
           {event.title}
         </h3>
         <span className="tag-pill text-[10px]">
