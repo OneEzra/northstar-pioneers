@@ -54,7 +54,7 @@ export function ShareEventButton({ slug, title, className = '' }: ShareEventButt
       <DialogContent className="max-w-sm text-center">
         <DialogHeader className="items-center text-center sm:text-center">
           <DialogTitle>{title}</DialogTitle>
-          <DialogDescription>Have them scan this with their phone camera to open the event.</DialogDescription>
+          <DialogDescription>Scan with your phone's camera to open this event.</DialogDescription>
         </DialogHeader>
         <div className="mx-auto rounded-xl bg-white p-3 shadow-sm ring-1 ring-border" style={{ lineHeight: 0 }}>
           <QRCodeCanvas value={url} size={240} level="M" />
