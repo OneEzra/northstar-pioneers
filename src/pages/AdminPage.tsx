@@ -7,6 +7,7 @@ import { ArrowLeft, CalendarPlus, ExternalLink, RefreshCw, UploadCloud } from 'l
 import { SiteNav } from '@/components/SiteNav';
 import { SiteFooter } from '@/components/SiteFooter';
 import { LoginArea } from '@/components/auth/LoginArea';
+import { EmailSignIn } from '@/components/admin/EmailSignIn';
 import { EventDetailsForm } from '@/components/admin/EventDetailsForm';
 import { ProgramEditor } from '@/components/admin/ProgramEditor';
 import {
@@ -23,7 +24,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useCurrentUser } from '@/hooks/useCurrentUser';
+import { useOrganizer } from '@/hooks/useOrganizer';
 import { useMeetupEvents, type MeetupEvents } from '@/hooks/useMeetupEvents';
 import { useNspPublish } from '@/hooks/useNspPublish';
 import { useToast } from '@/hooks/useToast';
@@ -43,7 +44,7 @@ import {
   validateEventForm,
   type EventForm,
 } from '@/lib/nspAdmin';
-import { NSP_ADMIN_PUBKEYS, buildCalendarEvent, isNspAdmin, type EventTemplate } from '@/lib/nspNostr';
+import { NSP_ADMIN_PUBKEYS, buildCalendarEvent, type EventTemplate } from '@/lib/nspNostr';
 
 const EMPTY_PROGRAM: EventProgram = { topics: [] };
 
@@ -120,7 +121,7 @@ function EventPills({ e, published }: { e: MeetupEvent; published: MeetupEvents[
 
 function EventList({ data, onEdit, onNew }: { data: MeetupEvents; onEdit: (slug: string) => void; onNew: () => void }) {
   const { run, isPending } = usePublisher();
-  const signer = useCurrentUser().user?.pubkey ?? '';
+  const signer = useOrganizer().organizer?.pubkey ?? '';
   const [confirmMigrate, setConfirmMigrate] = useState(false);
   const ready = !data.isLoading && !data.isError;
 
@@ -276,7 +277,7 @@ function EventEditor({
   const [moving, setMoving] = useState(false);
   const [move, setMove] = useState({ day: form.day, startTime: form.startTime, endTime: form.endTime });
   const { run, isPending } = usePublisher();
-  const signer = useCurrentUser().user?.pubkey ?? '';
+  const signer = useOrganizer().organizer?.pubkey ?? '';
 
   const errors = validateEventForm(form);
   const shownErrors = showErrors ? errors : {};
@@ -479,11 +480,10 @@ function EventEditor({
 
 const AdminPage = () => {
   useSeoMeta({ title: 'Admin — Northstar Pioneers', robots: 'noindex, nofollow' });
-  const { user } = useCurrentUser();
+  const { organizer, isAdmin, isLoading, signOut } = useOrganizer();
   const data = useMeetupEvents();
   const [view, setView] = useState<{ mode: 'list' } | { mode: 'edit'; slug: string | null }>({ mode: 'list' });
 
-  const isAdmin = isNspAdmin(user?.pubkey);
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -496,24 +496,38 @@ const AdminPage = () => {
               Event <span className="text-[#1E8EFF]">Admin</span>
             </h1>
           </div>
-          <LoginArea label="Sign in" />
+          {organizer?.via === 'email' && (
+            <div className="flex items-center gap-3 text-sm text-muted-foreground">
+              <span>{organizer.email}</span>
+              <Button variant="outline" size="sm" onClick={() => signOut.mutate()} disabled={signOut.isPending}>
+                Sign out
+              </Button>
+            </div>
+          )}
+          {organizer?.via === 'nostr' && <LoginArea label="Sign in" />}
         </div>
 
-        {!user && (
-          <div className="card-accent p-8 max-w-xl space-y-3">
-            <h2 className="text-xl font-bold">Sign in with the organizer account</h2>
-            <p className="text-sm text-muted-foreground">
-              Use a Nostr browser extension (like Alby or nos2x) or a signer app so your private key never
-              touches this site. Pasting a key works too, but it's stored in this browser.
-            </p>
+        {!organizer && !isLoading && (
+          <div className="card-accent p-8 max-w-xl space-y-6">
+            <div className="space-y-2">
+              <h2 className="text-xl font-bold">Sign in</h2>
+              <p className="text-sm text-muted-foreground">
+                Enter your organizer email and we'll send you a 6-digit code. No password needed.
+              </p>
+            </div>
+            <EmailSignIn />
+            <div className="border-t border-border pt-4 space-y-2">
+              <p className="text-xs text-muted-foreground">Have a Nostr key or signer? You can still use it.</p>
+              <LoginArea label="Sign in with Nostr" />
+            </div>
           </div>
         )}
 
-        {user && !isAdmin && (
+        {organizer && !isAdmin && (
           <div className="card-accent p-8 max-w-xl space-y-3">
             <h2 className="text-xl font-bold">This isn't an organizer account</h2>
             <p className="text-sm text-muted-foreground">You're signed in as</p>
-            <p className="font-mono text-xs break-all">{nip19.npubEncode(user.pubkey)}</p>
+            <p className="font-mono text-xs break-all">{nip19.npubEncode(organizer.pubkey)}</p>
             <p className="text-sm text-muted-foreground">
               Only organizer accounts can manage events. To add one, send its npub (never the nsec) to the
               site maintainer.

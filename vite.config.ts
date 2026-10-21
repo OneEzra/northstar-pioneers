@@ -4,6 +4,8 @@ import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "vitest/config";
 
+import { netlifyFunctionsDev } from "./vite-netlify-dev";
+
 // https://vitejs.dev/config/
 export default defineConfig(() => ({
   server: {
@@ -13,6 +15,7 @@ export default defineConfig(() => ({
   plugins: [
     react(),
     tailwindcss(),
+    netlifyFunctionsDev(),
   ],
   test: {
     globals: true,

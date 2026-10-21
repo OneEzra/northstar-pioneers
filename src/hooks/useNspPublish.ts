@@ -3,7 +3,9 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import type { NostrEvent } from '@nostrify/nostrify';
 
 import { useCurrentUser } from '@/hooks/useCurrentUser';
+import { useOrganizer } from '@/hooks/useOrganizer';
 import { MEETUP_EVENTS_QUERY_KEY } from '@/hooks/useMeetupEvents';
+import { signOnServer, type StampedTemplate } from '@/lib/organizerApi';
 import { NSP_EVENT_RELAYS, isNspAdmin, type EventTemplate } from '@/lib/nspNostr';
 
 export interface PublishResult {
@@ -34,30 +36,40 @@ export function nextCreatedAt(template: EventTemplate, known: NostrEvent[], now:
 }
 
 /**
- * Sign records with the signed-in admin account and send each one to every
+ * Sign records as the organizer account (in this browser for a Nostr login,
+ * on the server for an email sign-in) and send each one to every
  * event relay. Succeeds if every record reached at least one relay; reports
  * which relays refused and why. Updates the site's event list immediately.
  */
 export function useNspPublish() {
   const { nostr } = useNostr();
   const { user } = useCurrentUser();
+  const { organizer } = useOrganizer();
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (templates: EventTemplate[]): Promise<PublishResult> => {
-      if (!user) throw new Error('Sign in first.');
-      if (!isNspAdmin(user.pubkey)) throw new Error('This account is not an organizer account.');
+      if (!organizer) throw new Error('Sign in first.');
+      if (!isNspAdmin(organizer.pubkey)) throw new Error('This account is not an organizer account.');
 
       const known = queryClient
         .getQueriesData<NostrEvent[]>({ queryKey: MEETUP_EVENTS_QUERY_KEY })
         .flatMap(([, data]) => data ?? []);
-      const signed: NostrEvent[] = [];
+      const stamped: StampedTemplate[] = [];
       let now = Math.floor(Date.now() / 1000);
       for (const t of templates) {
         // Unique, increasing timestamps, later than every known version, so the newest edit always wins.
         const created_at = nextCreatedAt(t, known, now);
-        signed.push(await user.signer.signEvent({ ...t, created_at }));
+        stamped.push({ ...t, created_at });
         now = created_at + 1;
+      }
+      let signed: NostrEvent[];
+      if (organizer.via === 'email') {
+        signed = await signOnServer(stamped);
+      } else {
+        if (!user) throw new Error('Sign in first.');
+        signed = [];
+        for (const t of stamped) signed.push(await user.signer.signEvent(t));
       }
 
       let minAccepted = Infinity;
