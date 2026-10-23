@@ -9,7 +9,7 @@
 //   NSP_SIGNING_KEY       organizer Nostr private key (nsec1... or 64-char hex)
 //   NSP_ADMIN_EMAILS      comma-separated emails allowed to sign in
 //   POSTMARK_SERVER_TOKEN Postmark server token used to email the codes
-//   NSP_LOGIN_FROM        optional sender address (default keys@northstarpioneers.com)
+//   NSP_LOGIN_FROM        optional sender, e.g. Name <address> (default: Key for Northstar Pioneers <keys@northstarpioneers.com>)
 
 import { createHmac, randomInt, timingSafeEqual } from 'node:crypto';
 import { getStore } from '@netlify/blobs';
@@ -178,7 +178,7 @@ async function sendCodeEmail(email: string, code: string): Promise<void> {
       'x-postmark-server-token': token,
     },
     body: JSON.stringify({
-      From: process.env.NSP_LOGIN_FROM ?? 'keys@northstarpioneers.com',
+      From: process.env.NSP_LOGIN_FROM ?? 'Key for Northstar Pioneers <keys@northstarpioneers.com>',
       To: email,
       Subject: `Your Northstar Pioneers sign-in code: ${code}`,
       TextBody: `Your sign-in code is ${code}\n\nIt works once and expires in ${minutes} minutes. If you didn't ask for it, you can ignore this email.\n`,
