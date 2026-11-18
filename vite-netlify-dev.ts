@@ -23,6 +23,9 @@ export function netlifyFunctionsDev(): Plugin {
       process.env.NSP_DEV_AUTH = '1';
 
       server.middlewares.use(async (req, res, next) => {
+        // Same rewrite as public/_redirects: /files/<key> is served by the file function.
+        const files = /^\/files\/([^/?]+)$/.exec(req.url ?? '');
+        if (files) req.url = `/.netlify/functions/file?k=${files[1]}`;
         const match = /^\/\.netlify\/functions\/([a-z-]+)(?:\?.*)?$/.exec(req.url ?? '');
         const file = match && path.join(process.cwd(), 'netlify/functions', `${match[1]}.mts`);
         if (!file || !existsSync(file)) return next();

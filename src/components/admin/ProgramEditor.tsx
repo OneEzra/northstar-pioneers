@@ -9,6 +9,7 @@ import { useToast } from '@/hooks/useToast';
 import { useUploadFile } from '@/hooks/useUploadFile';
 import type { EventProgram, Resource, ResourceType, Topic } from '@/data/events';
 import { paragraphsToText, textToParagraphs } from '@/lib/nspAdmin';
+import { IMAGE_ACCEPT, UPLOAD_ACCEPT } from '@/lib/organizerApi';
 
 type Demo = NonNullable<EventProgram['builderDemo']>;
 const EMPTY_DEMO: Demo = { title: '', presenter: '', description: '' };
@@ -22,8 +23,16 @@ function Small({ children, htmlFor }: { children: React.ReactNode; htmlFor?: str
   );
 }
 
-/** Upload an image to the app's media servers and hand back its URL. */
-function UploadButton({ onUploaded, label = 'Upload' }: { onUploaded: (url: string) => void; label?: string }) {
+/** Upload a file and hand back its URL and original name. */
+function UploadButton({
+  onUploaded,
+  accept = IMAGE_ACCEPT,
+  label = 'Upload',
+}: {
+  onUploaded: (url: string, fileName: string) => void;
+  accept?: string;
+  label?: string;
+}) {
   const input = useRef<HTMLInputElement>(null);
   const { mutateAsync, isPending } = useUploadFile();
   const { toast } = useToast();
@@ -32,7 +41,7 @@ function UploadButton({ onUploaded, label = 'Upload' }: { onUploaded: (url: stri
       <input
         ref={input}
         type="file"
-        accept="image/*"
+        accept={accept}
         className="hidden"
         onChange={async (e) => {
           const file = e.target.files?.[0];
@@ -41,7 +50,7 @@ function UploadButton({ onUploaded, label = 'Upload' }: { onUploaded: (url: stri
           try {
             const tags = await mutateAsync(file);
             const url = tags.find(([name]) => name === 'url')?.[1] ?? tags[0]?.[1];
-            if (url) onUploaded(url);
+            if (url) onUploaded(url, file.name);
           } catch (err) {
             toast({ title: 'Upload failed', description: err instanceof Error ? err.message : String(err), variant: 'destructive' });
           }
@@ -56,14 +65,35 @@ function UploadButton({ onUploaded, label = 'Upload' }: { onUploaded: (url: stri
 
 const BLANK_RESOURCE: Resource = { type: 'link', label: '', url: '' };
 
-/** Link rows. An empty list still shows one blank row, ready to type into; blank rows are dropped on save. */
-function ResourceRows({ value, onChange }: { value?: Resource[]; onChange: (list: Resource[]) => void }) {
+/** After an upload: slides and documents are "slides", anything else a plain "link"; label defaults to the file name. */
+function resourceFromUpload(current: Resource, url: string, fileName: string): Resource {
+  const isDocument = /\.(pdf|pptx)$/i.test(fileName);
+  return {
+    type: current.url || current.label ? current.type : isDocument ? 'slides' : 'link',
+    label: current.label || fileName.replace(/\.[^.]+$/, ''),
+    url,
+  };
+}
+
+/**
+ * Link rows, each with an Upload button that hosts a file on our site and fills in its link.
+ * An empty list still shows one blank row, ready to type into; blank rows are dropped on save.
+ */
+function ResourceRows({
+  value,
+  onChange,
+  addLabel = 'Add link',
+}: {
+  value?: Resource[];
+  onChange: (list: Resource[]) => void;
+  addLabel?: string;
+}) {
   const list = value?.length ? value : [BLANK_RESOURCE];
   const update = (i: number, patch: Partial<Resource>) => onChange(list.map((r, j) => (j === i ? { ...r, ...patch } : r)));
   return (
     <div className="space-y-2">
       {list.map((r, i) => (
-        <div key={i} className="grid grid-cols-[110px_1fr_2fr_auto] gap-2 items-center">
+        <div key={i} className="grid grid-cols-[110px_1fr_2fr_auto_auto] gap-2 items-center">
           <select
             aria-label="Link type"
             className="h-9 rounded-md border border-border bg-background px-2 text-sm"
@@ -78,13 +108,17 @@ function ResourceRows({ value, onChange }: { value?: Resource[]; onChange: (list
           </select>
           <Input aria-label="Link label" placeholder="Label" value={r.label} onChange={(e) => update(i, { label: e.target.value })} />
           <Input aria-label="Link URL" placeholder="https://…" value={r.url} onChange={(e) => update(i, { url: e.target.value })} />
+          <UploadButton
+            accept={UPLOAD_ACCEPT}
+            onUploaded={(url, fileName) => onChange(list.map((x, j) => (j === i ? resourceFromUpload(x, url, fileName) : x)))}
+          />
           <Button type="button" variant="ghost" size="icon" aria-label="Remove link" onClick={() => onChange(list.filter((_, j) => j !== i))} disabled={list.length === 1 && !r.label && !r.url}>
             <Trash2 className="size-4" />
           </Button>
         </div>
       ))}
       <Button type="button" variant="outline" size="sm" onClick={() => onChange([...list, { ...BLANK_RESOURCE }])}>
-        <Plus className="size-3.5" /> Add link
+        <Plus className="size-3.5" /> {addLabel}
       </Button>
     </div>
   );
@@ -224,9 +258,26 @@ export function ProgramEditor({ program, onChange }: { program: EventProgram; on
       {/* After the event */}
       <section className="space-y-4">
         <div className="pioneer-label">After the Event</div>
+        <div className="space-y-1.5">
+          <Small htmlFor="notes">Event notes (blank line between paragraphs)</Small>
+          <Textarea
+            id="notes"
+            rows={4}
+            placeholder="Highlights, follow-ups, anything attendees sent you afterward…"
+            value={paragraphsToText(program.notes)}
+            onChange={(e) => onChange({ ...program, notes: textToParagraphs(e.target.value) })}
+          />
+        </div>
+        <div className="space-y-1.5">
+          <Small>Links &amp; resources shared after the event</Small>
+          <p className="text-xs text-muted-foreground">
+            Paste a link, or upload a PDF, PowerPoint (.pptx), PNG, JPEG or GIF (up to 5 MB). For anything bigger, link to it.
+          </p>
+          <ResourceRows value={program.resources} onChange={(resources) => onChange({ ...program, resources })} addLabel="Add resource" />
+        </div>
         <div className="grid grid-cols-1 sm:grid-cols-[2fr_auto_1fr] gap-4 items-end">
           <div className="space-y-1.5">
-            <Small htmlFor="photo">Event photo</Small>
+            <Small htmlFor="photo">Event photo (optional)</Small>
             <Input id="photo" placeholder="https://…" value={program.photoUrl ?? ''} onChange={(e) => onChange({ ...program, photoUrl: e.target.value })} />
           </div>
           <UploadButton onUploaded={(url) => onChange({ ...program, photoUrl: url })} />
@@ -240,20 +291,6 @@ export function ProgramEditor({ program, onChange }: { program: EventProgram; on
               onChange={(e) => onChange({ ...program, attendees: e.target.value ? Number(e.target.value) : undefined })}
             />
           </div>
-        </div>
-        <div className="space-y-1.5">
-          <Small htmlFor="notes">Event notes (blank line between paragraphs)</Small>
-          <Textarea
-            id="notes"
-            rows={4}
-            placeholder="Highlights, follow-ups, anything attendees sent you afterward…"
-            value={paragraphsToText(program.notes)}
-            onChange={(e) => onChange({ ...program, notes: textToParagraphs(e.target.value) })}
-          />
-        </div>
-        <div className="space-y-1.5">
-          <Small>Links &amp; resources shared after the event</Small>
-          <ResourceRows value={program.resources} onChange={(resources) => onChange({ ...program, resources })} />
         </div>
       </section>
     </div>
