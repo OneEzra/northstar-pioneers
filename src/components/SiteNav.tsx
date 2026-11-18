@@ -3,6 +3,10 @@ import { Link, NavLink } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useTheme } from '@/hooks/useTheme';
+import { ShareLinkDialog } from '@/components/ShareLinkDialog';
+
+const LINKEDIN_URL = 'https://www.linkedin.com/company/northstarpioneers';
+const SITE_URL = 'https://northstarpioneers.com';
 
 const navLinks = [
   { label: 'Home', to: '/' },
@@ -56,13 +60,22 @@ export function SiteNav() {
 
         {/* Right controls */}
         <div className="hidden md:flex items-center gap-3">
+          <ShareLinkDialog
+            url={SITE_URL}
+            title="Northstar Pioneers"
+            description="Scan with your phone's camera to open northstarpioneers.com."
+          >
+            <button className="text-xs font-bold uppercase tracking-widest text-muted-foreground border border-border hover:text-foreground hover:border-foreground/40 px-4 py-2 rounded-[2px] transition-colors">
+              Share
+            </button>
+          </ShareLinkDialog>
           <a
-            href="https://www.meetup.com/northstar-pioneers/"
+            href={LINKEDIN_URL}
             target="_blank"
             rel="noopener noreferrer"
             className="text-xs font-bold uppercase tracking-widest text-[#1E8EFF] border border-[#1E8EFF]/40 hover:bg-[#1E8EFF]/10 px-4 py-2 rounded-[2px] transition-colors"
           >
-            Meetup ↗
+            LinkedIn ↗
           </a>
           <a
             href="https://t.me/northstarpioneerscommunity"
@@ -125,13 +138,22 @@ export function SiteNav() {
               </NavLink>
             ))}
             <div className="flex gap-3 pt-2 border-t border-border">
+              <ShareLinkDialog
+                url={SITE_URL}
+                title="Northstar Pioneers"
+                description="Scan with your phone's camera to open northstarpioneers.com."
+              >
+                <button className="text-xs font-bold uppercase tracking-widest text-muted-foreground border border-border px-4 py-2 rounded-[2px]">
+                  Share
+                </button>
+              </ShareLinkDialog>
               <a
-                href="https://www.meetup.com/northstar-pioneers/"
+                href={LINKEDIN_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-xs font-bold uppercase tracking-widest text-[#1E8EFF] border border-[#1E8EFF]/40 px-4 py-2 rounded-[2px]"
               >
-                Meetup ↗
+                LinkedIn ↗
               </a>
               <a
                 href="https://t.me/northstarpioneerscommunity"
