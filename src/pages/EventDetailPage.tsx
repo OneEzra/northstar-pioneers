@@ -341,6 +341,40 @@ const EventDetailPage = () => {
           </section>
         )}
 
+        {/* After the event: photo, notes and extra links */}
+        {(event.photoUrl || event.notes?.length || event.resources?.length) && (
+          <section>
+            <div className="pioneer-label mb-5">From the Event</div>
+            <div className="card-accent p-6 space-y-5">
+              {event.photoUrl && (
+                <img
+                  src={event.photoUrl}
+                  alt={`Photo from ${event.title}`}
+                  loading="lazy"
+                  className="w-full rounded-[2px] border border-border"
+                />
+              )}
+              {event.attendees ? (
+                <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                  {event.attendees} pioneers attended
+                </p>
+              ) : null}
+              {event.notes?.map((p, i) => (
+                <p key={i} className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">
+                  {p}
+                </p>
+              ))}
+              {event.resources && event.resources.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {event.resources.map((r) => (
+                    <ResourceBadge key={r.url} resource={r} />
+                  ))}
+                </div>
+              )}
+            </div>
+          </section>
+        )}
+
         {/* No topics yet for upcoming events */}
         {event.status === 'upcoming' && event.topics.length === 0 && (
           <section>

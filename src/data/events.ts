@@ -84,6 +84,10 @@ export interface MeetupEventInput {
   photoUrl?: string;
   /** Number of attendees (for past events) */
   attendees?: number;
+  /** Notes added after the event, one string per paragraph */
+  notes?: string[];
+  /** Extra links shared after the event (slides, articles, photos) */
+  resources?: Resource[];
   /** Active (default), cancelled, or rescheduled to another event */
   state?: EventState;
   /** When rescheduled: the slug of the replacement event */
@@ -93,7 +97,7 @@ export interface MeetupEventInput {
 export type EventState = 'active' | 'cancelled' | 'rescheduled';
 
 /** The details that can be filled in over time, kept in a separate record. */
-export type EventProgram = Pick<MeetupEventInput, 'topics' | 'builderDemo' | 'photoUrl' | 'attendees'>;
+export type EventProgram = Pick<MeetupEventInput, 'topics' | 'builderDemo' | 'photoUrl' | 'attendees' | 'notes' | 'resources'>;
 
 export type EventStatus = 'upcoming' | 'past';
 

@@ -163,6 +163,8 @@ export function programOf(e: MeetupEventInput): EventProgram {
     builderDemo: e.builderDemo,
     photoUrl: e.photoUrl,
     attendees: e.attendees,
+    notes: e.notes,
+    resources: e.resources,
   };
 }
 
@@ -210,6 +212,8 @@ export function cleanProgram(p: EventProgram): EventProgram {
     builderDemo,
     photoUrl: sanitizeUrl(p.photoUrl?.trim()),
     attendees: p.attendees && p.attendees > 0 ? Math.round(p.attendees) : undefined,
+    notes: p.notes?.map((x) => x.trim()).filter(Boolean).length ? p.notes.map((x) => x.trim()).filter(Boolean) : undefined,
+    resources: cleanResources(p.resources),
   };
 }
 

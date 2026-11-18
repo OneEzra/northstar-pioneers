@@ -86,6 +86,21 @@ describe('program cleanup', () => {
     expect(p.attendees).toBeUndefined();
   });
 
+  test('keeps after-event notes and links, dropping blanks and unsafe links', () => {
+    const p = cleanProgram({
+      topics: [],
+      notes: ['  Great turnout. ', '   '],
+      resources: [
+        { type: 'link', label: '', url: '' },
+        { type: 'link', label: 'bad', url: 'javascript:1' },
+        { type: 'slides', label: 'Deck', url: 'https://a.com/deck' },
+      ],
+    });
+    expect(p.notes).toEqual(['Great turnout.']);
+    expect(p.resources).toEqual([{ type: 'slides', label: 'Deck', url: 'https://a.com/deck' }]);
+    expect(cleanProgram({ topics: [], notes: ['  '], resources: [] })).toMatchObject({ notes: undefined, resources: undefined });
+  });
+
   test('paragraph text', () => {
     expect(textToParagraphs('One.\n\n\nTwo\nstill two.\n\n')).toEqual(['One.', 'Two\nstill two.']);
     expect(paragraphsToText(['a', 'b'])).toBe('a\n\nb');

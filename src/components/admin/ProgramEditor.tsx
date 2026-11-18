@@ -54,8 +54,11 @@ function UploadButton({ onUploaded, label = 'Upload' }: { onUploaded: (url: stri
   );
 }
 
+const BLANK_RESOURCE: Resource = { type: 'link', label: '', url: '' };
+
+/** Link rows. An empty list still shows one blank row, ready to type into; blank rows are dropped on save. */
 function ResourceRows({ value, onChange }: { value?: Resource[]; onChange: (list: Resource[]) => void }) {
-  const list = value ?? [];
+  const list = value?.length ? value : [BLANK_RESOURCE];
   const update = (i: number, patch: Partial<Resource>) => onChange(list.map((r, j) => (j === i ? { ...r, ...patch } : r)));
   return (
     <div className="space-y-2">
@@ -75,12 +78,12 @@ function ResourceRows({ value, onChange }: { value?: Resource[]; onChange: (list
           </select>
           <Input aria-label="Link label" placeholder="Label" value={r.label} onChange={(e) => update(i, { label: e.target.value })} />
           <Input aria-label="Link URL" placeholder="https://…" value={r.url} onChange={(e) => update(i, { url: e.target.value })} />
-          <Button type="button" variant="ghost" size="icon" aria-label="Remove link" onClick={() => onChange(list.filter((_, j) => j !== i))}>
+          <Button type="button" variant="ghost" size="icon" aria-label="Remove link" onClick={() => onChange(list.filter((_, j) => j !== i))} disabled={list.length === 1 && !r.label && !r.url}>
             <Trash2 className="size-4" />
           </Button>
         </div>
       ))}
-      <Button type="button" variant="outline" size="sm" onClick={() => onChange([...list, { type: 'link', label: '', url: '' }])}>
+      <Button type="button" variant="outline" size="sm" onClick={() => onChange([...list, { ...BLANK_RESOURCE }])}>
         <Plus className="size-3.5" /> Add link
       </Button>
     </div>
@@ -237,6 +240,20 @@ export function ProgramEditor({ program, onChange }: { program: EventProgram; on
               onChange={(e) => onChange({ ...program, attendees: e.target.value ? Number(e.target.value) : undefined })}
             />
           </div>
+        </div>
+        <div className="space-y-1.5">
+          <Small htmlFor="notes">Event notes (blank line between paragraphs)</Small>
+          <Textarea
+            id="notes"
+            rows={4}
+            placeholder="Highlights, follow-ups, anything attendees sent you afterward…"
+            value={paragraphsToText(program.notes)}
+            onChange={(e) => onChange({ ...program, notes: textToParagraphs(e.target.value) })}
+          />
+        </div>
+        <div className="space-y-1.5">
+          <Small>Links &amp; resources shared after the event</Small>
+          <ResourceRows value={program.resources} onChange={(resources) => onChange({ ...program, resources })} />
         </div>
       </section>
     </div>
