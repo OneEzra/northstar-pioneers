@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { ShareEventButton } from '@/components/ShareEventButton';
 import { PresentLink } from '@/components/present/PresentLink';
 import { getVenueSponsor } from '@/data/venues';
-import { meetupLinkFor } from '@/lib/meetup';
+import { rsvpLinkFor } from '@/lib/meetup';
 import { Skeleton } from '@/components/ui/skeleton';
 import { formatEventDate, formatEventDateShort, type MeetupEvent } from '@/data/events';
 
@@ -13,7 +13,7 @@ import { formatEventDate, formatEventDateShort, type MeetupEvent } from '@/data/
 export function NextGatheringCard({ event, loading = false }: { event: MeetupEvent; loading?: boolean }) {
   const [topicsOpen, setTopicsOpen] = useState(false);
   const sponsor = getVenueSponsor(event.venue);
-  const rsvp = meetupLinkFor(event);
+  const rsvp = rsvpLinkFor(event);
 
   return (
     <div className="card-accent p-0 overflow-hidden">

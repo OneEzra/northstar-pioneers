@@ -3,7 +3,7 @@ import { SiteNav } from '@/components/SiteNav';
 import { SiteFooter } from '@/components/SiteFooter';
 import { WelcomeVideo } from '@/components/WelcomeVideo';
 import { useMeetupEvents } from '@/hooks/useMeetupEvents';
-import { MEETUP_GROUP_URL, meetupLinkFor } from '@/lib/meetup';
+import { MEETUP_GROUP_URL, rsvpLinkFor } from '@/lib/meetup';
 import { usePageSeo, DEFAULT_TITLE, DEFAULT_DESCRIPTION, eventJsonLd } from '@/lib/seo';
 import { NextGatheringCard } from '@/components/events/NextGatheringCard';
 import { HorizonEventCard } from '@/components/events/HorizonEventCard';
@@ -44,6 +44,7 @@ function getPresenterInfo(event: MeetupEvent): { name: string; url: string } | n
 const Index = () => {
   const welcomeVideoUrl = import.meta.env.VITE_WELCOME_VIDEO_URL as string | undefined;
   const { next: nextEvent, horizon: placeholderEvents, past: allPastEvents, isLoading: eventsLoading } = useMeetupEvents();
+  const nextLink = nextEvent ? rsvpLinkFor(nextEvent) : null;
   const pastEvents = allPastEvents.slice(0, 2);
 
   usePageSeo({
@@ -119,12 +120,12 @@ const Index = () => {
           {/* CTA row */}
           <div className="flex flex-wrap gap-4 items-center">
             <a
-              href={(nextEvent && meetupLinkFor(nextEvent)?.url) ?? MEETUP_GROUP_URL}
+              href={nextLink?.url ?? MEETUP_GROUP_URL}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-block bg-[#1E8EFF] text-black font-bold text-sm uppercase tracking-widest px-7 py-3.5 rounded-[2px] hover:brightness-110 transition-all"
             >
-              RSVP on Meetup
+              {nextLink?.label ?? 'RSVP on Meetup'}
             </a>
             <Link
               to="/events"

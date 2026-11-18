@@ -4,7 +4,7 @@ import { usePageSeo, eventJsonLd } from '@/lib/seo';
 import { SiteNav } from '@/components/SiteNav';
 import { SiteFooter } from '@/components/SiteFooter';
 import { useMeetupEvents } from '@/hooks/useMeetupEvents';
-import { meetupLinkFor } from '@/lib/meetup';
+import { rsvpLinkFor } from '@/lib/meetup';
 import { ShareEventButton } from '@/components/ShareEventButton';
 import { PresentLink } from '@/components/present/PresentLink';
 import NotFound from './NotFound';
@@ -155,7 +155,7 @@ const EventDetailPage = () => {
   // Old links (e.g. /events/2026-09) redirect to the date-based URL
   if (slug !== event.slug) return <Navigate to={`/events/${event.slug}`} replace />;
 
-  const meetup = meetupLinkFor(event);
+  const meetup = rsvpLinkFor(event);
   const currentIndex = pastEvents.findIndex((e) => e.slug === event.slug);
   const prevEvent = currentIndex < pastEvents.length - 1 ? pastEvents[currentIndex + 1] : null;
   const nextEventInList = currentIndex > 0 ? pastEvents[currentIndex - 1] : null;

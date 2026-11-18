@@ -5,7 +5,7 @@ import { SiteNav } from '@/components/SiteNav';
 import { SiteFooter } from '@/components/SiteFooter';
 import { useMeetupEvents } from '@/hooks/useMeetupEvents';
 import { EVENT_TIME_ZONE, type MeetupEvent } from '@/data/events';
-import { meetupLinkFor } from '@/lib/meetup';
+import { rsvpLinkFor } from '@/lib/meetup';
 import { Skeleton } from '@/components/ui/skeleton';
 
 const resourceIcon: Record<string, string> = {
@@ -30,7 +30,7 @@ function PioneerCard({ event }: { event: MeetupEvent }) {
   const demo = event.builderDemo!;
   const { month, day, year } = dateParts(event.date);
   const upcoming = event.status === 'upcoming';
-  const meetup = meetupLinkFor(event);
+  const meetup = rsvpLinkFor(event);
 
   return (
     <article className="card-accent overflow-hidden">

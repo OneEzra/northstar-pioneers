@@ -28,7 +28,7 @@ import { useOrganizer } from '@/hooks/useOrganizer';
 import { useMeetupEvents, type MeetupEvents } from '@/hooks/useMeetupEvents';
 import { useNspPublish } from '@/hooks/useNspPublish';
 import { useToast } from '@/hooks/useToast';
-import { isMeetupEventUrl } from '@/lib/meetup';
+import { isRsvpEventUrl } from '@/lib/meetup';
 import { formatEventDate, formatEventDateShort, type EventProgram, type MeetupEvent } from '@/data/events';
 import {
   buildCalendarList,
@@ -110,8 +110,8 @@ function EventPills({ e, published }: { e: MeetupEvent; published: MeetupEvents[
       {!published.current.has(e.slug) && (
         <Pill tone="warn">{published.calendar.has(e.slug) ? 'Needs publishing' : 'Not on Nostr yet'}</Pill>
       )}
-      {e.status === 'upcoming' && (e.state ?? 'active') === 'active' && !isMeetupEventUrl(e.meetupUrl) && (
-        <Pill tone="warn">No Meetup link</Pill>
+      {e.status === 'upcoming' && (e.state ?? 'active') === 'active' && !isRsvpEventUrl(e.meetupUrl) && (
+        <Pill tone="warn">No RSVP link</Pill>
       )}
     </div>
   );
@@ -461,7 +461,7 @@ function EventEditor({
           </div>
           {existing && canMove && (
             <p className="text-xs text-muted-foreground">
-              New link: /events/{planReschedule(existing, move.day, move.startTime, move.endTime, taken).next.slug}. Update the date on Meetup.com too.
+              New link: /events/{planReschedule(existing, move.day, move.startTime, move.endTime, taken).next.slug}. Update the date on the event's Meetup or LinkedIn page.com too.
             </p>
           )}
           <AlertDialogFooter>
