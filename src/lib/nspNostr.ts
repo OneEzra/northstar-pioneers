@@ -249,6 +249,8 @@ const programSchema = z.object({
     .optional(),
   photoUrl: z.string().optional(),
   attendees: z.number().int().nonnegative().optional(),
+  notes: z.array(z.string()).optional(),
+  resources: z.array(resourceSchema).optional(),
 });
 
 type Resource = z.infer<typeof resourceSchema>;
@@ -297,6 +299,8 @@ function programFromJson(raw: string | undefined): EventProgram | null {
       },
       photoUrl: sanitizeUrl(p.photoUrl),
       attendees: p.attendees,
+      notes: p.notes,
+      resources: cleanResources(p.resources),
   };
 }
 

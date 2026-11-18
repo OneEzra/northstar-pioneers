@@ -8,9 +8,11 @@ import {
   signingKey,
 } from '../lib/auth.ts';
 
-// Only the records the admin page creates. Mirrors src/lib/nspNostr.ts.
+// Only the records the admin page creates (meetup events and the calendar, mirroring
+// src/lib/nspNostr.ts) plus short-lived Blossom upload authorizations for image uploads.
 const KIND_CALENDAR_EVENT = 31923;
 const KIND_CALENDAR = 31924;
+const KIND_BLOSSOM_AUTH = 24242;
 const CALENDAR_D = 'northstar-pioneers-meetups';
 const SLUG_PATTERN = /^\d{4}-\d{2}-\d{2}(?:-[a-z0-9]+(?:-[a-z0-9]+)*)?$/;
 
@@ -19,6 +21,8 @@ const MAX_CONTENT = 20_000;
 const MAX_TAGS = 80;
 const MAX_TAG_VALUE = 8_000;
 const MAX_CLOCK_DRIFT = 24 * 60 * 60;
+const MAX_UPLOAD_BYTES = 25 * 1024 * 1024;
+const MAX_UPLOAD_AUTH_SECONDS = 10 * 60;
 
 interface Template {
   kind: number;
@@ -27,12 +31,28 @@ interface Template {
   created_at: number;
 }
 
+/** A Blossom upload authorization: one file (by hash), a modest size, a short life. */
+function uploadProblem(tags: string[][], now: number): string | null {
+  const get = (name: string) => tags.find(([n]) => n === name)?.[1] ?? '';
+  const expiration = Number(get('expiration'));
+  if (get('t') !== 'upload') return 'Invalid upload request.';
+  if (!/^[0-9a-f]{64}$/.test(get('x'))) return 'Invalid upload request.';
+  if (!Number.isInteger(expiration) || expiration <= now || expiration - now > MAX_UPLOAD_AUTH_SECONDS) {
+    return 'Invalid upload request.';
+  }
+  const size = Number(get('size'));
+  if (size && (!Number.isFinite(size) || size > MAX_UPLOAD_BYTES)) return 'That file is too large.';
+  return null;
+}
+
 /** Returns the problem with a record, or null when it's fine to sign. */
 function problem(t: unknown, now: number): string | null {
   if (!t || typeof t !== 'object') return 'Invalid record.';
   const { kind, content, tags, created_at } = t as Partial<Template>;
 
-  if (kind !== KIND_CALENDAR_EVENT && kind !== KIND_CALENDAR) return 'This kind of record cannot be saved here.';
+  if (kind !== KIND_CALENDAR_EVENT && kind !== KIND_CALENDAR && kind !== KIND_BLOSSOM_AUTH) {
+    return 'This kind of record cannot be saved here.';
+  }
   if (typeof content !== 'string' || content.length > MAX_CONTENT) return 'Record content is too long.';
   if (!Number.isInteger(created_at) || Math.abs((created_at as number) - now) > MAX_CLOCK_DRIFT) {
     return 'Record timestamp is off. Check your device clock.';
@@ -42,6 +62,8 @@ function problem(t: unknown, now: number): string | null {
     if (!Array.isArray(tag) || tag.length === 0 || tag.length > 10) return 'Invalid tag.';
     if (!tag.every((v) => typeof v === 'string' && v.length <= MAX_TAG_VALUE)) return 'Invalid tag value.';
   }
+
+  if (kind === KIND_BLOSSOM_AUTH) return uploadProblem(tags, now);
 
   const d = tags.find(([name]) => name === 'd')?.[1] ?? '';
   if (kind === KIND_CALENDAR_EVENT && !SLUG_PATTERN.test(d)) return 'Invalid event ID.';

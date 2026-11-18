@@ -17,7 +17,7 @@ Published only by organizer accounts (see `NSP_ADMIN_PUBKEYS` in `src/lib/nspNos
 | `status` | yes | `active`, `cancelled`, or `rescheduled` |
 | `rescheduled_to` | — | New event ID when `status` is `rescheduled`; the old URL forwards there |
 | `alias` | — | Older URL IDs that redirect here (e.g. `2026-10`) |
-| `nsp_program` | yes | JSON: `{ "v": 1, "topics": [...], "builderDemo": {...}, "photoUrl", "attendees" }` — featured pioneer, Socratic topics, links. Always present (an empty program is authoritative and clears an older pioneer). |
+| `nsp_program` | yes | JSON: `{ "v": 1, "topics": [...], "builderDemo": {...}, "photoUrl", "attendees", "notes": [paragraphs], "resources": [links] }` — featured pioneer, Socratic topics, links. Always present (an empty program is authoritative and clears an older pioneer). |
 
 `content` repeats the summary so other NIP-52 apps show a readable description.
 
