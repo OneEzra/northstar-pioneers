@@ -4,11 +4,11 @@ import { ArrowDown, ArrowUp, Plus, Trash2, Upload } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { ParagraphsField } from '@/components/admin/ParagraphsField';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/useToast';
 import { useUploadFile } from '@/hooks/useUploadFile';
 import type { EventProgram, Resource, ResourceType, Topic } from '@/data/events';
-import { paragraphsToText, textToParagraphs } from '@/lib/nspAdmin';
 import { IMAGE_ACCEPT, UPLOAD_ACCEPT } from '@/lib/organizerApi';
 
 type Demo = NonNullable<EventProgram['builderDemo']>;
@@ -162,12 +162,7 @@ function TopicEditor({
       </div>
       <div className="space-y-1.5">
         <Small htmlFor={`${id}-more`}>Read more (blank line between paragraphs)</Small>
-        <Textarea
-          id={`${id}-more`}
-          rows={4}
-          value={paragraphsToText(topic.expandedContent)}
-          onChange={(e) => set({ expandedContent: textToParagraphs(e.target.value) })}
-        />
+        <ParagraphsField id={`${id}-more`} rows={4} value={topic.expandedContent} onChange={(expandedContent) => set({ expandedContent })} />
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-[2fr_1fr_auto] gap-2 items-end">
         <div className="space-y-1.5">
@@ -260,12 +255,12 @@ export function ProgramEditor({ program, onChange }: { program: EventProgram; on
         <div className="pioneer-label">After the Event</div>
         <div className="space-y-1.5">
           <Small htmlFor="notes">Event notes (blank line between paragraphs)</Small>
-          <Textarea
+          <ParagraphsField
             id="notes"
             rows={4}
             placeholder="Highlights, follow-ups, anything attendees sent you afterward…"
-            value={paragraphsToText(program.notes)}
-            onChange={(e) => onChange({ ...program, notes: textToParagraphs(e.target.value) })}
+            value={program.notes}
+            onChange={(notes) => onChange({ ...program, notes })}
           />
         </div>
         <div className="space-y-1.5">
